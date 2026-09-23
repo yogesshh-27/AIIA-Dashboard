@@ -198,7 +198,33 @@ class AIIADashboardHandler(http.server.SimpleHTTPRequestHandler):
             page = int(get_param("page", "1"))
             limit = int(get_param("limit", "15"))
             self.send_json_response(db_service.get_alerts(category=category, severity=severity, status=status, search=search, page=page, limit=limit))
+        elif path == "/api/pv/overview":
+            self.send_json_response(db_service.get_pv_overview())
+        elif path == "/api/pv/adverse-events":
+            search = get_param("search", "")
+            severity = get_param("severity", "")
+            status = get_param("status", "")
+            serious = get_param("serious_only", "false").lower() in ("true", "1")
+            page = int(get_param("page", "1"))
+            limit = int(get_param("limit", "20"))
+            self.send_json_response(db_service.get_pv_adverse_events(
+                search=search, severity=severity, serious_only=serious, status=status, page=page, limit=limit))
+        elif path == "/api/pv/signals":
+            search = get_param("search", "")
+            severity = get_param("severity", "")
+            page = int(get_param("page", "1"))
+            limit = int(get_param("limit", "20"))
+            self.send_json_response(db_service.get_pv_safety_signals(
+                search=search, severity=severity, page=page, limit=limit))
+        elif path == "/api/pv/reporting":
+            search = get_param("search", "")
+            status = get_param("status", "")
+            page = int(get_param("page", "1"))
+            limit = int(get_param("limit", "20"))
+            self.send_json_response(db_service.get_pv_reporting_deadlines(
+                search=search, status=status, page=page, limit=limit))
         elif path == "/api/export":
+
             scope = get_param("scope", "aiia")
             search = get_param("search", "")
             status = get_param("status", "")

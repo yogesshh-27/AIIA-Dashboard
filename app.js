@@ -181,12 +181,12 @@ function renderView(route) {
     renderComplianceView(viewport, sub);
   } else if (route === 'alerts' || route.startsWith('alerts/')) {
     renderAlertCenterView(viewport);
-  } else if (route.startsWith('management/')) {
-    renderStudyManagementView(viewport, route.split('/')[1]);
-  } else if (route.startsWith('safety/')) {
-    renderSafetyView(viewport, route.split('/')[1]);
-  } else if (route.startsWith('interop/')) {
-    renderInteropView(viewport, route.split('/')[1]);
+  } else if (route === 'management' || route.startsWith('management/')) {
+    renderStudyManagementView(viewport, route.split('/')[1] || 'timeline');
+  } else if (route === 'safety' || route.startsWith('safety/')) {
+    renderSafetyView(viewport, route.split('/')[1] || 'dashboard');
+  } else if (route === 'interop' || route.startsWith('interop/')) {
+    renderInteropView(viewport, route.split('/')[1] || 'fhir');
   } else if (route === 'documents') {
     renderDocumentsView(viewport);
   } else if (route === 'audit') {
@@ -2734,42 +2734,241 @@ function toggleOverdueMilestonesOnly() {
 // 8. MODULE: PHARMACOVIGILANCE
 // ============================================================
 function renderSafetyView(container, sub) {
-  container.innerHTML = `
-    <div style="margin-bottom: 16px;">
-      <h1 class="h1-title">Pharmacovigilance & Safety Monitoring: ${escapeHTML(sub.toUpperCase())}</h1>
-      <p class="text-muted" style="font-size: 12px;">Active surveillance of Adverse Events (AE), Serious Adverse Events (SAE), and safety signals in Ayurvedic clinical protocols.</p>
-    </div>
-
-    <div class="grid-3">
-      <div class="kpi-card">
-        <span class="kpi-label">Total Documented AEs</span>
-        <span class="kpi-value">0</span>
-        <span class="kpi-context">✓ No serious unexpected events</span>
-      </div>
-      <div class="kpi-card">
-        <span class="kpi-label">Safety Reports Logged</span>
-        <span class="kpi-value">263</span>
-        <span class="kpi-context">✓ Annual Safety Reports on file</span>
-      </div>
-      <div class="kpi-card">
-        <span class="kpi-label">Regulatory Safety Status</span>
-        <span class="kpi-value">CLEAR</span>
-        <span class="kpi-context">✓ DCGI Compliance verified</span>
-      </div>
-    </div>
-
-    <div class="flat-card">
-      <div class="flat-card-header">
-        <span class="flat-card-title">Ayurvedic Clinical Safety Registry</span>
-      </div>
-      <div class="empty-state">
-        <div class="empty-state-icon">🛡</div>
-        <div class="empty-state-title">No Active Safety Signals or Unresolved AEs</div>
-        <div class="empty-state-desc">All AIIA clinical trials are operating under approved Institutional Ethics Committee pharmacovigilance oversight.</div>
-      </div>
-    </div>
-  `;
+  if (sub === 'ae') {
+    renderPVAdverseEventsView(container);
+  } else if (sub === 'signals') {
+    renderPVSignalsView(container);
+  } else if (sub === 'reports') {
+    renderPVReportingView(container);
+  } else {
+    renderPVDashboardView(container);
+  }
 }
+
+// ---- PV DASHBOARD ----
+function renderPVDashboardView(container) {
+  container.innerHTML = '<div style="margin-bottom: 16px;">' +
+    '<h1 class="h1-title">Pharmacovigilance &amp; Safety Monitoring</h1>' +
+    '<p class="text-muted" style="font-size: 12px;">Active surveillance of Adverse Events (AE), Serious Adverse Events (SAE), and safety signals in Ayurvedic clinical protocols.</p>' +
+    '</div>' +
+    '<div class="pv-disclaimer-bar" id="pv-disclaimer-bar" style="display:none;"></div>' +
+    '<div class="grid-3" id="pv-kpis-grid">' +
+    '<div class="kpi-card interactive" onclick="navigateTo(\'safety/ae\')" title="View all Adverse Events">' +
+    '<span class="kpi-label">Total AE</span><span class="kpi-value" id="pv-kpi-ae">&mdash;</span>' +
+    '<span class="kpi-context">All recorded event cases</span>' +
+    '</div>' +
+    '<div class="kpi-card interactive" onclick="navigateTo(\'safety/ae\'); setTimeout(function(){ var cb = document.getElementById(\'pv-ae-serious-only\'); if (cb) { cb.checked = true; onPVAeFilter(); }}, 100);" title="View Serious Adverse Events">' +
+    '<span class="kpi-label">SAE</span><span class="kpi-value" id="pv-kpi-sae" style="color: var(--status-critical-text);">&mdash;</span>' +
+    '<span class="kpi-context">Serious adverse cases</span>' +
+    '</div>' +
+    '<div class="kpi-card interactive" onclick="navigateTo(\'safety/ae\'); setTimeout(function(){ var sel = document.getElementById(\'pv-ae-status-filter\'); if (sel) { sel.value = \'Open\'; onPVAeFilter(); }}, 100);" title="View Open AE Reports">' +
+    '<span class="kpi-label">Open Reports</span><span class="kpi-value" id="pv-kpi-open">&mdash;</span>' +
+    '<span class="kpi-context">Active surveillance cases</span>' +
+    '</div>' +
+    '<div class="kpi-card interactive" onclick="navigateTo(\'safety/ae\'); setTimeout(function(){ var sel = document.getElementById(\'pv-ae-status-filter\'); if (sel) { sel.value = \'Under Review\'; onPVAeFilter(); }}, 100);" title="View Reports Under Review">' +
+    '<span class="kpi-label">Under Review</span><span class="kpi-value" id="pv-kpi-review" style="color: var(--status-warning-text);">&mdash;</span>' +
+    '<span class="kpi-context">Under clinical investigation</span>' +
+    '</div>' +
+    '<div class="kpi-card interactive" onclick="navigateTo(\'safety/ae\'); setTimeout(function(){ var sel = document.getElementById(\'pv-ae-status-filter\'); if (sel) { sel.value = \'Closed\'; onPVAeFilter(); }}, 100);" title="View Closed Reports">' +
+    '<span class="kpi-label">Closed Reports</span><span class="kpi-value" id="pv-kpi-closed" style="color: var(--status-complete-text);">&mdash;</span>' +
+    '<span class="kpi-context">Concluded / resolved</span>' +
+    '</div>' +
+    '<div class="kpi-card interactive" onclick="navigateTo(\'safety/signals\')" title="View Potential Safety Signals">' +
+    '<span class="kpi-label">Potential Signals</span><span class="kpi-value" id="pv-kpi-signals" style="color: var(--status-critical-text);">&mdash;</span>' +
+    '<span class="kpi-context">Automated frequency detection</span>' +
+    '</div>' +
+    '</div>' +
+    '<div class="pv-nav-strip" style="margin: 16px 0 12px; display: flex; gap: 8px;">' +
+    '<button class="btn-secondary btn-sm" onclick="navigateTo(\'safety/ae\')">&#9889; View AE / SAE Table</button>' +
+    '<button class="btn-secondary btn-sm" onclick="navigateTo(\'safety/signals\')">&#128225; View Safety Signals</button>' +
+    '<button class="btn-secondary btn-sm" onclick="navigateTo(\'safety/reports\')">&#128196; Reporting Deadlines</button>' +
+    '</div>' +
+    '<div class="grid-2" style="margin-top: 12px;">' +
+    '<div class="flat-card"><div class="flat-card-header"><span class="flat-card-title">AE Severity Distribution</span></div><div class="flat-card-body" id="pv-severity-dist" style="min-height: 80px;"><span class="text-muted" style="font-size:12px;">Loading...</span></div></div>' +
+    '<div class="flat-card"><div class="flat-card-header"><span class="flat-card-title">AE Causality Assessment</span></div><div class="flat-card-body" id="pv-causality-dist" style="min-height: 80px;"><span class="text-muted" style="font-size:12px;">Loading...</span></div></div>' +
+    '</div>' +
+    '<div class="flat-card" style="margin-top: 12px;"><div class="flat-card-header"><span class="flat-card-title">AE Outcome Summary</span></div><div class="flat-card-body" id="pv-outcome-dist" style="min-height: 60px;"><span class="text-muted" style="font-size:12px;">Loading...</span></div></div>' +
+    '<div class="pv-signal-notice" id="pv-signal-notice" style="display:none;"></div>';
+  loadPVDashboard();
+}
+
+async function loadPVDashboard() {
+  try {
+    var res = await fetch('/api/pv/overview');
+    var data = await res.json();
+    var bar = document.getElementById('pv-disclaimer-bar');
+    if (bar && data.disclaimer) { bar.style.display = 'block'; bar.innerHTML = '<span class="pv-disclaimer-icon">&#9888;</span> ' + escapeHTML(data.disclaimer); }
+    var k = data.kpis || {};
+    pvSetText('pv-kpi-ae', k.total_ae != null ? k.total_ae : 0);
+    pvSetText('pv-kpi-sae', k.total_sae != null ? k.total_sae : 0);
+    pvSetText('pv-kpi-open', k.open_reports != null ? k.open_reports : 0);
+    pvSetText('pv-kpi-review', k.under_review != null ? k.under_review : 0);
+    pvSetText('pv-kpi-closed', k.closed_reports != null ? k.closed_reports : 0);
+    pvSetText('pv-kpi-signals', k.potential_signals != null ? k.potential_signals : 0);
+    var sevEl = document.getElementById('pv-severity-dist');
+    if (sevEl && data.severity_distribution) { sevEl.innerHTML = renderPVDistributionBars(data.severity_distribution, 'severity', 'cnt', k.total_ae); }
+    var cauEl = document.getElementById('pv-causality-dist');
+    if (cauEl && data.causality_distribution) { cauEl.innerHTML = renderPVDistributionBars(data.causality_distribution, 'causality', 'cnt', k.total_ae); }
+    var outEl = document.getElementById('pv-outcome-dist');
+    if (outEl && data.outcome_distribution) { outEl.innerHTML = renderPVDistributionBars(data.outcome_distribution, 'outcome', 'cnt', k.total_ae); }
+    var notice = document.getElementById('pv-signal-notice');
+    if (notice && data.signal_disclaimer) { notice.style.display = 'block'; notice.innerHTML = '<span class="pv-signal-notice-icon">&#8505;</span> ' + escapeHTML(data.signal_disclaimer); }
+  } catch (e) { console.error('PV Dashboard load error:', e); }
+}
+
+function pvSetText(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+
+function renderPVDistributionBars(items, labelKey, countKey, total) {
+  if (!items || items.length === 0) return '<span class="text-muted" style="font-size:12px;">No data available.</span>';
+  var maxVal = Math.max.apply(null, items.map(function(i) { return i[countKey] || 0; }).concat([1]));
+  return items.map(function(item) {
+    var label = item[labelKey] || '\u2014';
+    var cnt = item[countKey] || 0;
+    var pct = total > 0 ? ((cnt / total) * 100).toFixed(1) : 0;
+    var barW = (cnt / maxVal) * 100;
+    return '<div class="pv-dist-row"><span class="pv-dist-label">' + escapeHTML(label) + '</span><div class="pv-dist-bar-track"><div class="pv-dist-bar-fill" style="width: ' + barW + '%;"></div></div><span class="pv-dist-count">' + cnt + ' <span class="text-muted">(' + pct + '%)</span></span></div>';
+  }).join('');
+}
+
+// ---- AE/SAE TABLE ----
+var pvAePage = 1;
+var pvAeLimit = 15;
+
+function renderPVAdverseEventsView(container) {
+  container.innerHTML = '<div style="margin-bottom: 16px;"><h1 class="h1-title">AE / SAE Vigilance Registry</h1><p class="text-muted" style="font-size: 12px;">Adverse Event and Serious Adverse Event case records. All records below are synthetic demonstration data.</p></div>' +
+    '<div class="pv-disclaimer-bar"><span class="pv-disclaimer-icon">&#9888;</span> Demonstration / Synthetic Safety Data &mdash; Not real patient information.</div>' +
+    '<div class="flat-card" style="margin-top: 12px;"><div class="flat-card-header"><span class="flat-card-title">Adverse Event Reports</span><div style="display:flex; gap: 8px; align-items:center; flex-wrap: wrap;"><input type="text" id="pv-ae-search" class="form-input form-input-sm" placeholder="Search event, trial, subject..." onkeyup="onPVAeSearch()" style="max-width: 200px;"><select id="pv-ae-severity-filter" class="form-select form-input-sm" onchange="onPVAeFilter()" style="max-width: 120px;"><option value="">All Severity</option><option value="Mild">Mild</option><option value="Moderate">Moderate</option><option value="Severe">Severe</option></select><select id="pv-ae-status-filter" class="form-select form-input-sm" onchange="onPVAeFilter()" style="max-width: 120px;"><option value="">All Status</option><option value="Open">Open</option><option value="Under Review">Under Review</option><option value="Closed">Closed</option></select><label style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-secondary); cursor: pointer;"><input type="checkbox" id="pv-ae-serious-only" onchange="onPVAeFilter()"> SAE Only</label></div></div>' +
+    '<div class="flat-card-body" style="overflow-x: auto;"><table class="data-table" id="pv-ae-table"><thead><tr><th>Report ID</th><th>Trial</th><th>Event</th><th>Severity</th><th>Serious</th><th>Date</th><th>Status</th><th>Causality</th></tr></thead><tbody id="pv-ae-tbody"><tr><td colspan="8" class="text-muted" style="text-align:center; padding: 20px;">Loading...</td></tr></tbody></table></div><div class="table-pagination" id="pv-ae-pagination"></div></div>';
+  pvAePage = 1;
+  loadPVAdverseEvents();
+}
+
+async function loadPVAdverseEvents() {
+  var search = (document.getElementById('pv-ae-search') || {}).value || '';
+  var severity = (document.getElementById('pv-ae-severity-filter') || {}).value || '';
+  var status = (document.getElementById('pv-ae-status-filter') || {}).value || '';
+  var seriousOnly = (document.getElementById('pv-ae-serious-only') || {}).checked ? 'true' : 'false';
+  try {
+    var params = new URLSearchParams({search: search, severity: severity, status: status, serious_only: seriousOnly, page: pvAePage, limit: pvAeLimit});
+    var res = await fetch('/api/pv/adverse-events?' + params);
+    var data = await res.json();
+    var tbody = document.getElementById('pv-ae-tbody');
+    if (!tbody) return;
+    if (!data.data || data.data.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="text-muted" style="text-align:center; padding: 20px;">No adverse event records found.</td></tr>'; return; }
+    tbody.innerHTML = data.data.map(function(ae) {
+      return '<tr><td><span class="mono-text">AE-' + String(ae.report_id).padStart(4, '0') + '</span></td><td title="' + escapeHTML(ae.trial_title || '') + '">' + escapeHTML(ae.ctri_number || '\u2014') + '</td><td><strong>' + escapeHTML(ae.event_term || '\u2014') + '</strong></td><td>' + renderPVSeverityBadge(ae.severity) + '</td><td>' + (ae.is_serious ? '<span class="status-indicator status-critical">SAE</span>' : '<span class="status-indicator status-neutral">No</span>') + '</td><td>' + escapeHTML(ae.onset_date || '\u2014') + '</td><td>' + renderPVReportStatusBadge(ae.status) + '</td><td>' + escapeHTML(ae.causality || '\u2014') + '</td></tr>';
+    }).join('');
+    var pagEl = document.getElementById('pv-ae-pagination');
+    if (pagEl) { var tp = data.total_pages || 1; pagEl.innerHTML = '<span class="text-muted" style="font-size:11px;">Showing ' + data.data.length + ' of ' + data.total + ' records</span><div style="display:flex; gap: 4px;"><button class="btn-sm btn-secondary" ' + (pvAePage <= 1 ? 'disabled' : '') + ' onclick="changePVAePage(' + (pvAePage - 1) + ')">&#8592; Prev</button><span class="text-muted" style="font-size:11px; padding: 4px 8px;">Page ' + pvAePage + ' of ' + tp + '</span><button class="btn-sm btn-secondary" ' + (pvAePage >= tp ? 'disabled' : '') + ' onclick="changePVAePage(' + (pvAePage + 1) + ')">Next &#8594;</button></div>'; }
+  } catch (e) { console.error('PV AE load error:', e); }
+}
+function changePVAePage(p) { pvAePage = p; loadPVAdverseEvents(); }
+function onPVAeSearch() { clearTimeout(debounceTimer); debounceTimer = setTimeout(function() { pvAePage = 1; loadPVAdverseEvents(); }, 300); }
+function onPVAeFilter() { pvAePage = 1; loadPVAdverseEvents(); }
+
+function renderPVSeverityBadge(sev) {
+  if (!sev) return '<span class="status-indicator status-neutral">\u2014</span>';
+  if (sev === 'Severe' || sev === 'High') return '<span class="status-indicator status-critical">' + escapeHTML(sev) + '</span>';
+  if (sev === 'Moderate' || sev === 'Medium') return '<span class="status-indicator status-warning">' + escapeHTML(sev) + '</span>';
+  return '<span class="status-indicator status-progress">' + escapeHTML(sev) + '</span>';
+}
+
+function renderPVReportStatusBadge(status) {
+  if (!status) return '<span class="status-indicator status-neutral">\u2014</span>';
+  if (status === 'Closed') return '<span class="status-indicator status-complete">&#10003; Closed</span>';
+  if (status === 'Under Review') return '<span class="status-indicator status-warning">&#9888; Under Review</span>';
+  if (status === 'Open') return '<span class="status-indicator status-progress">&#9679; Open</span>';
+  return '<span class="status-indicator status-neutral">' + escapeHTML(status) + '</span>';
+}
+
+// ---- SAFETY SIGNALS ----
+var pvSigPage = 1;
+
+function renderPVSignalsView(container) {
+  container.innerHTML = '<div style="margin-bottom: 16px;"><h1 class="h1-title">Safety Signal Detection</h1><p class="text-muted" style="font-size: 12px;">Basic aggregated signal detection comparing event frequency between reporting periods.</p></div>' +
+    '<div class="pv-disclaimer-bar"><span class="pv-disclaimer-icon">&#9888;</span> Demonstration / Synthetic Safety Data &mdash; Not real patient information.</div>' +
+    '<div class="pv-signal-notice" style="margin-top: 8px;"><span class="pv-signal-notice-icon">&#8505;</span> Potential safety signals are decision-support outputs and require qualified human review.</div>' +
+    '<div class="flat-card" style="margin-top: 12px;"><div class="flat-card-header"><span class="flat-card-title">Potential Safety Signals</span><div style="display:flex; gap: 8px; align-items:center;"><input type="text" id="pv-sig-search" class="form-input form-input-sm" placeholder="Search event, trial..." onkeyup="onPVSigSearch()" style="max-width: 200px;"><select id="pv-sig-severity-filter" class="form-select form-input-sm" onchange="onPVSigFilter()" style="max-width: 130px;"><option value="">All Severity</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div></div>' +
+    '<div class="flat-card-body" style="overflow-x: auto;"><table class="data-table" id="pv-sig-table"><thead><tr><th>Signal</th><th>Event</th><th>Trial</th><th>Current Freq.</th><th>Previous Freq.</th><th>Change</th><th>Severity</th><th>Review Status</th></tr></thead><tbody id="pv-sig-tbody"><tr><td colspan="8" class="text-muted" style="text-align:center; padding: 20px;">Loading...</td></tr></tbody></table></div><div class="table-pagination" id="pv-sig-pagination"></div></div>';
+  pvSigPage = 1;
+  loadPVSignals();
+}
+
+async function loadPVSignals() {
+  var search = (document.getElementById('pv-sig-search') || {}).value || '';
+  var severity = (document.getElementById('pv-sig-severity-filter') || {}).value || '';
+  try {
+    var params = new URLSearchParams({search: search, severity: severity, page: pvSigPage, limit: 20});
+    var res = await fetch('/api/pv/signals?' + params);
+    var data = await res.json();
+    var tbody = document.getElementById('pv-sig-tbody');
+    if (!tbody) return;
+    if (!data.data || data.data.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="text-muted" style="text-align:center; padding: 20px;">No safety signals detected in current reporting period.</td></tr>'; return; }
+    tbody.innerHTML = data.data.map(function(sig) {
+      var cp = sig.change_pct || 0;
+      var ci = cp > 0 ? '\u2191' : (cp < 0 ? '\u2193' : '\u2014');
+      var cc = cp > 50 ? 'status-critical' : (cp > 30 ? 'status-warning' : 'status-progress');
+      return '<tr><td><span class="mono-text">' + escapeHTML(sig.signal_code || '\u2014') + '</span></td><td>' + escapeHTML(sig.event_term || '\u2014') + '</td><td title="' + escapeHTML(sig.trial_title || '') + '">' + escapeHTML(sig.ctri_number || '\u2014') + '</td><td style="text-align:center; font-weight:600;">' + (sig.current_frequency != null ? sig.current_frequency : '\u2014') + '</td><td style="text-align:center;">' + (sig.previous_frequency != null ? sig.previous_frequency : '\u2014') + '</td><td><span class="status-indicator ' + cc + '">' + ci + ' ' + (cp > 0 ? '+' : '') + cp + '%</span></td><td>' + renderPVSeverityBadge(sig.severity) + '</td><td>' + renderPVReviewStatusBadge(sig.review_status) + '</td></tr>';
+    }).join('');
+    var pagEl = document.getElementById('pv-sig-pagination');
+    if (pagEl) { var tp = data.total_pages || 1; pagEl.innerHTML = '<span class="text-muted" style="font-size:11px;">Showing ' + data.data.length + ' of ' + data.total + ' signals</span><div style="display:flex; gap: 4px;"><button class="btn-sm btn-secondary" ' + (pvSigPage <= 1 ? 'disabled' : '') + ' onclick="changePVSigPage(' + (pvSigPage - 1) + ')">&#8592; Prev</button><span class="text-muted" style="font-size:11px; padding: 4px 8px;">Page ' + pvSigPage + ' of ' + tp + '</span><button class="btn-sm btn-secondary" ' + (pvSigPage >= tp ? 'disabled' : '') + ' onclick="changePVSigPage(' + (pvSigPage + 1) + ')">Next &#8594;</button></div>'; }
+  } catch (e) { console.error('PV Signals load error:', e); }
+}
+function changePVSigPage(p) { pvSigPage = p; loadPVSignals(); }
+function onPVSigSearch() { clearTimeout(debounceTimer); debounceTimer = setTimeout(function() { pvSigPage = 1; loadPVSignals(); }, 300); }
+function onPVSigFilter() { pvSigPage = 1; loadPVSignals(); }
+
+function renderPVReviewStatusBadge(status) {
+  if (!status) return '<span class="status-indicator status-neutral">\u2014</span>';
+  if (status.indexOf('Action Required') >= 0) return '<span class="status-indicator status-critical">Action Required</span>';
+  if (status.indexOf('Under Investigation') >= 0) return '<span class="status-indicator status-warning">Under Investigation</span>';
+  if (status.indexOf('No Action') >= 0) return '<span class="status-indicator status-complete">No Action Needed</span>';
+  if (status.indexOf('Pending') >= 0) return '<span class="status-indicator status-neutral">Pending Review</span>';
+  return '<span class="status-indicator status-neutral">' + escapeHTML(status) + '</span>';
+}
+
+// ---- REPORTING DEADLINES ----
+var pvRepPage = 1;
+
+function renderPVReportingView(container) {
+  container.innerHTML = '<div style="margin-bottom: 16px;"><h1 class="h1-title">Safety Reporting &amp; Deadlines</h1><p class="text-muted" style="font-size: 12px;">Configured safety reporting deadlines. Overdue reports are flagged for immediate action.</p></div>' +
+    '<div class="pv-disclaimer-bar"><span class="pv-disclaimer-icon">&#9888;</span> Demonstration / Synthetic Safety Data &mdash; Deadlines shown are for demonstration purposes only.</div>' +
+    '<div class="flat-card" style="margin-top: 12px;"><div class="flat-card-header"><span class="flat-card-title">Reporting Deadlines</span><div style="display:flex; gap: 8px; align-items:center;"><input type="text" id="pv-rep-search" class="form-input form-input-sm" placeholder="Search trial, report type..." onkeyup="onPVRepSearch()" style="max-width: 200px;"><select id="pv-rep-status-filter" class="form-select form-input-sm" onchange="onPVRepFilter()" style="max-width: 130px;"><option value="">All Status</option><option value="Overdue">Overdue</option><option value="Due Soon">Due Soon</option><option value="Pending">Pending</option><option value="Submitted">Submitted</option></select></div></div>' +
+    '<div class="flat-card-body" style="overflow-x: auto;"><table class="data-table" id="pv-rep-table"><thead><tr><th>Trial</th><th>Report Type</th><th>Deadline</th><th>Submitted</th><th>Status</th><th>Responsible</th></tr></thead><tbody id="pv-rep-tbody"><tr><td colspan="6" class="text-muted" style="text-align:center; padding: 20px;">Loading...</td></tr></tbody></table></div><div class="table-pagination" id="pv-rep-pagination"></div></div>';
+  pvRepPage = 1;
+  loadPVReporting();
+}
+
+async function loadPVReporting() {
+  var search = (document.getElementById('pv-rep-search') || {}).value || '';
+  var status = (document.getElementById('pv-rep-status-filter') || {}).value || '';
+  try {
+    var params = new URLSearchParams({search: search, status: status, page: pvRepPage, limit: 20});
+    var res = await fetch('/api/pv/reporting?' + params);
+    var data = await res.json();
+    var tbody = document.getElementById('pv-rep-tbody');
+    if (!tbody) return;
+    if (!data.data || data.data.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-muted" style="text-align:center; padding: 20px;">No reporting deadlines configured.</td></tr>'; return; }
+    tbody.innerHTML = data.data.map(function(dl) {
+      return '<tr class="' + (dl.status === 'Overdue' ? 'row-overdue' : '') + '"><td title="' + escapeHTML(dl.trial_title || '') + '">' + escapeHTML(dl.ctri_number || '\u2014') + '</td><td>' + escapeHTML(dl.report_type || '\u2014') + '</td><td>' + escapeHTML(dl.deadline_date || '\u2014') + '</td><td>' + (dl.submission_date ? escapeHTML(dl.submission_date) : '<span class="text-muted">\u2014</span>') + '</td><td>' + renderPVDeadlineStatus(dl.status) + '</td><td>' + escapeHTML(dl.responsible_role || '\u2014') + '</td></tr>';
+    }).join('');
+    var pagEl = document.getElementById('pv-rep-pagination');
+    if (pagEl) { var tp = data.total_pages || 1; pagEl.innerHTML = '<span class="text-muted" style="font-size:11px;">Showing ' + data.data.length + ' of ' + data.total + ' deadlines</span><div style="display:flex; gap: 4px;"><button class="btn-sm btn-secondary" ' + (pvRepPage <= 1 ? 'disabled' : '') + ' onclick="changePVRepPage(' + (pvRepPage - 1) + ')">&#8592; Prev</button><span class="text-muted" style="font-size:11px; padding: 4px 8px;">Page ' + pvRepPage + ' of ' + tp + '</span><button class="btn-sm btn-secondary" ' + (pvRepPage >= tp ? 'disabled' : '') + ' onclick="changePVRepPage(' + (pvRepPage + 1) + ')">Next &#8594;</button></div>'; }
+  } catch (e) { console.error('PV Reporting load error:', e); }
+}
+function changePVRepPage(p) { pvRepPage = p; loadPVReporting(); }
+function onPVRepSearch() { clearTimeout(debounceTimer); debounceTimer = setTimeout(function() { pvRepPage = 1; loadPVReporting(); }, 300); }
+function onPVRepFilter() { pvRepPage = 1; loadPVReporting(); }
+
+function renderPVDeadlineStatus(status) {
+  if (!status) return '<span class="status-indicator status-neutral">\u2014</span>';
+  if (status === 'Overdue') return '<span class="status-indicator status-critical">&#9888; Overdue</span>';
+  if (status === 'Due Soon') return '<span class="status-indicator status-warning">Due Soon</span>';
+  if (status === 'Submitted') return '<span class="status-indicator status-complete">&#10003; Submitted</span>';
+  if (status === 'Pending') return '<span class="status-indicator status-neutral">Pending</span>';
+  return '<span class="status-indicator status-neutral">' + escapeHTML(status) + '</span>';
+}
+
 
 // ============================================================
 // 9. MODULE: INTEROPERABILITY (CDISC & FHIR)

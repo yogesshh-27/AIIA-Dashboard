@@ -95,8 +95,63 @@ The automated test suite in [tests/test_compliance.py](file:///c:/Users/yoges/Do
 python -m unittest discover tests
 ..........................
 ----------------------------------------------------------------------
-Ran 26 tests in 9.685s
+Ran 30 tests in 18.587s
 
 OK
 ```
-All **26 tests** across all project modules passed with 0 errors and 0 failures.
+
+---
+
+## 6. Pharmacovigilance & Safety Monitoring Module
+
+The **Pharmacovigilance Module** implements active safety surveillance and signal detection for Ayurvedic clinical trials using synthetic demonstration data.
+
+```mermaid
+graph TD
+    subgraph PV_Module["Pharmacovigilance & Safety Surveillance"]
+        D1["Safety Dashboard (Total AE: 42, SAE: 5, Open: 21, Under Review: 9, Signals: 16)"]
+        D2["AE / SAE Vigilance Registry (Severity, Causality, Status, Date)"]
+        D3["Safety Signal Detection (Period-Over-Period Frequency Changes)"]
+        D4["Safety Reporting Deadlines (IEC, DCGI/CDSCO, Annuals, Overdue Flagging)"]
+    end
+    
+    Disclaimer["Mandatory Banner: 'Demonstration / Synthetic Safety Data'"] --- PV_Module
+    Notice["Decision Support: 'Signals require qualified human review'"] --- D3
+```
+
+### Key Capabilities Implemented:
+1. **Prominent Disclaimers**:
+   - `"Demonstration / Synthetic Safety Data — All adverse event records, safety signals, and reporting deadlines shown below are simulated for institutional training and demonstration purposes only."`
+   - `"Potential safety signals are decision-support outputs and require qualified human review."`
+2. **Dashboard Overview**:
+   - 6 Interactive KPI Cards: **Total AE (42)**, **SAE (5)**, **Open Reports (21)**, **Under Review (9)**, **Closed Reports (18)**, **Potential Signals (16)**.
+   - Dynamic distribution bars for **AE Severity** (Mild 54.8%, Severe 23.8%, Moderate 21.4%), **Causality** (Possible, Unrelated, Unlikely, Probable, Definite), and **Outcome** recovery rates.
+3. **AE / SAE Vigilance Registry**:
+   - Full filtering by text search, severity, status (`Open`, `Under Review`, `Closed`), and `SAE Only`.
+   - Complete required columns: `Report ID`, `Trial`, `Event`, `Severity`, `Serious`, `Date`, `Status`, `Causality`.
+4. **Safety Signal Detection**:
+   - Period-over-period aggregated frequency comparison (`Current Freq.`, `Previous Freq.`, and calculated `Change %` with trend arrows `↑ +400%`, `↑ +300%`, `↑ +200%`).
+   - Review status badges: `Under Investigation`, `Action Required`, `No Action Needed`, `Pending Review`.
+5. **Safety Reporting & Deadlines**:
+   - Tracks deadlines across IEC, DCGI / CDSCO (SUSAR 7-day/15-day, DSUR), and Annual Safety Reports.
+   - Immediate visual highlighting of overdue reports (`⚠ Overdue` in red).
+
+### Visual Verification & Screenshots:
+
+#### 1. Safety Overview Dashboard
+Shows the 6 KPI cards, synthetic data disclaimer, and distribution charts:
+![PV Dashboard Overview](C:/Users/yoges/.gemini/antigravity-ide/brain/a34006d0-4530-4b10-a229-5d90578cd03a/pv_dashboard_overview_1790193037400.png)
+
+#### 2. AE / SAE Vigilance Registry
+Shows the filter bar, status badges, and synthetic event records:
+![PV AE Table](C:/Users/yoges/.gemini/antigravity-ide/brain/a34006d0-4530-4b10-a229-5d90578cd03a/pv_ae_table_1790193051944.png)
+
+#### 3. Safety Signal Detection
+Shows period-over-period frequency comparisons, percentage changes, and human review notices:
+![PV Signals Table](C:/Users/yoges/.gemini/antigravity-ide/brain/a34006d0-4530-4b10-a229-5d90578cd03a/pv_signals_table_1790193067488.png)
+
+#### 4. Safety Reporting Deadlines
+Shows tracked deadlines with immediate overdue flags and responsible roles:
+![PV Reports Deadlines](C:/Users/yoges/.gemini/antigravity-ide/brain/a34006d0-4530-4b10-a229-5d90578cd03a/pv_reports_deadlines_1790193083880.png)
+
+All **30 tests** across all project modules passed with 0 errors and 0 failures.

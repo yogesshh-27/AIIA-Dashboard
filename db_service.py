@@ -1528,3 +1528,290 @@ def calculate_data_quality_audit(scope: str = "aiia") -> Dict[str, Any]:
         "flagged_trials": flagged[:25]
     }
 
+
+# ============================================================
+# PHARMACOVIGILANCE MODULE
+# (SYNTHETIC / DEMONSTRATION SAFETY DATA)
+# ============================================================
+
+PV_DISCLAIMER = "Demonstration / Synthetic Safety Data — All adverse event records, safety signals, and reporting deadlines shown below are simulated for institutional training and demonstration purposes only."
+PV_SIGNAL_DISCLAIMER = "Potential safety signals are decision-support outputs and require qualified human review."
+
+def get_pv_overview() -> Dict[str, Any]:
+    """Dashboard KPIs for pharmacovigilance module."""
+    conn = get_app_connection()
+    if not conn:
+        return {"error": "Database unavailable", "disclaimer": PV_DISCLAIMER}
+    c = conn.cursor()
+
+    # AE counts
+    c.execute("SELECT COUNT(*) FROM adverse_events")
+    total_ae = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM adverse_events WHERE is_serious = 1")
+    total_sae = c.fetchone()[0]
+
+    # Reports
+    c.execute("SELECT COUNT(*) FROM safety_reports WHERE review_status IN ('Pending', 'Under Review')")
+    open_reports = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM safety_reports WHERE review_status = 'Under Review'")
+    under_review = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM safety_reports WHERE review_status IN ('Approved', 'Submitted')")
+    closed_reports = c.fetchone()[0]
+
+    # Signals
+    try:
+        c.execute("SELECT COUNT(*) FROM pv_safety_signals")
+        potential_signals = c.fetchone()[0]
+    except Exception:
+        potential_signals = 0
+
+    # Severity distribution
+    c.execute("""
+        SELECT severity, COUNT(*) as cnt 
+        FROM adverse_events 
+        GROUP BY severity 
+        ORDER BY cnt DESC
+    """)
+    severity_dist = [dict(r) for r in c.fetchall()]
+
+    # Causality distribution
+    c.execute("""
+        SELECT causality, COUNT(*) as cnt 
+        FROM adverse_events 
+        GROUP BY causality 
+        ORDER BY cnt DESC
+    """)
+    causality_dist = [dict(r) for r in c.fetchall()]
+
+    # Outcome distribution
+    c.execute("""
+        SELECT outcome, COUNT(*) as cnt 
+        FROM adverse_events 
+        GROUP BY outcome 
+        ORDER BY cnt DESC
+    """)
+    outcome_dist = [dict(r) for r in c.fetchall()]
+
+    # Overdue deadlines count
+    try:
+        c.execute("SELECT COUNT(*) FROM pv_reporting_deadlines WHERE status = 'Overdue'")
+        overdue_deadlines = c.fetchone()[0]
+    except Exception:
+        overdue_deadlines = 0
+
+    conn.close()
+
+    return {
+        "disclaimer": PV_DISCLAIMER,
+        "signal_disclaimer": PV_SIGNAL_DISCLAIMER,
+        "is_synthetic": True,
+        "kpis": {
+            "total_ae": total_ae,
+            "total_sae": total_sae,
+            "open_reports": open_reports,
+            "under_review": under_review,
+            "closed_reports": closed_reports,
+            "potential_signals": potential_signals,
+            "overdue_deadlines": overdue_deadlines,
+        },
+        "severity_distribution": severity_dist,
+        "causality_distribution": causality_dist,
+        "outcome_distribution": outcome_dist,
+    }
+
+
+def get_pv_adverse_events(search: str = "", severity: str = "", serious_only: bool = False,
+                          status: str = "", page: int = 1, limit: int = 20) -> Dict[str, Any]:
+    """Retrieve AE/SAE table with filters."""
+    conn = get_app_connection()
+    if not conn:
+        return {"total": 0, "data": [], "disclaimer": PV_DISCLAIMER}
+    c = conn.cursor()
+
+    conditions = []
+    params = []
+
+    if search:
+        s = f"%{search.strip()}%"
+        conditions.append("(ae.event_term LIKE ? OR ae.subject_id LIKE ? OR t.ctri_number LIKE ? OR t.public_title LIKE ?)")
+        params.extend([s, s, s, s])
+
+    if severity:
+        conditions.append("ae.severity = ?")
+        params.append(severity)
+
+    if serious_only:
+        conditions.append("ae.is_serious = 1")
+
+    if status:
+        if status == 'Closed':
+            conditions.append("ae.outcome IN ('Recovered', 'Recovered with Sequelae')")
+        elif status == 'Under Review':
+            conditions.append("(ae.is_serious = 1 AND ae.outcome NOT IN ('Recovered', 'Recovered with Sequelae'))")
+        elif status == 'Open':
+            conditions.append("(ae.is_serious = 0 AND ae.outcome NOT IN ('Recovered', 'Recovered with Sequelae'))")
+
+    where_sql = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+
+    c.execute(f"""
+        SELECT COUNT(*)
+        FROM adverse_events ae
+        LEFT JOIN trials t ON ae.trial_id = t.id
+        {where_sql}
+    """, params)
+    total = c.fetchone()[0]
+
+    offset = (page - 1) * limit
+    c.execute(f"""
+        SELECT 
+            ae.id as report_id,
+            ae.trial_id,
+            t.ctri_number,
+            t.public_title as trial_title,
+            ae.subject_id,
+            ae.event_term,
+            ae.onset_date,
+            ae.resolution_date,
+            ae.severity,
+            ae.causality,
+            ae.is_serious,
+            ae.outcome,
+            CASE 
+                WHEN ae.outcome IN ('Recovered', 'Recovered with Sequelae') THEN 'Closed'
+                WHEN ae.is_serious = 1 THEN 'Under Review'
+                ELSE 'Open'
+            END as status
+        FROM adverse_events ae
+        LEFT JOIN trials t ON ae.trial_id = t.id
+        {where_sql}
+        ORDER BY ae.onset_date DESC
+        LIMIT ? OFFSET ?
+    """, params + [limit, offset])
+
+    rows = [dict(r) for r in c.fetchall()]
+    conn.close()
+
+    return {
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": (total + limit - 1) // limit if limit > 0 else 1,
+        "data": rows,
+        "disclaimer": PV_DISCLAIMER,
+        "is_synthetic": True,
+    }
+
+
+def get_pv_safety_signals(search: str = "", severity: str = "", 
+                          page: int = 1, limit: int = 20) -> Dict[str, Any]:
+    """Retrieve safety signal detection results."""
+    conn = get_app_connection()
+    if not conn:
+        return {"total": 0, "data": [], "disclaimer": PV_DISCLAIMER}
+    c = conn.cursor()
+
+    conditions = []
+    params = []
+
+    if search:
+        s = f"%{search.strip()}%"
+        conditions.append("(event_term LIKE ? OR ctri_number LIKE ? OR trial_title LIKE ? OR signal_code LIKE ?)")
+        params.extend([s, s, s, s])
+
+    if severity:
+        conditions.append("severity = ?")
+        params.append(severity)
+
+    where_sql = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+
+    try:
+        c.execute(f"SELECT COUNT(*) FROM pv_safety_signals {where_sql}", params)
+        total = c.fetchone()[0]
+
+        offset = (page - 1) * limit
+        c.execute(f"""
+            SELECT * FROM pv_safety_signals
+            {where_sql}
+            ORDER BY change_pct DESC
+            LIMIT ? OFFSET ?
+        """, params + [limit, offset])
+        rows = [dict(r) for r in c.fetchall()]
+    except Exception:
+        total = 0
+        rows = []
+
+    conn.close()
+
+    return {
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": (total + limit - 1) // limit if limit > 0 else 1,
+        "data": rows,
+        "disclaimer": PV_DISCLAIMER,
+        "signal_disclaimer": PV_SIGNAL_DISCLAIMER,
+        "is_synthetic": True,
+    }
+
+
+def get_pv_reporting_deadlines(search: str = "", status: str = "",
+                               page: int = 1, limit: int = 20) -> Dict[str, Any]:
+    """Retrieve safety reporting deadlines with overdue flagging."""
+    conn = get_app_connection()
+    if not conn:
+        return {"total": 0, "data": [], "disclaimer": PV_DISCLAIMER}
+    c = conn.cursor()
+
+    conditions = []
+    params = []
+
+    if search:
+        s = f"%{search.strip()}%"
+        conditions.append("(ctri_number LIKE ? OR trial_title LIKE ? OR report_type LIKE ?)")
+        params.extend([s, s, s])
+
+    if status:
+        conditions.append("status = ?")
+        params.append(status)
+
+    where_sql = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+
+    try:
+        c.execute(f"SELECT COUNT(*) FROM pv_reporting_deadlines {where_sql}", params)
+        total = c.fetchone()[0]
+
+        offset = (page - 1) * limit
+        c.execute(f"""
+            SELECT * FROM pv_reporting_deadlines
+            {where_sql}
+            ORDER BY 
+                CASE status 
+                    WHEN 'Overdue' THEN 1 
+                    WHEN 'Due Soon' THEN 2 
+                    WHEN 'Pending' THEN 3 
+                    WHEN 'Submitted' THEN 4 
+                    ELSE 5 
+                END ASC,
+                deadline_date ASC
+            LIMIT ? OFFSET ?
+        """, params + [limit, offset])
+        rows = [dict(r) for r in c.fetchall()]
+    except Exception:
+        total = 0
+        rows = []
+
+    conn.close()
+
+    return {
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": (total + limit - 1) // limit if limit > 0 else 1,
+        "data": rows,
+        "disclaimer": PV_DISCLAIMER,
+        "is_synthetic": True,
+    }
+
