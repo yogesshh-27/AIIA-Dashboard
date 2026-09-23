@@ -40,15 +40,24 @@
         </button>
 
         <!-- User, Role & Profile -->
-        <div class="header-user-badge">
-          <div class="user-avatar" title="Institutional User Profile">DG</div>
+        <div class="header-user-badge" style="display:flex; align-items:center; gap: 8px;">
+          <div class="user-avatar" id="header-user-avatar" title="Active Institutional Persona">TN</div>
           <div class="user-details">
-            <span class="user-name">Dr. Galib</span>
-            <span class="user-role">System Auditor / PI</span>
+            <span class="user-name" id="header-user-name" style="font-weight:600; font-size:11px;">Prof. (Dr.) Tanuja Nesari</span>
+            <div style="display:flex; align-items:center; gap: 4px;">
+              <span style="font-size:9px; color: var(--text-muted);">Role:</span>
+              <select id="header-role-select" class="form-select form-input-sm" style="height: 20px; font-size: 10px; padding: 0 4px; border: 1px solid var(--border-light); border-radius: 3px; background: var(--bg-surface); cursor: pointer;" onchange="onRoleSwitch(this.value)">
+                <option value="Administrator">Administrator</option>
+                <option value="Principal Investigator">Principal Investigator</option>
+                <option value="Study Coordinator">Study Coordinator</option>
+                <option value="Monitor">Monitor</option>
+                <option value="Ethics Committee">Ethics Committee</option>
+                <option value="Pharmacovigilance Officer">Pharmacovigilance Officer</option>
+                <option value="Institutional Leadership">Institutional Leadership</option>
+                <option value="Regulator / Read-only">Regulator / Read-only</option>
+              </select>
+            </div>
           </div>
-          <button class="btn btn-ghost btn-sm" style="padding: 2px 6px; font-size: 10px;" title="Profile Menu" onclick="openProfileModal()">
-            Profile
-          </button>
         </div>
       </div>
     </header>
