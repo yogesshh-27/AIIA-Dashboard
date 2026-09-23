@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIIA - Clinical Trial Intelligence & Management System</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ============================================================
+         INSTITUTIONAL HEADER
+         ============================================================ -->
+    <header class="app-header" role="banner">
+      <div class="header-left">
+        <button id="btn-toggle-sidebar" class="sidebar-toggle-btn" aria-label="Toggle navigation sidebar" title="Toggle Sidebar">
+          ☰
+        </button>
+        <div class="header-brand">
+          <div class="header-emblem" aria-hidden="true">AIIA</div>
+          <div class="header-titles">
+            <span class="header-title-main">All India Institute of Ayurveda</span>
+            <span class="header-title-sub">Clinical Trial Intelligence & Management System | Clinical Trials Registry</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Quick Action / Global Search -->
+        <button class="header-action-btn" onclick="navigateTo('design-system')" title="View Design System Showcase">
+          <span>Component Showcase</span>
+        </button>
+
+        <!-- Notifications / Alert Center -->
+        <button id="btn-notifications" class="header-action-btn" aria-label="Notifications" title="System Notifications & Alert Center" onclick="navigateTo('alerts')">
+          <span>Alerts</span>
+          <span class="notification-count" id="header-alert-count">11</span>
+        </button>
+
+        <!-- User, Role & Profile -->
+        <div class="header-user-badge">
+          <div class="user-avatar" title="Institutional User Profile">DG</div>
+          <div class="user-details">
+            <span class="user-name">Dr. Galib</span>
+            <span class="user-role">System Auditor / PI</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="padding: 2px 6px; font-size: 10px;" title="Profile Menu" onclick="openProfileModal()">
+            Profile
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         BODY LAYOUT: SIDEBAR + MAIN VIEWPORT
+         ============================================================ -->
+    <div class="app-body">
+
+      <!-- COMPACT INSTITUTIONAL SIDEBAR -->
+      <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Main Navigation">
+        <div class="sidebar-scroll">
+
+          <!-- Dashboard -->
+          <div class="sidebar-group">
+            <a href="#dashboard" class="sidebar-link active" data-route="dashboard">
+              <span class="sidebar-icon">⊞</span>
+              <span class="sidebar-text">Dashboard</span>
+            </a>
+          </div>
+
+          <!-- Clinical Trials -->
+          <div class="sidebar-group">
+            <div class="sidebar-group-title" onclick="toggleSidebarGroup(this)">
+              <span>Clinical Trials</span>
+              <span style="font-size: 9px;">▾</span>
+            </div>
+            <div class="sidebar-group-items">
+              <a href="#trials/all" class="sidebar-link" data-route="trials/all">
+                <span class="sidebar-icon">•</span>
+                <span class="sidebar-text">All Trials</span>
+                <span class="sidebar-badge" id="badge-all-trials">263</span>
+              </a>
+              <a href="#trials/active" class="sidebar-link" data-route="trials/active">
+                <span class="sidebar-icon">•</span>
+                <span class="sidebar-text">Active Trials</span>
+                <span class="sidebar-badge">11</span>
+              </a>
+              <a href="#trials/recruiting" class="sidebar-link" data-route="trials/recruiting">
+                <span class="sidebar-icon">•</span>
+                <span class="sidebar-text">Recruiting Trials</span>
+                <span class="sidebar-badge">11</span>
+              </a>
+              <a href="#trials/completed" class="sidebar-link" data-route="trials/completed">
+                <span class="sidebar-icon">•</span>
+                <span class="sidebar-text">Completed Trials</span>
+                <span class="sidebar-badge">21</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Study Management -->
+          <div class="sidebar-group">
+            <div class="sidebar-group-title" onclick="toggleSidebarGroup(this)">
+              <span>Study Management</span>
+              <span style="font-size: 9px;">▾</span>
+            </div>
+            <div class="sidebar-group-items">
+              <a href="#management/timeline" class="sidebar-link" data-route="management/timeline">
+                <span class="sidebar-icon">📊</span>
+                <span class="sidebar-text">Study Timeline</span>
+              </a>
+              <a href="#management/milestones" class="sidebar-link" data-route="management/milestones">
+                <span class="sidebar-icon">⏱</span>
+                <span class="sidebar-text">Milestones</span>
+              </a>
+              <a href="#management/recruitment" class="sidebar-link" data-route="management/recruitment">
+                <span class="sidebar-icon">👥</span>
+                <span class="sidebar-text">Recruitment</span>
+              </a>
+              <a href="#management/monitoring" class="sidebar-link" data-route="management/monitoring">
+                <span class="sidebar-icon">👁</span>
+                <span class="sidebar-text">Monitoring</span>
+              </a>
+              <a href="#management/deviations" class="sidebar-link" data-route="management/deviations">
+                <span class="sidebar-icon">⚠</span>
+                <span class="sidebar-text">Protocol Deviations</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Compliance -->
+          <div class="sidebar-group">
+            <div class="sidebar-group-title" onclick="toggleSidebarGroup(this)">
+              <span>Compliance</span>
+              <span style="font-size: 9px;">▾</span>
+            </div>
+            <div class="sidebar-group-items">
+              <a href="#compliance/overview" class="sidebar-link" data-route="compliance/overview">
+                <span class="sidebar-icon">🛡</span>
+                <span class="sidebar-text">Overview</span>
+              </a>
+              <a href="#alerts" class="sidebar-link" data-route="alerts">
+                <span class="sidebar-icon">🔔</span>
+                <span class="sidebar-text">Alert Center</span>
+                <span class="sidebar-badge" id="sidebar-alert-badge" style="background: #7f1d1d; color: #fff;">11</span>
+              </a>
+              <a href="#compliance/ctri" class="sidebar-link" data-route="compliance/ctri">
+                <span class="sidebar-icon">✓</span>
+                <span class="sidebar-text">CTRI</span>
+              </a>
+              <a href="#compliance/iec" class="sidebar-link" data-route="compliance/iec">
+                <span class="sidebar-icon">⚖</span>
+                <span class="sidebar-text">Ethics / IEC</span>
+              </a>
+              <a href="#compliance/regulatory" class="sidebar-link" data-route="compliance/regulatory">
+                <span class="sidebar-icon">🏛</span>
+                <span class="sidebar-text">Regulatory</span>
+              </a>
+              <a href="#compliance/data-quality" class="sidebar-link" data-route="compliance/data-quality">
+                <span class="sidebar-icon">🔍</span>
+                <span class="sidebar-text">Data Quality</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Pharmacovigilance -->
+          <div class="sidebar-group">
+            <div class="sidebar-group-title" onclick="toggleSidebarGroup(this)">
+              <span>Pharmacovigilance</span>
+              <span style="font-size: 9px;">▾</span>
+            </div>
+            <div class="sidebar-group-items">
+              <a href="#safety/ae" class="sidebar-link" data-route="safety/ae">
+                <span class="sidebar-icon">⚡</span>
+                <span class="sidebar-text">AE / SAE</span>
+              </a>
+              <a href="#safety/signals" class="sidebar-link" data-route="safety/signals">
+                <span class="sidebar-icon">📡</span>
+                <span class="sidebar-text">Safety Signals</span>
+              </a>
+              <a href="#safety/reports" class="sidebar-link" data-route="safety/reports">
+                <span class="sidebar-icon">📄</span>
+                <span class="sidebar-text">Reports</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Interoperability -->
+          <div class="sidebar-group">
+            <div class="sidebar-group-title" onclick="toggleSidebarGroup(this)">
+              <span>Interoperability</span>
+              <span style="font-size: 9px;">▾</span>
+            </div>
+            <div class="sidebar-group-items">
+              <a href="#interop/fhir" class="sidebar-link" data-route="interop/fhir">
+                <span class="sidebar-icon">🧬</span>
+                <span class="sidebar-text">FHIR R4</span>
+              </a>
+              <a href="#interop/cdisc" class="sidebar-link" data-route="interop/cdisc">
+                <span class="sidebar-icon">📖</span>
+                <span class="sidebar-text">CDISC</span>
+              </a>
+              <a href="#interop/export" class="sidebar-link" data-route="interop/export">
+                <span class="sidebar-icon">💾</span>
+                <span class="sidebar-text">Export</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Standalone Entities -->
+          <div class="sidebar-group">
+            <a href="#assistant" class="sidebar-link" data-route="assistant">
+              <span class="sidebar-icon">🤖</span>
+              <span class="sidebar-text">AI Trial Assistant</span>
+            </a>
+            <a href="#documents" class="sidebar-link" data-route="documents">
+              <span class="sidebar-icon">📁</span>
+              <span class="sidebar-text">Documents</span>
+            </a>
+            <a href="#audit" class="sidebar-link" data-route="audit">
+              <span class="sidebar-icon">📋</span>
+              <span class="sidebar-text">Audit Trail</span>
+            </a>
+            <a href="#admin" class="sidebar-link" data-route="admin">
+              <span class="sidebar-icon">⚙</span>
+              <span class="sidebar-text">Administration</span>
+            </a>
+          </div>
+
+          <!-- Component & Design System Showcase -->
+          <div class="sidebar-group" style="margin-top: 16px; border-top: 1px solid var(--border-light); padding-top: 8px;">
+            <a href="#design-system" class="sidebar-link" data-route="design-system">
+              <span class="sidebar-icon">🎨</span>
+              <span class="sidebar-text">Design System</span>
+            </a>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- MAIN VIEWPORT -->
+      <main class="app-main" id="app-main" role="main">
+
+        <!-- Breadcrumbs & Context Action Bar -->
+        <nav class="breadcrumbs-bar" aria-label="Breadcrumb">
+          <div class="breadcrumb-trail" id="breadcrumb-container">
+            <a href="#dashboard" class="breadcrumb-item">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active" id="breadcrumb-current">Dashboard</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sm btn-outline" onclick="refreshCurrentView()">Refresh View</button>
+            <button class="btn btn-sm btn-primary" onclick="openNewProtocolModal()">+ New Protocol</button>
+          </div>
+        </nav>
+
+        <!-- Viewport Container for Routed Pages -->
+        <div class="content-viewport" id="content-viewport">
+          <!-- Routed content injected dynamically by app.js -->
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- ============================================================
+       ACCESSIBLE MODAL COMPONENT
+       ============================================================ -->
+  <div id="app-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title" onclick="handleModalBackdropClick(event)">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 id="modal-title" class="modal-title">Modal Title</h2>
+        <button class="btn btn-sm btn-ghost" onclick="closeAppModal()" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Injected modal content -->
+      </div>
+      <div class="modal-footer" id="modal-footer">
+        <button class="btn btn-sm btn-outline" onclick="closeAppModal()">Cancel</button>
+        <button class="btn btn-sm btn-primary" id="modal-btn-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Drawer Panel -->
+  <div id="notification-drawer" class="modal-backdrop" onclick="handleNotificationBackdropClick(event)">
+    <div class="modal-container" style="max-width: 480px; position: fixed; right: 20px; top: 60px; height: auto;">
+      <div class="modal-header">
+        <h2 class="modal-title">System & Governance Alerts</h2>
+        <button class="btn btn-sm btn-ghost" onclick="closeNotificationPanel()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="status-indicator status-warning" style="display: flex; align-items: flex-start; gap: 8px; padding: 10px; border-radius: 4px;">
+            <span style="font-weight: 700;">!</span>
+            <div>
+              <strong>Retrospective Registration Detected</strong>
+              <div style="font-size: 11px; margin-top: 2px;">CTRI/2018/02/011853 was registered post first subject enrollment. Governance review required.</div>
+            </div>
+          </div>
+          <div class="status-indicator status-critical" style="display: flex; align-items: flex-start; gap: 8px; padding: 10px; border-radius: 4px;">
+            <span style="font-weight: 700;">×</span>
+            <div>
+              <strong>IEC Clearance Renewal Due</strong>
+              <div style="font-size: 11px; margin-top: 2px;">Annual progress report for Protocol AIIA/IEC/2021-04 is due in 15 days.</div>
+            </div>
+          </div>
+          <div class="status-indicator status-complete" style="display: flex; align-items: flex-start; gap: 8px; padding: 10px; border-radius: 4px;">
+            <span style="font-weight: 700;">✓</span>
+            <div>
+              <strong>CTRI Ingestion Synchronized</strong>
+              <div style="font-size: 11px; margin-top: 2px;">Database ingestion pipeline synchronized 1,263 protocol records.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sm btn-outline" onclick="closeNotificationPanel()">Dismiss All</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js?v=compliance_v1"></script>
+</body>
+</html>
