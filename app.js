@@ -120,7 +120,6 @@ async function handleStaffLogin(e) {
 
   if (errorEl) errorEl.style.display = 'none';
 
-  // Demo direct credentials bypass for rock-solid stability during presentations
   const isDemoMatch = (staffId.toUpperCase() === 'AIIA001' && password === 'AIIA@123') ||
                       (staffId.toLowerCase() === 'admin' && password === 'admin123');
 
@@ -143,10 +142,9 @@ async function handleStaffLogin(e) {
       }
     }
   } catch (err) {
-    console.warn('Network fetch error, checking demo credentials fallback...', err);
+    console.warn('Network login check fallback...', err);
   }
 
-  // Fallback for valid demo credentials if network glitch occurs
   if (isDemoMatch) {
     const fallbackUser = {
       staff_id: 'AIIA001',
@@ -732,21 +730,6 @@ async function renderActiveTrialsView(container) {
       </table>
     </div>
   `;
-  } catch (err) {
-    console.error('Error rendering patients view:', err);
-    container.innerHTML = `
-      <div class="view-header-bar">
-        <div class="view-title-group">
-          <h2>Patient Management & Clinical Roster</h2>
-          <p>Registered clinical trial participants under active protocol care</p>
-        </div>
-      </div>
-      <div style="background: #ffffff; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid var(--border-light);">
-        <p style="color: var(--text-secondary); margin-bottom: 14px;">Error connecting to clinical database. Please check your network or click retry.</p>
-        <button class="btn btn-primary btn-sm" onclick="switchStaffTab('patients')">🔄 Retry Loading Patients</button>
-      </div>
-    `;
-  }
 }
 
 // ============================================================
@@ -932,21 +915,6 @@ async function renderTrialInfoView(container) {
       </table>
     </div>
   `;
-  } catch (err) {
-    console.error('Error rendering patients view:', err);
-    container.innerHTML = `
-      <div class="view-header-bar">
-        <div class="view-title-group">
-          <h2>Patient Management & Clinical Roster</h2>
-          <p>Registered clinical trial participants under active protocol care</p>
-        </div>
-      </div>
-      <div style="background: #ffffff; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid var(--border-light);">
-        <p style="color: var(--text-secondary); margin-bottom: 14px;">Error connecting to clinical database. Please check your network or click retry.</p>
-        <button class="btn btn-primary btn-sm" onclick="switchStaffTab('patients')">🔄 Retry Loading Patients</button>
-      </div>
-    `;
-  }
 }
 
 async function openStaffTrialDetailModal(trialId) {
@@ -1247,21 +1215,6 @@ async function renderApprovalsView(container) {
       </table>
     </div>
   `;
-  } catch (err) {
-    console.error('Error rendering patients view:', err);
-    container.innerHTML = `
-      <div class="view-header-bar">
-        <div class="view-title-group">
-          <h2>Patient Management & Clinical Roster</h2>
-          <p>Registered clinical trial participants under active protocol care</p>
-        </div>
-      </div>
-      <div style="background: #ffffff; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid var(--border-light);">
-        <p style="color: var(--text-secondary); margin-bottom: 14px;">Error connecting to clinical database. Please check your network or click retry.</p>
-        <button class="btn btn-primary btn-sm" onclick="switchStaffTab('patients')">🔄 Retry Loading Patients</button>
-      </div>
-    `;
-  }
 }
 
 function openApprovalDecisionModal(approvalId, site, type, status) {
@@ -1518,10 +1471,9 @@ async function openDoctorProfileModal(doctorId) {
 // 11. MODULE 8: PATIENT INFORMATION & TREATMENT TIMELINE
 // ============================================================
 async function renderPatientsView(container) {
-  try {
-    const res = await fetch('/api/ayur/patients');
-    const data = await res.json();
-    const patients = data.patients || [];
+  const res = await fetch('/api/ayur/patients');
+  const data = await res.json();
+  const patients = data.patients || [];
 
   container.innerHTML = `
     <div class="view-header-bar">
@@ -1578,21 +1530,6 @@ async function renderPatientsView(container) {
       </table>
     </div>
   `;
-  } catch (err) {
-    console.error('Error rendering patients view:', err);
-    container.innerHTML = `
-      <div class="view-header-bar">
-        <div class="view-title-group">
-          <h2>Patient Management & Clinical Roster</h2>
-          <p>Registered clinical trial participants under active protocol care</p>
-        </div>
-      </div>
-      <div style="background: #ffffff; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid var(--border-light);">
-        <p style="color: var(--text-secondary); margin-bottom: 14px;">Error connecting to clinical database. Please check your network or click retry.</p>
-        <button class="btn btn-primary btn-sm" onclick="switchStaffTab('patients')">🔄 Retry Loading Patients</button>
-      </div>
-    `;
-  }
 }
 
 async function openPatientProfileModal(patientId) {
@@ -1777,21 +1714,6 @@ async function renderPVView(container) {
       </table>
     </div>
   `;
-  } catch (err) {
-    console.error('Error rendering patients view:', err);
-    container.innerHTML = `
-      <div class="view-header-bar">
-        <div class="view-title-group">
-          <h2>Patient Management & Clinical Roster</h2>
-          <p>Registered clinical trial participants under active protocol care</p>
-        </div>
-      </div>
-      <div style="background: #ffffff; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid var(--border-light);">
-        <p style="color: var(--text-secondary); margin-bottom: 14px;">Error connecting to clinical database. Please check your network or click retry.</p>
-        <button class="btn btn-primary btn-sm" onclick="switchStaffTab('patients')">🔄 Retry Loading Patients</button>
-      </div>
-    `;
-  }
 }
 
 function openReportAEModal() {
@@ -2050,12 +1972,12 @@ async function renderInteropView(container) {
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
       <div class="active-trials-section-card">
         <h4 style="font-size: 14px; margin-bottom: 10px;">HL7 FHIR R4 ResearchStudy JSON Preview</h4>
-        <pre style="background: #1e293b; color: #38bdf8; padding: 14px; border-radius: 6px; font-size: 11px; max-height: 240px; overflow: auto;">${JSON.stringify(interopData.fhir_preview || interopData.fhir_patient, null, 2)}</pre>
+        <pre style="background: #1e293b; color: #38bdf8; padding: 14px; border-radius: 6px; font-size: 11px; max-height: 240px; overflow: auto;">${JSON.stringify(interopData.fhir_preview, null, 2)}</pre>
       </div>
 
       <div class="active-trials-section-card">
         <h4 style="font-size: 14px; margin-bottom: 10px;">CDISC SDTM Dataset Preview (TS/DM)</h4>
-        <pre style="background: #1e293b; color: #4ade80; padding: 14px; border-radius: 6px; font-size: 11px; max-height: 240px; overflow: auto;">${JSON.stringify(interopData.cdisc_preview || interopData.cdisc_sdtm, null, 2)}</pre>
+        <pre style="background: #1e293b; color: #4ade80; padding: 14px; border-radius: 6px; font-size: 11px; max-height: 240px; overflow: auto;">${JSON.stringify(interopData.cdisc_preview, null, 2)}</pre>
       </div>
     </div>
 
