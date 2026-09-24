@@ -40,18 +40,18 @@ class TestAIIADashboard(unittest.TestCase):
         status, ctype, content = self.get_url("/")
         self.assertEqual(status, 200)
         self.assertIn(b"All India Institute of Ayurveda", content)
-        self.assertIn(b"Clinical Trials Registry", content)
+        self.assertIn(b"AYURCTMS", content)
 
     def test_02_static_css(self):
         status, ctype, content = self.get_url("/app.css")
         self.assertEqual(status, 200)
-        self.assertIn(b"--accent: #1d4454;", content)
-        self.assertIn(b"--status-complete-text", content)
+        self.assertIn(b"--ayur-primary", content)
+        self.assertIn(b"gate-card", content)
 
     def test_03_static_js(self):
         status, ctype, content = self.get_url("/app.js")
         self.assertEqual(status, 200)
-        self.assertIn(b"openDossier", content)
+        self.assertIn(b"handlePatientMatchingSubmit", content)
 
     def test_04_api_stats(self):
         status, ctype, content = self.get_url("/api/stats")

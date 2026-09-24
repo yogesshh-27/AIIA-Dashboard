@@ -1,0 +1,459 @@
+import pathlib
+
+html_content = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYURCTMS - AIIA Clinical Trial Management & Research Portal</title>
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="theme-healthcare">
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- ============================================================
+       1. LANDING GATE: WHO ARE YOU? (PATIENT vs AIIA AUTHORIZED STAFF)
+       ============================================================ -->
+  <div id="landing-gate" class="landing-gate-view">
+    <div class="landing-header">
+      <div class="landing-brand">
+        <div class="landing-emblem">AYUR</div>
+        <div class="landing-brand-text">
+          <h1>AYURCTMS</h1>
+          <p>All India Institute of Ayurveda (AIIA) | Ministry of Ayush, Govt. of India</p>
+        </div>
+      </div>
+      <div class="landing-tag">SIH PS ID: 26046</div>
+    </div>
+
+    <div class="landing-hero-content">
+      <div class="landing-title-block">
+        <h2>AIIA Clinical Trial Management & Research Portal</h2>
+        <p>A real-time, cloud-based, GCP-compliant Clinical Trial Management System (CTMS) for Ayurveda research, with CDISC/FHIR-interoperable data, role-based KPIs, and integrated ethics, regulatory and pharmacovigilance tracking.</p>
+      </div>
+
+      <div class="gate-selection-container">
+        <h3 class="gate-prompt">Who are you?</h3>
+        <p class="gate-subprompt">Select your portal to continue</p>
+
+        <div class="gate-cards-grid">
+          <!-- CARD 1: PATIENT -->
+          <div class="gate-card gate-card-patient" onclick="showPatientPortal()" tabindex="0" role="button" aria-label="Patient Portal">
+            <div class="gate-card-icon-wrapper">
+              <span class="gate-icon">👤</span>
+            </div>
+            <div class="gate-card-body">
+              <span class="gate-badge">Public Access</span>
+              <h4 class="gate-card-title">I'm a Patient</h4>
+              <p class="gate-card-desc">Find suitable clinical trials and participating locations accessible to you across India.</p>
+              <ul class="gate-card-features">
+                <li>✓ Multi-location accessibility search</li>
+                <li>✓ Verified Ayurvedic trial sites</li>
+                <li>✓ Direct trial coordinator contacts</li>
+              </ul>
+            </div>
+            <div class="gate-card-action">
+              <span>Find Clinical Trials</span>
+              <span class="arrow-icon">→</span>
+            </div>
+          </div>
+
+          <!-- CARD 2: AIIA AUTHORIZED STAFF -->
+          <div class="gate-card gate-card-staff" onclick="showStaffLoginModal()" tabindex="0" role="button" aria-label="Staff Portal">
+            <div class="gate-card-icon-wrapper staff-icon-wrapper">
+              <span class="gate-icon">🏥</span>
+            </div>
+            <div class="gate-card-body">
+              <span class="gate-badge staff-badge">Institutional / Staff Access</span>
+              <h4 class="gate-card-title">AIIA Authorized Staff</h4>
+              <p class="gate-card-desc">Manage clinical trials, patients, doctors, sites, GCP compliance, and pharmacovigilance.</p>
+              <ul class="gate-card-features">
+                <li>✓ Role-based KPIs & trial oversight</li>
+                <li>✓ Pharmacovigilance & safety signals</li>
+                <li>✓ CDISC / FHIR data interoperability</li>
+              </ul>
+            </div>
+            <div class="gate-card-action staff-action">
+              <span>Staff Portal Login</span>
+              <span class="arrow-icon">→</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="landing-footer">
+      <span>GCP & NDCT Rules 2019 Compliant Architecture</span>
+      <span>•</span>
+      <span>CDISC SDTM / HL7 FHIR R4 Interoperable</span>
+      <span>•</span>
+      <span>All India Institute of Ayurveda © 2026</span>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       2. PATIENT FLOW: TRIAL MATCHING PORTAL
+       ============================================================ -->
+  <div id="patient-portal" class="patient-portal-view" style="display: none;">
+    <header class="patient-header">
+      <div class="patient-header-left">
+        <button class="btn btn-outline btn-sm" onclick="returnToGate()">← Back to Portal Selection</button>
+        <div class="brand-inline">
+          <span class="brand-pill">AYURCTMS</span>
+          <span class="brand-text">Patient Trial Matching Portal</span>
+        </div>
+      </div>
+      <div class="patient-header-right">
+        <button class="btn btn-outline btn-sm" onclick="showStaffLoginModal()">AIIA Staff Login</button>
+      </div>
+    </header>
+
+    <main class="patient-main-container">
+      <!-- Intake Form Section -->
+      <section class="patient-intake-section">
+        <div class="section-hero">
+          <h2>Find a Suitable Clinical Trial</h2>
+          <p>Tell us a little about yourself so we can identify trial locations that may be accessible to you.</p>
+        </div>
+
+        <div class="patient-card form-card">
+          <form id="patient-matching-form" onsubmit="handlePatientMatchingSubmit(event)">
+            <div class="form-row-grid">
+              <div class="form-group">
+                <label for="p-fullname">Full Name *</label>
+                <input type="text" id="p-fullname" class="form-input" placeholder="e.g. Ramesh Kumar" required>
+              </div>
+
+              <div class="form-group">
+                <label for="p-age">Age *</label>
+                <input type="number" id="p-age" class="form-input" min="1" max="120" placeholder="e.g. 45" required>
+              </div>
+
+              <div class="form-group">
+                <label for="p-gender">Gender *</label>
+                <select id="p-gender" class="form-select" required>
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="p-contact">Contact Information (Phone / Email) *</label>
+                <input type="text" id="p-contact" class="form-input" placeholder="e.g. 9876543210 or name@example.com" required>
+              </div>
+            </div>
+
+            <div class="form-row-grid">
+              <div class="form-group">
+                <label for="p-condition">Illness / Condition Being Studied *</label>
+                <select id="p-condition" class="form-select" required onchange="onConditionSelectChange(this.value)">
+                  <option value="">Select Illness / Condition</option>
+                  <option value="Arthritis">Arthritis (Sandhivata / Osteoarthritis)</option>
+                  <option value="Diabetes">Diabetes (Madhumeha / Type 2 DM)</option>
+                  <option value="Acne">Acne (Mukhadushika / Dermatological)</option>
+                  <option value="Hypertension">Hypertension (Raktachapa / Cardiovascular)</option>
+                  <option value="Digestive Disorder">Digestive Disorder (Grahani / IBS)</option>
+                  <option value="Respiratory Disorders">Respiratory Disorders (Kasa / Shwasa)</option>
+                  <option value="All">Show All Active Ayurveda Studies</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="p-city">Area / City of Residence *</label>
+                <input type="text" id="p-city" class="form-input" placeholder="e.g. Mumbai, Delhi, Noida..." required>
+              </div>
+
+              <div class="form-group">
+                <label for="p-state">State *</label>
+                <input type="text" id="p-state" class="form-input" placeholder="e.g. Maharashtra, Delhi NCR..." required>
+              </div>
+
+              <div class="form-group">
+                <label for="p-distance">Distance Preference</label>
+                <select id="p-distance" class="form-select">
+                  <option value="Within City (< 25 km)">Within City (&lt; 25 km)</option>
+                  <option value="Within 50 km">Within 50 km</option>
+                  <option value="Within 100 km">Within 100 km</option>
+                  <option value="Any Accessible Site">Any Accessible Site in India</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Locations patient can access (Multi-select pill checkboxes) -->
+            <div class="form-group location-pills-group">
+              <label class="form-label-bold">Locations I Can Access (Select all that apply): *</label>
+              <div class="location-pills-grid" id="accessible-locations-container">
+                <label class="location-pill"><input type="checkbox" name="accessible_loc" value="Delhi" checked><span>Delhi (AIIA Main Campus)</span></label>
+                <label class="location-pill"><input type="checkbox" name="accessible_loc" value="Mumbai" checked><span>Mumbai (Partner Site)</span></label>
+                <label class="location-pill"><input type="checkbox" name="accessible_loc" value="Kolkata"><span>Kolkata (Partner Site)</span></label>
+                <label class="location-pill"><input type="checkbox" name="accessible_loc" value="Noida"><span>Noida (Clinical Extension)</span></label>
+                <label class="location-pill"><input type="checkbox" name="accessible_loc" value="Lucknow"><span>Lucknow (Partner Site)</span></label>
+                <label class="location-pill"><input type="checkbox" name="accessible_loc" value="Jaipur"><span>Jaipur (National Institute Partner)</span></label>
+                <label class="location-pill"><input type="checkbox" name="accessible_loc" value="Kerala"><span>Kerala (AIIA Center of Excellence)</span></label>
+                <label class="location-pill"><input type="checkbox" name="accessible_loc" value="Bengaluru"><span>Bengaluru (Collaborative Center)</span></label>
+                <label class="location-pill"><input type="checkbox" name="accessible_loc" value="Hyderabad"><span>Hyderabad (Partner Site)</span></label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="p-accessibility">Optional Accessibility Requirements (e.g. Wheelchair access, Ground floor, Weekend visits)</label>
+              <input type="text" id="p-accessibility" class="form-input" placeholder="Optional accessibility preferences...">
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-lg" id="btn-patient-search">
+                <span>🔍 Find Suitable Clinical Trials</span>
+              </button>
+              <button type="button" class="btn btn-ghost" onclick="resetPatientForm()">Reset Form</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Patient Results Section -->
+      <section class="patient-results-section" id="patient-results-area" style="display: none;">
+        <div class="results-header-bar">
+          <div>
+            <h3 id="patient-results-title">Finding suitable clinical trial locations...</h3>
+            <p class="results-subtitle" id="patient-results-count">Matches will appear below</p>
+          </div>
+          <button class="btn btn-sm btn-outline" onclick="scrollToForm()">Edit Search Parameters</button>
+        </div>
+
+        <!-- MANDATORY DISCLAIMER BOX -->
+        <div class="disclaimer-banner">
+          <div class="disclaimer-icon">⚠️</div>
+          <div class="disclaimer-content">
+            <strong>Potentially Relevant Trial</strong>
+            <p>Final eligibility will be determined by the authorized clinical research team following institutional protocol and informed consent procedures.</p>
+          </div>
+        </div>
+
+        <div class="trial-cards-grid" id="patient-trial-cards-container">
+          <!-- Dynamically injected trial cards -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============================================================
+       3. STAFF LOGIN MODAL / SCREEN
+       ============================================================ -->
+  <div id="staff-login-modal" class="modal-overlay" style="display: none;">
+    <div class="login-card-modal">
+      <div class="login-header">
+        <div class="login-emblem">AIIA</div>
+        <h3>AIIA Staff Authentication</h3>
+        <p>AYURCTMS Clinical Trial Management Portal</p>
+      </div>
+
+      <div class="demo-credentials-box">
+        <div class="demo-cred-title">🔑 Demonstration Credentials:</div>
+        <div class="demo-cred-row">
+          <span>Staff ID: <strong>AIIA001</strong></span>
+          <span>Password: <strong>AIIA@123</strong></span>
+        </div>
+        <button type="button" class="btn btn-xs btn-outline" onclick="autofillDemoLogin()" style="margin-top: 6px;">Autofill Demo Credentials</button>
+      </div>
+
+      <form id="staff-login-form" onsubmit="handleStaffLogin(event)">
+        <div class="form-group">
+          <label for="login-staff-id">Staff ID *</label>
+          <input type="text" id="login-staff-id" class="form-input" placeholder="e.g. AIIA001" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password *</label>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <div id="login-error-msg" class="login-error" style="display: none;"></div>
+
+        <div class="login-actions">
+          <button type="submit" class="btn btn-primary btn-block" id="btn-login-submit">
+            <span>LOGIN</span>
+          </button>
+          <button type="button" class="btn btn-ghost btn-block" onclick="hideStaffLoginModal()">
+            <span>BACK</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="login-security-notice">
+        <span>🔒 256-bit Encrypted Session • AIIA GCP Regulatory Portal</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       4. MAIN STAFF PORTAL (MATCHING HAND-DRAWN SKETCH ARCHITECTURE)
+       ============================================================ -->
+  <div id="staff-portal" class="staff-portal-shell" style="display: none;">
+
+    <!-- TOP HEADER -->
+    <header class="staff-header">
+      <div class="header-left">
+        <button id="sidebar-toggle-btn" class="sidebar-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle Navigation Sidebar">
+          ☰
+        </button>
+        <div class="header-logo-group">
+          <div class="header-emblem-small">AYUR</div>
+          <div class="header-title-text">
+            <span class="header-main-name">AYURCTMS</span>
+            <span class="header-sub-name">AIIA Clinical Trial Management & Research Portal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- GLOBAL SEARCH BAR -->
+      <div class="header-center">
+        <div class="global-search-container">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="global-search-input" class="global-search-input" placeholder="Search patients, doctors, trials or sites..." oninput="handleGlobalSearch(this.value)" autocomplete="off">
+          <div id="global-search-dropdown" class="global-search-dropdown" style="display: none;"></div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- NOTIFICATION BELL -->
+        <div class="notification-wrapper">
+          <button class="header-icon-btn" id="btn-notifications-toggle" onclick="toggleNotificationsDrawer()" aria-label="Notifications" title="System Notifications">
+            <span>🔔</span>
+            <span class="notification-badge" id="notification-unread-count">5</span>
+          </button>
+          <!-- NOTIFICATIONS DRAWER -->
+          <div id="notifications-drawer" class="notifications-drawer" style="display: none;">
+            <div class="notif-drawer-header">
+              <h4>System Notifications</h4>
+              <span class="badge" id="notif-total-badge">5 Active</span>
+            </div>
+            <div class="notif-list" id="notif-items-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- STAFF PROFILE -->
+        <div class="staff-profile-chip">
+          <div class="staff-avatar">DA</div>
+          <div class="staff-profile-info">
+            <span class="staff-name" id="staff-display-name">Dr. Research Admin</span>
+            <span class="staff-role-badge">AIIA Authorized Staff</span>
+          </div>
+          <button class="btn btn-xs btn-outline" onclick="logoutStaff()" title="Sign out / Switch Persona">Exit</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- STAFF BODY (SIDEBAR + MAIN CONTENT AREA) -->
+    <div class="staff-body">
+
+      <!-- LEFT SIDEBAR (11 ITEMS FROM SPEC) -->
+      <aside class="staff-sidebar" id="staff-sidebar">
+        <nav class="sidebar-nav">
+          <div class="sidebar-section-title">CLINICAL TRIAL MANAGEMENT</div>
+
+          <a href="#dashboard" class="sidebar-nav-item active" data-nav="dashboard" onclick="switchStaffTab('dashboard')">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">1. Dashboard</span>
+          </a>
+
+          <a href="#active-trials" class="sidebar-nav-item" data-nav="active-trials" onclick="switchStaffTab('active-trials')">
+            <span class="nav-icon">🔬</span>
+            <span class="nav-label">2. Active Trials</span>
+            <span class="nav-badge" id="badge-active-trials">5</span>
+          </a>
+
+          <a href="#sites" class="sidebar-nav-item" data-nav="sites" onclick="switchStaffTab('sites')">
+            <span class="nav-icon">📍</span>
+            <span class="nav-label">3. Sites / Locations</span>
+            <span class="nav-badge">9</span>
+          </a>
+
+          <a href="#trial-info" class="sidebar-nav-item" data-nav="trial-info" onclick="switchStaffTab('trial-info')">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">4. Trial Information</span>
+            <span class="nav-badge">8</span>
+          </a>
+
+          <a href="#approvals" class="sidebar-nav-item" data-nav="approvals" onclick="switchStaffTab('approvals')">
+            <span class="nav-icon">⚖️</span>
+            <span class="nav-label">5. Pending Approvals</span>
+            <span class="nav-badge warning-badge" id="badge-pending-approvals">2</span>
+          </a>
+
+          <a href="#gcp" class="sidebar-nav-item" data-nav="gcp" onclick="switchStaffTab('gcp')">
+            <span class="nav-icon">🛡️</span>
+            <span class="nav-label">6. GCP Guidelines</span>
+            <span class="nav-badge success-badge" id="badge-gcp-pct">89%</span>
+          </a>
+
+          <div class="sidebar-section-title">RESEARCH PERSONNEL & SAFETY</div>
+
+          <a href="#doctors" class="sidebar-nav-item" data-nav="doctors" onclick="switchStaffTab('doctors')">
+            <span class="nav-icon">👨‍⚕️</span>
+            <span class="nav-label">7. Doctor Information</span>
+            <span class="nav-badge">11</span>
+          </a>
+
+          <a href="#patients" class="sidebar-nav-item" data-nav="patients" onclick="switchStaffTab('patients')">
+            <span class="nav-icon">👥</span>
+            <span class="nav-label">8. Patient Information</span>
+            <span class="nav-badge">25</span>
+          </a>
+
+          <a href="#pv" class="sidebar-nav-item" data-nav="pv" onclick="switchStaffTab('pv')">
+            <span class="nav-icon">⚠️</span>
+            <span class="nav-label">9. Pharmacovigilance</span>
+            <span class="nav-badge danger-badge" id="badge-pv-alerts">Signal</span>
+          </a>
+
+          <div class="sidebar-section-title">GOVERNANCE & STANDARDS</div>
+
+          <a href="#reports" class="sidebar-nav-item" data-nav="reports" onclick="switchStaffTab('reports')">
+            <span class="nav-icon">📑</span>
+            <span class="nav-label">10. Reports</span>
+          </a>
+
+          <a href="#interop" class="sidebar-nav-item" data-nav="interop" onclick="switchStaffTab('interop')">
+            <span class="nav-icon">🔗</span>
+            <span class="nav-label">11. Interoperability & Audit</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="sidebar-footer-text">
+            <span>AIIA CTMS v2.4</span>
+            <span>GCP-Compliant</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT VIEWPORT -->
+      <main class="staff-main-viewport" id="staff-main-content">
+        <!-- Dynamically rendered views -->
+      </main>
+    </div>
+  </div>
+
+  <!-- DYNAMIC MODAL OVERLAY CONTAINER -->
+  <div id="dynamic-modal-overlay" class="modal-overlay" style="display: none;" onclick="handleModalBackdropClick(event)">
+    <div id="dynamic-modal-content" class="modal-window"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+'''
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("index.html updated with AYURCTMS complete layout.")

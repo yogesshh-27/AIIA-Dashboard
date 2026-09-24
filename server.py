@@ -281,6 +281,114 @@ class AIIADashboardHandler(http.server.SimpleHTTPRequestHandler):
             trial_id = get_param("trial_id", None)
             self.send_json_response(db_service.get_fhir_research_study(trial_id=trial_id))
 
+        # --- DOCUMENTS GET ROUTES ---
+        elif path == "/api/documents/summary":
+            self.send_json_response(db_service.get_documents_summary())
+        elif path == "/api/documents":
+            category = get_param("category", "")
+            search = get_param("search", "")
+            trial_ctri = get_param("trial_ctri", "")
+            status = get_param("status", "")
+            page = int(get_param("page", "1"))
+            limit = int(get_param("limit", "20"))
+            self.send_json_response(db_service.get_documents(
+                category=category, search=search, trial_ctri=trial_ctri, status=status, page=page, limit=limit
+            ))
+        elif path.startswith("/api/documents/") and path.endswith("/download"):
+            if not self.require_permission("documents:read"):
+                return
+            parts = path.split("/")
+            doc_id_str = parts[3]
+            version = get_param("version", "")
+            doc_file = db_service.get_document_file_path(doc_id_str, version=version if version else None)
+            if not doc_file or not os.path.exists(doc_file["file_path"]):
+                self.send_error_response(404, "Document file not found in secure repository.")
+                return
+
+            auth = self.get_auth_context()
+            db_service.log_audit_event(
+                user_name=auth["user_name"],
+                role=auth["role"],
+                action="DOWNLOAD_DOCUMENT",
+                entity="DocumentRepository",
+                entity_id=doc_file["doc_id"],
+                previous_value="Stored Securely",
+                new_value=f"Downloaded {doc_file['file_name']} (v{doc_file['version']}) - SHA256: {doc_file['checksum_sha256'][:12]}...",
+                ip_address=self.client_address[0] if self.client_address else "127.0.0.1"
+            )
+
+            with open(doc_file["file_path"], "rb") as f:
+                file_bytes = f.read()
+
+            self.send_response(200)
+            self.send_header("Content-Type", "application/octet-stream")
+            self.send_header("Content-Disposition", f'attachment; filename="{doc_file["file_name"]}"')
+            self.send_header("Content-Length", str(len(file_bytes)))
+            self.send_header("X-Document-ID", doc_file["doc_id"])
+            self.send_header("X-Document-Checksum", doc_file["checksum_sha256"])
+            self.end_headers()
+            self.wfile.write(file_bytes)
+            return
+
+        elif path.startswith("/api/documents/"):
+            doc_id_str = path.split("/")[-1]
+            doc_detail = db_service.get_document_detail(doc_id_str)
+            if doc_detail:
+                self.send_json_response(doc_detail)
+            else:
+                self.send_error_response(404, "Document not found")
+
+        # --- REPORTS GET & EXPORT ROUTES ---
+        elif path == "/api/reports/data" or (path.startswith("/api/reports/") and path != "/api/reports/export"):
+            if path == "/api/reports/data":
+                rep_type = get_param("type", "portfolio").lower()
+            else:
+                rep_type = path.replace("/api/reports/", "").strip().lower()
+
+            if rep_type == "portfolio":
+                self.send_json_response(db_service.get_report_portfolio())
+            elif rep_type == "recruitment":
+                self.send_json_response(db_service.get_report_recruitment())
+            elif rep_type == "compliance":
+                self.send_json_response(db_service.get_report_compliance())
+            elif rep_type == "safety":
+                self.send_json_response(db_service.get_report_safety())
+            elif rep_type in ("data_quality", "data-quality"):
+                self.send_json_response(db_service.get_report_data_quality())
+            elif rep_type == "audit":
+                self.send_json_response(db_service.get_report_audit())
+            else:
+                self.send_error_response(400, f"Unknown report type '{rep_type}'")
+
+        elif path == "/api/reports/export":
+            rep_type = get_param("type", "portfolio").lower()
+            export_fmt = get_param("format", "csv").lower()
+            auth = self.get_auth_context()
+
+            if export_fmt in ("pdf", "html"):
+                html_content = db_service.generate_report_printable_html(
+                    rep_type,
+                    generated_by=auth.get("user_name", "Prof. (Dr.) Tanuja Nesari"),
+                    role=auth.get("role", "Administrator")
+                )
+                html_bytes = html_content.encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(html_bytes)))
+                self.end_headers()
+                self.wfile.write(html_bytes)
+                return
+            else:
+                csv_content = db_service.generate_report_csv(rep_type)
+                csv_bytes = csv_content.encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/csv; charset=utf-8")
+                self.send_header("Content-Disposition", f'attachment; filename="AIIA_{rep_type.upper()}_REPORT.csv"')
+                self.send_header("Content-Length", str(len(csv_bytes)))
+                self.end_headers()
+                self.wfile.write(csv_bytes)
+                return
+
         # --- EXPORT ROUTE ---
         elif path == "/api/export":
             scope = get_param("scope", "aiia")
@@ -342,6 +450,100 @@ class AIIADashboardHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_header("Content-Length", str(len(csv_bytes)))
                 self.end_headers()
                 self.wfile.write(csv_bytes)
+
+        # ============================================================
+        # AYURCTMS DEDICATED REST API (SIH PS 26046)
+        # ============================================================
+        elif path == "/api/ayur/dashboard/stats":
+            self.send_json_response(db_service.get_ayur_dashboard_stats())
+        elif path == "/api/ayur/sites":
+            city = get_param("city", "")
+            if city:
+                self.send_json_response(db_service.get_ayur_sites(city=city))
+            else:
+                self.send_json_response(db_service.get_ayur_sites())
+        elif path.startswith("/api/ayur/sites/"):
+            city = urllib.parse.unquote(path.replace("/api/ayur/sites/", "").strip())
+            self.send_json_response(db_service.get_ayur_sites(city=city))
+        elif path == "/api/ayur/trials":
+            status = get_param("status", "")
+            condition = get_param("condition", "")
+            location = get_param("location", "")
+            search = get_param("search", "")
+            self.send_json_response(db_service.get_ayur_trials(status=status, condition=condition, location=location, search=search))
+        elif path.startswith("/api/ayur/trials/"):
+            trial_id = urllib.parse.unquote(path.replace("/api/ayur/trials/", "").strip())
+            self.send_json_response(db_service.get_ayur_trial_detail(trial_id))
+        elif path == "/api/ayur/doctors":
+            site = get_param("site", "")
+            specialization = get_param("specialization", "")
+            status = get_param("status", "")
+            search = get_param("search", "")
+            self.send_json_response(db_service.get_ayur_doctors(site=site, specialization=specialization, status=status, search=search))
+        elif path.startswith("/api/ayur/doctors/"):
+            doctor_id = urllib.parse.unquote(path.replace("/api/ayur/doctors/", "").strip())
+            self.send_json_response(db_service.get_ayur_doctor_detail(doctor_id))
+        elif path == "/api/ayur/patients":
+            condition = get_param("condition", "")
+            site = get_param("site", "")
+            status = get_param("status", "")
+            search = get_param("search", "")
+            self.send_json_response(db_service.get_ayur_patients(condition=condition, site=site, status=status, search=search))
+        elif path.startswith("/api/ayur/patients/"):
+            patient_id = urllib.parse.unquote(path.replace("/api/ayur/patients/", "").strip())
+            self.send_json_response(db_service.get_ayur_patient_detail(patient_id))
+        elif path == "/api/ayur/pv/summary":
+            self.send_json_response(db_service.get_ayur_pv_summary())
+        elif path == "/api/ayur/pv/events":
+            trial_id = get_param("trial_id", "")
+            severity = get_param("severity", "")
+            status = get_param("status", "")
+            search = get_param("search", "")
+            self.send_json_response(db_service.get_ayur_adverse_events(trial_id=trial_id, severity=severity, status=status, search=search))
+        elif path == "/api/ayur/pv/signals":
+            self.send_json_response(db_service.get_ayur_safety_signals())
+        elif path == "/api/ayur/approvals":
+            site = get_param("site", "")
+            approval_type = get_param("type", "")
+            status = get_param("status", "")
+            self.send_json_response(db_service.get_ayur_approvals(site=site, approval_type=approval_type, status=status))
+        elif path == "/api/ayur/gcp":
+            self.send_json_response(db_service.get_ayur_gcp_checklist())
+        elif path == "/api/ayur/reports":
+            report_type = get_param("type", "trial_progress")
+            self.send_json_response(db_service.get_ayur_report_data(report_type=report_type))
+        elif path == "/api/ayur/reports/export":
+            report_type = get_param("type", "trial_progress")
+            fmt = get_param("format", "csv").lower()
+            rep_data = db_service.get_ayur_report_data(report_type=report_type)
+            if fmt == "csv":
+                out = io.StringIO()
+                writer = csv.writer(out)
+                cols = rep_data.get("columns", [])
+                writer.writerow(cols)
+                for row in rep_data.get("rows", []):
+                    writer.writerow([row.get(c, "") for c in cols])
+                csv_bytes = out.getvalue().encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/csv; charset=utf-8")
+                self.send_header("Content-Disposition", f'attachment; filename="AYURCTMS_{report_type.upper()}_REPORT.csv"')
+                self.send_header("Content-Length", str(len(csv_bytes)))
+                self.end_headers()
+                self.wfile.write(csv_bytes)
+                return
+            else:
+                self.send_json_response(rep_data)
+                return
+        elif path == "/api/ayur/search":
+            q = get_param("q", get_param("search", ""))
+            self.send_json_response(db_service.global_ayur_search(q))
+        elif path == "/api/ayur/notifications":
+            self.send_json_response(db_service.get_ayur_notifications())
+        elif path == "/api/ayur/interop/demo":
+            self.send_json_response(db_service.get_ayur_interop_demo())
+        elif path == "/api/ayur/audit":
+            self.send_json_response(db_service.get_ayur_audit_trail())
+
         else:
             if path == "/":
                 self.path = "/index.html"
@@ -481,6 +683,134 @@ class AIIADashboardHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_json_response(res)
             except Exception as e:
                 self.send_json_response({"error": str(e)}, status=400)
+            return
+        # 9. DOCUMENT UPLOAD & VERSIONING
+        elif path == "/api/documents/upload":
+            if not self.require_permission("documents:write"):
+                return
+            auth = self.get_auth_context()
+            doc_name = body.get("document_name", "New Institutional Document")
+            category = body.get("category", "Protocol")
+            trial_ctri = body.get("trial_ctri", "")
+            version = body.get("version", "v1.0")
+            uploaded_by = auth.get("user_name", "Prof. (Dr.) Tanuja Nesari")
+            status = body.get("status", "Under Review")
+            description = body.get("description", "")
+            file_name = body.get("file_name", f"{doc_name.replace(' ', '_')}.pdf")
+            file_content_raw = body.get("file_content", f"Institutional Record: {doc_name}\nCategory: {category}\nVersion: {version}\n")
+            if isinstance(file_content_raw, str):
+                file_bytes = file_content_raw.encode("utf-8")
+            else:
+                file_bytes = bytes(file_content_raw)
+
+            res = db_service.create_document(
+                document_name=doc_name, category=category, trial_ctri=trial_ctri,
+                version=version, uploaded_by=uploaded_by, status=status,
+                description=description, file_name=file_name, file_content_bytes=file_bytes
+            )
+            self.send_json_response(res)
+            return
+
+        elif path.startswith("/api/documents/") and path.endswith("/version"):
+            if not self.require_permission("documents:write"):
+                return
+            parts = path.strip("/").split("/")
+            doc_id_str = parts[2]
+            auth = self.get_auth_context()
+            version = body.get("version", "v1.1")
+            change_summary = body.get("change_summary", "Routine periodic version update.")
+            uploaded_by = auth.get("user_name", "Principal Investigator")
+            status = body.get("status", "Approved")
+            file_name = body.get("file_name", f"Document_Update_{version}.pdf")
+            file_content_raw = body.get("file_content", f"Updated Document Version: {version}\nSummary: {change_summary}\n")
+            if isinstance(file_content_raw, str):
+                file_bytes = file_content_raw.encode("utf-8")
+            else:
+                file_bytes = bytes(file_content_raw)
+
+            res = db_service.add_document_version(
+                document_id=doc_id_str, version=version, change_summary=change_summary,
+                uploaded_by=uploaded_by, status=status, file_name=file_name, file_content_bytes=file_bytes
+            )
+            self.send_json_response(res)
+            return
+
+
+        # ============================================================
+        # AYURCTMS POST HANDLERS
+        # ============================================================
+        elif path == "/api/ayur/patient/match":
+            condition = body.get("condition", "")
+            accessible_locations = body.get("accessible_locations", [])
+            distance_pref = body.get("distance_pref", "")
+            age = body.get("age")
+            gender = body.get("gender")
+            res = db_service.match_patient_trials(
+                condition=condition,
+                accessible_locations=accessible_locations,
+                distance_pref=distance_pref,
+                age=age,
+                gender=gender
+            )
+            self.send_json_response(res)
+            return
+
+        elif path == "/api/ayur/auth/login":
+            staff_id = body.get("staff_id", body.get("username", "")).strip()
+            password = body.get("password", "").strip()
+
+            # Prototype credentials check (AIIA001 / AIIA@123 or standard test credentials)
+            if (staff_id.upper() == "AIIA001" and password == "AIIA@123") or (staff_id.lower() == "admin" and password == "admin123"):
+                self.send_json_response({
+                    "success": True,
+                    "token": "ayur-demo-token-998811",
+                    "user": {
+                        "staff_id": "AIIA001",
+                        "full_name": "Dr. Research Admin",
+                        "role": "AIIA Authorized Staff",
+                        "designation": "Clinical Research Coordinator / Admin",
+                        "institution": "All India Institute of Ayurveda (AIIA), New Delhi"
+                    },
+                    "message": "Login successful. Welcome to AYURCTMS."
+                })
+            else:
+                self.send_json_response({
+                    "success": False,
+                    "error": "Invalid Staff ID or Password. Demo credentials: Staff ID: AIIA001, Password: AIIA@123"
+                }, status=401)
+            return
+
+        elif path == "/api/ayur/trials/create":
+            res = db_service.create_ayur_trial(body)
+            self.send_json_response(res)
+            return
+
+        elif path == "/api/ayur/pv/report":
+            res = db_service.report_ayur_adverse_event(body)
+            self.send_json_response(res)
+            return
+
+        elif path == "/api/ayur/approvals/update" or path.startswith("/api/ayur/approvals/"):
+            approval_id = body.get("approval_id") or path.split("/")[-1]
+            status = body.get("status", "Approved")
+            notes = body.get("notes", "Reviewed by ethics/regulatory board.")
+            reviewed_by = body.get("reviewed_by", "Ethics Committee Officer")
+            res = db_service.update_ayur_approval(approval_id, status, notes, reviewed_by)
+            self.send_json_response(res)
+            return
+
+        elif path == "/api/ayur/gcp/toggle":
+            item_id = int(body.get("item_id", 1))
+            is_completed = int(body.get("is_completed", 1))
+            reviewed_by = body.get("reviewed_by", "Dr. Research Admin")
+            res = db_service.toggle_ayur_gcp_item(item_id, is_completed, reviewed_by)
+            self.send_json_response(res)
+            return
+
+        elif path == "/api/ayur/notifications/read":
+            notif_id = int(body.get("notification_id", 1))
+            res = db_service.mark_ayur_notification_read(notif_id)
+            self.send_json_response(res)
             return
 
         self.send_json_response({"error": "Endpoint not found"}, status=404)
