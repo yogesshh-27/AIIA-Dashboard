@@ -732,6 +732,21 @@ async function renderActiveTrialsView(container) {
       </table>
     </div>
   `;
+  } catch (err) {
+    console.error('Error rendering patients view:', err);
+    container.innerHTML = `
+      <div class="view-header-bar">
+        <div class="view-title-group">
+          <h2>Patient Management & Clinical Roster</h2>
+          <p>Registered clinical trial participants under active protocol care</p>
+        </div>
+      </div>
+      <div style="background: #ffffff; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid var(--border-light);">
+        <p style="color: var(--text-secondary); margin-bottom: 14px;">Error connecting to clinical database. Please check your network or click retry.</p>
+        <button class="btn btn-primary btn-sm" onclick="switchStaffTab('patients')">🔄 Retry Loading Patients</button>
+      </div>
+    `;
+  }
 }
 
 // ============================================================
@@ -917,6 +932,21 @@ async function renderTrialInfoView(container) {
       </table>
     </div>
   `;
+  } catch (err) {
+    console.error('Error rendering patients view:', err);
+    container.innerHTML = `
+      <div class="view-header-bar">
+        <div class="view-title-group">
+          <h2>Patient Management & Clinical Roster</h2>
+          <p>Registered clinical trial participants under active protocol care</p>
+        </div>
+      </div>
+      <div style="background: #ffffff; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid var(--border-light);">
+        <p style="color: var(--text-secondary); margin-bottom: 14px;">Error connecting to clinical database. Please check your network or click retry.</p>
+        <button class="btn btn-primary btn-sm" onclick="switchStaffTab('patients')">🔄 Retry Loading Patients</button>
+      </div>
+    `;
+  }
 }
 
 async function openStaffTrialDetailModal(trialId) {
@@ -1217,6 +1247,21 @@ async function renderApprovalsView(container) {
       </table>
     </div>
   `;
+  } catch (err) {
+    console.error('Error rendering patients view:', err);
+    container.innerHTML = `
+      <div class="view-header-bar">
+        <div class="view-title-group">
+          <h2>Patient Management & Clinical Roster</h2>
+          <p>Registered clinical trial participants under active protocol care</p>
+        </div>
+      </div>
+      <div style="background: #ffffff; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid var(--border-light);">
+        <p style="color: var(--text-secondary); margin-bottom: 14px;">Error connecting to clinical database. Please check your network or click retry.</p>
+        <button class="btn btn-primary btn-sm" onclick="switchStaffTab('patients')">🔄 Retry Loading Patients</button>
+      </div>
+    `;
+  }
 }
 
 function openApprovalDecisionModal(approvalId, site, type, status) {
@@ -1473,9 +1518,10 @@ async function openDoctorProfileModal(doctorId) {
 // 11. MODULE 8: PATIENT INFORMATION & TREATMENT TIMELINE
 // ============================================================
 async function renderPatientsView(container) {
-  const res = await fetch('/api/ayur/patients');
-  const data = await res.json();
-  const patients = data.patients || [];
+  try {
+    const res = await fetch('/api/ayur/patients');
+    const data = await res.json();
+    const patients = data.patients || [];
 
   container.innerHTML = `
     <div class="view-header-bar">
@@ -1532,6 +1578,21 @@ async function renderPatientsView(container) {
       </table>
     </div>
   `;
+  } catch (err) {
+    console.error('Error rendering patients view:', err);
+    container.innerHTML = `
+      <div class="view-header-bar">
+        <div class="view-title-group">
+          <h2>Patient Management & Clinical Roster</h2>
+          <p>Registered clinical trial participants under active protocol care</p>
+        </div>
+      </div>
+      <div style="background: #ffffff; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid var(--border-light);">
+        <p style="color: var(--text-secondary); margin-bottom: 14px;">Error connecting to clinical database. Please check your network or click retry.</p>
+        <button class="btn btn-primary btn-sm" onclick="switchStaffTab('patients')">🔄 Retry Loading Patients</button>
+      </div>
+    `;
+  }
 }
 
 async function openPatientProfileModal(patientId) {
@@ -1716,6 +1777,21 @@ async function renderPVView(container) {
       </table>
     </div>
   `;
+  } catch (err) {
+    console.error('Error rendering patients view:', err);
+    container.innerHTML = `
+      <div class="view-header-bar">
+        <div class="view-title-group">
+          <h2>Patient Management & Clinical Roster</h2>
+          <p>Registered clinical trial participants under active protocol care</p>
+        </div>
+      </div>
+      <div style="background: #ffffff; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid var(--border-light);">
+        <p style="color: var(--text-secondary); margin-bottom: 14px;">Error connecting to clinical database. Please check your network or click retry.</p>
+        <button class="btn btn-primary btn-sm" onclick="switchStaffTab('patients')">🔄 Retry Loading Patients</button>
+      </div>
+    `;
+  }
 }
 
 function openReportAEModal() {
