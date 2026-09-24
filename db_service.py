@@ -12,7 +12,29 @@ import uuid
 from typing import Dict, Any, List, Optional
 
 DB_PATH = "JM_CTRIdb.sqlite"
+import shutil
+
 APP_DB_PATH = "aiia_app.db"
+
+def get_resolved_app_db_path():
+    # If running on Vercel or read-only serverless environment, copy db to /tmp for read/write access
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        tmp_db = "/tmp/aiia_app.db"
+        if not os.path.exists(tmp_db):
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            src_db = os.path.join(base_dir, "aiia_app.db")
+            if os.path.exists(src_db):
+                shutil.copy2(src_db, tmp_db)
+        if os.path.exists(tmp_db):
+            return tmp_db
+
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    local_db = os.path.join(base_dir, "aiia_app.db")
+    if os.path.exists(local_db):
+        return local_db
+    if os.path.exists(APP_DB_PATH):
+        return APP_DB_PATH
+    return APP_DB_PATH
 
 def get_connection():
     conn = sqlite3.connect(DB_PATH)
@@ -20,19 +42,15 @@ def get_connection():
     return conn
 
 def get_app_connection():
-    if os.path.exists(APP_DB_PATH):
-        conn = sqlite3.connect(APP_DB_PATH)
+    db_file = get_resolved_app_db_path()
+    if os.path.exists(db_file):
+        conn = sqlite3.connect(db_file)
         conn.row_factory = sqlite3.Row
         return conn
     return None
 
 def get_app_conn():
     return get_app_connection()
-    if os.path.exists(APP_DB_PATH):
-        conn = sqlite3.connect(APP_DB_PATH)
-        conn.row_factory = sqlite3.Row
-        return conn
-    return None
 
 def init_indexes():
     """Ensure essential indexes exist for snappy queries on the 518MB database."""

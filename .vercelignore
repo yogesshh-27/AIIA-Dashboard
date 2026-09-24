@@ -1,0 +1,10 @@
+JM_CTRIdb.sqlite
+*.zip
+*.xls
+.git
+.agent
+.agents
+.gsd
+tests
+scratch
+*.log
