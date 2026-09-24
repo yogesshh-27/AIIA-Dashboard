@@ -1,0 +1,3 @@
+ctri_number,source_url,reason,timestamp,status,notes
+SEARCH_FORM,https://ctri.nic.in/Clinicaltrials/advancesearchmain.php,ACCESS_BLOCKED,2026-09-24T19:58:33.065801+00:00,BLOCKED,Search form presents CAPTCHA challenge; proceeding to direct public registry record discovery.
+SEARCH_FORM,https://ctri.nic.in/Clinicaltrials/advancesearchmain.php,ACCESS_BLOCKED,2026-09-24T19:59:46.012995+00:00,BLOCKED,Search form presents CAPTCHA challenge; proceeding to direct public registry record discovery.

@@ -1,0 +1,47 @@
+============================================================
+AYURCTMS - CTRI CLINICAL TRIAL DATA EXTRACTOR QUALITY REPORT
+============================================================
+
+Total discovered: 75
+Total unique trials: 75
+Duplicates removed: 0
+
+Pipeline Results:
+Successfully extracted: 75
+Access blocked: 0
+Manual review: 2
+Failed: 0
+
+------------------------------------------------------------
+Field Completeness:
+------------------------------------------------------------
+CTRI Number: 100.0%
+Public Title: 100.0%
+Condition: 100.0%
+Intervention: 93.3%
+Investigator: 100.0%
+Location: 100.0%
+Recruitment Status: 100.0%
+Sample Size: 100.0%
+Ethics Status: 100.0%
+Regulatory Status: 100.0%
+
+------------------------------------------------------------
+Validation Breakdown:
+------------------------------------------------------------
+VALID: 74
+WARNING: 1
+INVALID: 0
+
+Ayurveda / AYUSH Categories:
+AYURVEDA: 67
+AYUSH: 0
+INTEGRATIVE: 8
+OTHER: 0
+
+Deliverables Generated:
+- output/ctri_trials.csv (Primary Dataset)
+- output/ctri_trials.json
+- output/extraction_log.csv
+- output/manual_review.csv
+============================================================

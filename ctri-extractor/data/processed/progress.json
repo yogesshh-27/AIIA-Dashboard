@@ -1,0 +1,377 @@
+{
+  "CTRI/2010/091/001338": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T19:58:34.209017+00:00",
+    "cached_file": "data/raw/html\\CTRI_2010_091_001338.html"
+  },
+  "CTRI/2015/01/005351": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T19:58:37.145428+00:00",
+    "cached_file": "data/raw/html\\CTRI_2015_01_005351.html"
+  },
+  "CTRI/2011/05/001749": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T19:58:40.155515+00:00",
+    "cached_file": "data/raw/html\\CTRI_2011_05_001749.html"
+  },
+  "CTRI/2011/11/002157": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T19:58:43.144621+00:00",
+    "cached_file": "data/raw/html\\CTRI_2011_11_002157.html"
+  },
+  "CTRI/2011/12/002298": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T19:58:46.143759+00:00",
+    "cached_file": "data/raw/html\\CTRI_2011_12_002298.html"
+  },
+  "CTRI/2011/12/002299": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T19:59:46.918592+00:00",
+    "cached_file": "data/raw/html\\CTRI_2011_12_002299.html"
+  },
+  "CTRI/2011/12/002281": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T19:59:49.897556+00:00",
+    "cached_file": "data/raw/html\\CTRI_2011_12_002281.html"
+  },
+  "CTRI/2012/04/002542": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T19:59:52.898487+00:00",
+    "cached_file": "data/raw/html\\CTRI_2012_04_002542.html"
+  },
+  "CTRI/2012/03/002539": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T19:59:55.903273+00:00",
+    "cached_file": "data/raw/html\\CTRI_2012_03_002539.html"
+  },
+  "CTRI/2018/03/012320": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T19:59:58.917353+00:00",
+    "cached_file": "data/raw/html\\CTRI_2018_03_012320.html"
+  },
+  "CTRI/2013/04/003551": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:01.908146+00:00",
+    "cached_file": "data/raw/html\\CTRI_2013_04_003551.html"
+  },
+  "CTRI/2013/03/003500": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:04.909005+00:00",
+    "cached_file": "data/raw/html\\CTRI_2013_03_003500.html"
+  },
+  "CTRI/2013/03/003503": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:07.912457+00:00",
+    "cached_file": "data/raw/html\\CTRI_2013_03_003503.html"
+  },
+  "CTRI/2013/04/003530": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:10.911367+00:00",
+    "cached_file": "data/raw/html\\CTRI_2013_04_003530.html"
+  },
+  "CTRI/2013/09/003990": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:13.904820+00:00",
+    "cached_file": "data/raw/html\\CTRI_2013_09_003990.html"
+  },
+  "CTRI/2013/09/003974": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:16.906138+00:00",
+    "cached_file": "data/raw/html\\CTRI_2013_09_003974.html"
+  },
+  "CTRI/2013/09/004028": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:19.910209+00:00",
+    "cached_file": "data/raw/html\\CTRI_2013_09_004028.html"
+  },
+  "CTRI/2013/06/003779": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:22.910832+00:00",
+    "cached_file": "data/raw/html\\CTRI_2013_06_003779.html"
+  },
+  "CTRI/2013/08/003868": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:25.912886+00:00",
+    "cached_file": "data/raw/html\\CTRI_2013_08_003868.html"
+  },
+  "CTRI/2013/08/003917": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:28.908979+00:00",
+    "cached_file": "data/raw/html\\CTRI_2013_08_003917.html"
+  },
+  "CTRI/2014/02/004420": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:31.912070+00:00",
+    "cached_file": "data/raw/html\\CTRI_2014_02_004420.html"
+  },
+  "CTRI/2015/02/005496": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:34.908146+00:00",
+    "cached_file": "data/raw/html\\CTRI_2015_02_005496.html"
+  },
+  "CTRI/2014/02/004380": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:37.912365+00:00",
+    "cached_file": "data/raw/html\\CTRI_2014_02_004380.html"
+  },
+  "CTRI/2017/12/010899": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:40.911198+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_12_010899.html"
+  },
+  "CTRI/2014/12/005322": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:43.915213+00:00",
+    "cached_file": "data/raw/html\\CTRI_2014_12_005322.html"
+  },
+  "CTRI/2014/06/004702": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:46.917355+00:00",
+    "cached_file": "data/raw/html\\CTRI_2014_06_004702.html"
+  },
+  "CTRI/2015/06/005865": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:49.912117+00:00",
+    "cached_file": "data/raw/html\\CTRI_2015_06_005865.html"
+  },
+  "CTRI/2018/06/014654": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:52.916772+00:00",
+    "cached_file": "data/raw/html\\CTRI_2018_06_014654.html"
+  },
+  "CTRI/2015/11/006394": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:55.912380+00:00",
+    "cached_file": "data/raw/html\\CTRI_2015_11_006394.html"
+  },
+  "CTRI/2017/05/008673": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:00:58.920620+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_05_008673.html"
+  },
+  "CTRI/2015/08/006068": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:01.915153+00:00",
+    "cached_file": "data/raw/html\\CTRI_2015_08_006068.html"
+  },
+  "CTRI/2016/09/007314": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:04.917473+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_09_007314.html"
+  },
+  "CTRI/2016/01/006563": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:07.912511+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_01_006563.html"
+  },
+  "CTRI/2016/02/006615": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:10.917449+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_02_006615.html"
+  },
+  "CTRI/2016/02/006630": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:13.911953+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_02_006630.html"
+  },
+  "CTRI/2016/02/006628": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:16.921424+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_02_006628.html"
+  },
+  "CTRI/2016/01/006509": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:19.916423+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_01_006509.html"
+  },
+  "CTRI/2016/10/007378": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:22.914927+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_10_007378.html"
+  },
+  "CTRI/2016/02/006619": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:25.985102+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_02_006619.html"
+  },
+  "CTRI/2016/02/006690": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:28.934557+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_02_006690.html"
+  },
+  "CTRI/2016/12/007562": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:31.918153+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_12_007562.html"
+  },
+  "CTRI/2016/03/006750": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:34.917076+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_03_006750.html"
+  },
+  "CTRI/2016/02/006651": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:37.926859+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_02_006651.html"
+  },
+  "CTRI/2016/04/006793": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:40.926305+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_04_006793.html"
+  },
+  "CTRI/2017/03/008138": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:43.919991+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_03_008138.html"
+  },
+  "CTRI/2016/08/007145": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:46.921103+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_08_007145.html"
+  },
+  "CTRI/2016/02/006683": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:49.919470+00:00",
+    "cached_file": "data/raw/html\\CTRI_2016_02_006683.html"
+  },
+  "CTRI/2017/01/007664": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:52.920283+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_01_007664.html"
+  },
+  "CTRI/2017/08/009367": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:55.921539+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_08_009367.html"
+  },
+  "CTRI/2017/04/008296": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:01:58.922563+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_04_008296.html"
+  },
+  "CTRI/2017/10/010032": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:01.923104+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_10_010032.html"
+  },
+  "CTRI/2017/10/010037": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:04.940825+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_10_010037.html"
+  },
+  "CTRI/2018/05/014297": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:07.922854+00:00",
+    "cached_file": "data/raw/html\\CTRI_2018_05_014297.html"
+  },
+  "CTRI/2017/12/010913": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:10.924132+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_12_010913.html"
+  },
+  "CTRI/2018/10/016114": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:13.926310+00:00",
+    "cached_file": "data/raw/html\\CTRI_2018_10_016114.html"
+  },
+  "CTRI/2017/03/008017": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:16.924437+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_03_008017.html"
+  },
+  "CTRI/2017/06/008727": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:19.934507+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_06_008727.html"
+  },
+  "CTRI/2017/12/011052": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:22.926605+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_12_011052.html"
+  },
+  "CTRI/2017/08/009217": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:25.929572+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_08_009217.html"
+  },
+  "CTRI/2017/04/008316": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:28.928039+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_04_008316.html"
+  },
+  "CTRI/2017/03/008155": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:31.932422+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_03_008155.html"
+  },
+  "CTRI/2017/03/008174": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:34.934930+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_03_008174.html"
+  },
+  "CTRI/2017/03/008038": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:37.933556+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_03_008038.html"
+  },
+  "CTRI/2017/01/007729": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:40.935088+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_01_007729.html"
+  },
+  "CTRI/2017/04/008360": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:43.931972+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_04_008360.html"
+  },
+  "CTRI/2017/05/008563": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:46.931619+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_05_008563.html"
+  },
+  "CTRI/2017/04/008389": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:49.932305+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_04_008389.html"
+  },
+  "CTRI/2018/03/012565": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:52.952247+00:00",
+    "cached_file": "data/raw/html\\CTRI_2018_03_012565.html"
+  },
+  "CTRI/2017/06/008941": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:55.971373+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_06_008941.html"
+  },
+  "CTRI/2017/05/008645": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:02:58.968263+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_05_008645.html"
+  },
+  "CTRI/2018/04/013081": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:03:01.931962+00:00",
+    "cached_file": "data/raw/html\\CTRI_2018_04_013081.html"
+  },
+  "CTRI/2017/07/009185": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:03:04.953130+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_07_009185.html"
+  },
+  "CTRI/2017/10/010294": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:03:07.936841+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_10_010294.html"
+  },
+  "CTRI/2017/08/009419": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:03:10.945845+00:00",
+    "cached_file": "data/raw/html\\CTRI_2017_08_009419.html"
+  },
+  "CTRI/2018/10/016162": {
+    "status": "SUCCESS",
+    "timestamp": "2026-09-24T20:03:13.937205+00:00",
+    "cached_file": "data/raw/html\\CTRI_2018_10_016162.html"
+  }
+}

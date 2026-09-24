@@ -1,0 +1,33 @@
+source:
+  base_url: "https://ctri.nic.in/"
+  delay_seconds: 3
+  timeout_seconds: 30
+  max_retries: 3
+  user_agent: "AYURCTMS-CTRI-Extractor/1.0"
+
+search:
+  keywords:
+    - "Ayurveda"
+    - "Ayurvedic"
+    - "AYUSH"
+    - "Ayurvedic medicine"
+    - "Ayurvedic intervention"
+    - "Ayurvedic formulation"
+    - "Ayurvedic therapy"
+    - "Ayurveda treatment"
+
+  max_trials: 100
+
+output:
+  csv: "output/ctri_trials.csv"
+  json: "output/ctri_trials.json"
+  extraction_log: "output/extraction_log.csv"
+  manual_review: "output/manual_review.csv"
+  quality_report: "output/quality_report.txt"
+
+behavior:
+  download_pdf: true
+  save_raw_html: true
+  continue_on_error: true
+  manual_review_on_block: true
+  resume: true

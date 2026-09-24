@@ -164,6 +164,32 @@ class AIIADashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.send_json_response(db_service.get_app_trials(
                 scope=scope, search=search, status=status, page=page, limit=limit
             ))
+        elif path == "/api/ctri-extractor/trials" or path == "/api/ctri/dataset":
+            json_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ctri-extractor", "output", "ctri_trials.json")
+            if os.path.exists(json_file):
+                with open(json_file, "r", encoding="utf-8") as f:
+                    trials = json.load(f)
+            else:
+                trials = []
+            search_term = get_param("search", "").lower()
+            if search_term:
+                trials = [
+                    t for t in trials if search_term in (t.get("public_title", "") or "").lower()
+                    or search_term in (t.get("ctri_number", "") or "").lower()
+                    or search_term in (t.get("condition", "") or "").lower()
+                    or search_term in (t.get("intervention_name", "") or "").lower()
+                    or search_term in (t.get("principal_investigator", "") or "").lower()
+                ]
+            limit_val = int(get_param("limit", "100"))
+            self.send_json_response({"total": len(trials), "trials": trials[:limit_val]})
+        elif path == "/api/ctri-extractor/quality-report":
+            report_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ctri-extractor", "output", "quality_report.txt")
+            if os.path.exists(report_file):
+                with open(report_file, "r", encoding="utf-8") as f:
+                    content = f.read()
+            else:
+                content = "Quality report not found."
+            self.send_json_response({"report": content})
         elif path == "/api/ctms/overview":
             self.send_json_response(db_service.get_ctms_overview())
         elif path == "/api/ctms/timelines":
