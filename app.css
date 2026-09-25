@@ -5,20 +5,31 @@
    ============================================================ */
 
 :root {
-  /* Ayurvedic / Clinical Healthcare Palette */
-  --ayur-primary: #0b4f49;
-  --ayur-primary-dark: #073834;
-  --ayur-primary-light: #147d74;
-  --ayur-primary-subtle: #e6f4f2;
-  --ayur-primary-bg: #f2f9f8;
+  /* Official AIIA (aiia.gov.in) & Ministry of Ayush Identity Palette */
+  --ayur-primary: #005944;          /* Official AIIA Deep Forest Green */
+  --ayur-primary-dark: #003d2e;     /* Deep Government Ayush Green */
+  --ayur-primary-light: #0d7a5f;    /* Vibrant Herbal Emerald */
+  --ayur-primary-subtle: #e6f4f0;   /* Light Sage Tint */
+  --ayur-primary-bg: #f0f7f4;       /* Calm Ayush Background Surface */
 
-  --bg-canvas: #f6faf9;
+  /* Ayush Saffron & Gold Accents */
+  --ayur-saffron: #d97706;
+  --ayur-saffron-dark: #b45309;
+  --ayur-saffron-subtle: #fef3c7;
+  --ayur-gold: #ca8a04;
+
+  /* Indian Tricolor Accents (GIGW) */
+  --tricolor-saffron: #ff9933;
+  --tricolor-white: #ffffff;
+  --tricolor-green: #138808;
+
+  --bg-canvas: #f4f8f6;
   --bg-surface: #ffffff;
   --bg-card: #ffffff;
-  --bg-subtle: #f8fafc;
-  --bg-hover: #f1f5f9;
+  --bg-subtle: #f8faf9;
+  --bg-hover: #eaf3f0;
 
-  --border-light: #e2ece9;
+  --border-light: #d8e8e3;
   --border-medium: #cbd5e1;
   --border-dark: #94a3b8;
 
@@ -45,9 +56,9 @@
   --status-info-border: #bae6fd;
 
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(11, 79, 73, 0.08);
-  --shadow-lg: 0 10px 25px rgba(11, 79, 73, 0.12);
+  --shadow-sm: 0 2px 4px rgba(0, 89, 68, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 89, 68, 0.08);
+  --shadow-lg: 0 10px 25px rgba(0, 89, 68, 0.12);
 
   --radius-xs: 4px;
   --radius-sm: 6px;
@@ -55,7 +66,7 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
 
-  --header-height: 64px;
+  --header-height: 68px;
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 68px;
 
@@ -233,14 +244,75 @@ code, pre {
 }
 
 /* ============================================================
+   OFFICIAL GOVERNMENT OF INDIA & AIIA GIGW BAR (aiia.gov.in)
+   ============================================================ */
+.gov-top-bar {
+  background: #0f172a;
+  color: #cbd5e1;
+  font-size: 11.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.gov-top-bar-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 5px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.gov-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gov-emblem {
+  font-size: 13px;
+}
+.gov-text strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+.gov-sep {
+  color: #475569;
+  margin: 0 4px;
+}
+.gov-accessibility {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.gov-inst-link a {
+  color: #38bdf8;
+  font-weight: 600;
+}
+.gov-inst-link a:hover {
+  text-decoration: underline;
+}
+.gov-pill-lang {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  color: #f1f5f9;
+}
+.gov-tricolor-line {
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, #ff9933 0%, #ff9933 33.33%, #ffffff 33.33%, #ffffff 66.66%, #138808 66.66%, #138808 100%);
+  display: block;
+}
+
+/* ============================================================
    1. LANDING GATE VIEW (WHO ARE YOU?)
    ============================================================ */
 .landing-gate-view {
-  min-height: 100vh;
+  min-height: calc(100vh - 35px);
   display: flex;
   flex-direction: column;
-  background: radial-gradient(circle at top right, #e3f3f0 0%, #f4faf9 50%, #ffffff 100%);
-  padding: 24px;
+  background: radial-gradient(circle at top right, #e1efe9 0%, #f4f8f6 50%, #ffffff 100%);
+  padding: 20px 24px;
 }
 
 .landing-header {
@@ -249,43 +321,59 @@ code, pre {
   justify-content: space-between;
   max-width: 1200px;
   width: 100%;
-  margin: 0 auto 30px auto;
+  margin: 0 auto 28px auto;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .landing-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 .landing-emblem {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--ayur-primary), var(--ayur-primary-light));
+  background: linear-gradient(135deg, var(--ayur-primary), var(--ayur-primary-dark));
   color: #ffffff;
   font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 1px;
+  font-size: 15px;
+  letter-spacing: 1.5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 14px rgba(0, 89, 68, 0.25);
+  border: 2px solid #ffffff;
+}
+.landing-brand-hindi {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ayur-primary-dark);
+  letter-spacing: 0.3px;
+  margin-bottom: 1px;
 }
 .landing-brand-text h1 {
-  font-size: 22px;
+  font-size: 21px;
   letter-spacing: 0.5px;
   color: var(--ayur-primary);
+  font-weight: 800;
+  line-height: 1.2;
 }
 .landing-brand-text p {
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-muted);
+  font-weight: 500;
 }
-.landing-tag {
+.landing-official-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: #ffffff;
-  border: 1px solid var(--border-medium);
-  padding: 6px 14px;
+  border: 1px solid var(--border-light);
+  padding: 7px 16px;
   border-radius: 9999px;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   color: var(--ayur-primary);
   box-shadow: var(--shadow-xs);
