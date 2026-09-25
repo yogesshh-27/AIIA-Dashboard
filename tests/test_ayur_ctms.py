@@ -10,7 +10,18 @@ import json
 import sqlite3
 import os
 
-BASE_URL = "http://127.0.0.1:8000"
+import threading
+import time
+import socketserver
+import sys
+
+# Ensure workspace is in sys.path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import server
+import db_service
+
+TEST_PORT = 8009
+BASE_URL = f"http://127.0.0.1:{TEST_PORT}"
 
 def get(path):
     req = urllib.request.Request(f"{BASE_URL}{path}")
@@ -24,6 +35,19 @@ def post(path, data):
         return json.loads(resp.read().decode("utf-8"))
 
 class TestAYURCTMS(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        db_service.init_indexes()
+        socketserver.TCPServer.allow_reuse_address = True
+        cls.httpd = socketserver.ThreadingTCPServer(("127.0.0.1", TEST_PORT), server.AIIADashboardHandler)
+        cls.server_thread = threading.Thread(target=cls.httpd.serve_forever, daemon=True)
+        cls.server_thread.start()
+        time.sleep(1)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.httpd.shutdown()
+        cls.httpd.server_close()
 
     # 1. Dual Entry & Patient Matching
     def test_patient_matching_flow(self):

@@ -581,8 +581,18 @@ class AIIADashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.send_json_response(db_service.get_ayur_audit_trail())
 
         else:
-            if path == "/":
-                self.path = "/index.html"
+            dist_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist")
+            dist_index = os.path.join(dist_dir, "index.html")
+            
+            if path == "/" or path == "/index.html":
+                if os.path.exists(dist_index):
+                    self.path = "/dist/index.html"
+                else:
+                    self.path = "/index.html"
+            elif path.startswith("/assets/"):
+                asset_path = os.path.join(dist_dir, path.lstrip("/"))
+                if os.path.exists(asset_path):
+                    self.path = "/dist" + path
             super().do_GET()
 
     def do_POST(self):

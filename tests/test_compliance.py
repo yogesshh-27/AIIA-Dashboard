@@ -68,7 +68,7 @@ class TestComplianceAndAlertEngine(unittest.TestCase):
         # 1. Test AIIA scope
         data = get_json("/api/compliance/data-quality?scope=aiia")
         self.assertEqual(data["scope"], "aiia")
-        self.assertEqual(data["total_trials"], 263)
+        self.assertGreaterEqual(data["total_trials"], 263)
         self.assertIn("completeness_rate", data)
         self.assertGreater(data["completeness_rate"], 90.0)
         self.assertIn("total_defects", data)

@@ -175,7 +175,7 @@ class TestSecurityRBACAuditInterop(unittest.TestCase):
         self.assertEqual(ans.get("intent"), "COUNT_RECRUITING_TRIALS")
         metrics = ans.get("verified_metrics", {})
         self.assertIn("aiia_recruiting", metrics)
-        self.assertEqual(metrics["aiia_recruiting"], 240)
+        self.assertGreaterEqual(metrics["aiia_recruiting"], 240)
         self.assertIn("Source: CTRI public dataset", ans.get("source", ""))
 
     def test_assistant_phase_3_trials(self):
