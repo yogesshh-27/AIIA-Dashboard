@@ -10,8 +10,8 @@ from typing import Dict, Any
 
 import db_service
 
-PORT = 8000
-HOST = "127.0.0.1"
+PORT = int(os.environ.get("PORT", 8000))
+HOST = os.environ.get("HOST", "0.0.0.0")
 
 class AIIADashboardHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
