@@ -1,3 +1,0 @@
-# Cloudflare Pages SPA fallback
-# All non-file routes fall through to index.html for React Router
-/*  /index.html  200
