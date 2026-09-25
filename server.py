@@ -169,6 +169,16 @@ class AIIADashboardHandler(http.server.SimpleHTTPRequestHandler):
             if os.path.exists(json_file):
                 with open(json_file, "r", encoding="utf-8") as f:
                     trials = json.load(f)
+                for t in trials:
+                    c_num = t.get("ctri_number", "")
+                    s_url = t.get("source_url", "")
+                    if s_url and "showallp.php" in s_url and c_num:
+                        if "userName=" in s_url:
+                            base = s_url.split("userName=")[0]
+                            t["source_url"] = f"{base}userName={urllib.parse.quote(c_num)}"
+                        else:
+                            sep = "&" if "?" in s_url else "?"
+                            t["source_url"] = f"{s_url}{sep}userName={urllib.parse.quote(c_num)}"
             else:
                 trials = []
             search_term = get_param("search", "").lower()

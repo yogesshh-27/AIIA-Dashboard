@@ -2357,11 +2357,26 @@ function renderCTRITable(trials) {
     return;
   }
 
-  tbody.innerHTML = trials.map(t => `
+  tbody.innerHTML = trials.map(t => {
+    const ctriNum = t.ctri_number || '';
+    let sourceLink = t.source_url || '';
+    if (sourceLink && sourceLink.includes('showallp.php')) {
+      if (sourceLink.includes('userName=')) {
+        sourceLink = sourceLink.replace(/userName=[^&]*/, 'userName=' + encodeURIComponent(ctriNum));
+      } else {
+        sourceLink += (sourceLink.includes('?') ? '&' : '?') + 'userName=' + encodeURIComponent(ctriNum);
+      }
+    } else if (t.trial_id && ctriNum) {
+      sourceLink = `https://ctri.nic.in/Clinicaltrials/showallp.php?mid1=${t.trial_id}&EncHid=&userName=${encodeURIComponent(ctriNum)}`;
+    } else if (!sourceLink) {
+      sourceLink = ctriNum ? `https://ctri.nic.in/Clinicaltrials/showallp.php?userName=${encodeURIComponent(ctriNum)}` : 'https://ctri.nic.in/';
+    }
+
+    return `
     <tr>
       <td>
-        <span class="trial-id-badge" style="font-size: 11px; display: block; margin-bottom: 4px;">${t.ctri_number || 'PENDING'}</span>
-        <a href="${t.source_url || 'https://ctri.nic.in/'}" target="_blank" style="font-size: 10.5px; color: var(--ayur-primary); text-decoration: underline;" title="View official CTRI registry page">
+        <span class="trial-id-badge" style="font-size: 11px; display: block; margin-bottom: 4px;">${ctriNum || 'PENDING'}</span>
+        <a href="${sourceLink}" target="_blank" rel="noopener noreferrer" style="font-size: 10.5px; color: var(--ayur-primary); text-decoration: underline;" title="View official CTRI registry record for ${ctriNum}">
           Official Record ↗
         </a>
       </td>
@@ -2405,7 +2420,8 @@ function renderCTRITable(trials) {
         </span>
       </td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 
   if (countEl) {
     countEl.innerText = `Showing ${trials.length} of ${CTRI_EXTRACTOR_DATA.length} trials`;
