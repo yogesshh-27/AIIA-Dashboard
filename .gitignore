@@ -14,3 +14,4 @@ dist/
 *.tmp
 secure_documents/
 scratch/
+.wrangler/
