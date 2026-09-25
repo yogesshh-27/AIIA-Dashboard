@@ -6,7 +6,8 @@
     "dev": "npm --prefix frontend run dev",
     "build": "npm --prefix frontend run build",
     "preview": "npm --prefix frontend run preview",
-    "server": "python server.py"
+    "server": "python flask_app.py",
+    "server:legacy": "python server.py"
   },
   "keywords": [
     "ayurveda",

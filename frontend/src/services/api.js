@@ -1,5 +1,7 @@
 // Centralized API client for AYURCTMS backend
-const BASE_URL = '';
+// In development, Vite proxy forwards /api to localhost:8000 so BASE_URL stays empty.
+// In production (Cloudflare Pages), set VITE_API_URL to the Render backend URL.
+const BASE_URL = import.meta.env.VITE_API_URL || '';
 
 async function fetchJSON(url, options = {}) {
   try {

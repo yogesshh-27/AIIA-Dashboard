@@ -1,0 +1,18 @@
+##############################################################
+# Render Blueprint — AIIA Dashboard Python Backend (Flask)
+# Docs: https://docs.render.com/blueprint-spec
+##############################################################
+services:
+  - type: web
+    name: aiia-dashboard-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi_app:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: PORT
+        value: "10000"
+    healthCheckPath: /api/ayur/dashboard/stats
+    autoDeploy: true
