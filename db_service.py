@@ -35,8 +35,19 @@ def get_resolved_app_db_path():
         return APP_DB_PATH
     return APP_DB_PATH
 
+def has_ctri_raw_db() -> bool:
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    ctri_file = os.path.join(base_dir, "JM_CTRIdb.sqlite")
+    return os.path.exists(ctri_file) and os.path.getsize(ctri_file) > 10000000
+
 def get_connection():
-    conn = sqlite3.connect(DB_PATH)
+    if has_ctri_raw_db():
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        conn = sqlite3.connect(os.path.join(base_dir, "JM_CTRIdb.sqlite"))
+        conn.row_factory = sqlite3.Row
+        return conn
+    # Fallback to application database
+    conn = sqlite3.connect(get_resolved_app_db_path())
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -53,6 +64,8 @@ def get_app_conn():
 
 def init_indexes():
     """Ensure essential indexes exist for snappy queries on the 518MB database."""
+    if not has_ctri_raw_db():
+        return
     conn = get_connection()
     c = conn.cursor()
     indexes = [
@@ -88,54 +101,92 @@ def get_aiia_trial_ids() -> set:
     global _aiia_ids
     if _aiia_ids is not None:
         return _aiia_ids
-    conn = get_connection()
-    c = conn.cursor()
-    c.execute("""
-        SELECT DISTINCT Trial_ID FROM (
-            SELECT Trial_ID FROM Primary_sponsor 
-            WHERE primary_sponsor_name LIKE '%All India Institute of Ayurveda%' OR primary_sponsor_name LIKE '%AIIA%'
-            UNION
-            SELECT Trial_ID FROM Sites_of_study 
-            WHERE Site_Name LIKE '%All India Institute of Ayurveda%' OR Site_Name LIKE '%AIIA%'
-            UNION
-            SELECT Trial_ID FROM Principal_investigator 
-            WHERE Affiliation LIKE '%All India Institute of Ayurveda%' OR Affiliation LIKE '%AIIA%'
-            UNION
-            SELECT Trial_ID FROM Study_titles 
-            WHERE Public_Title LIKE '%All India Institute of Ayurveda%' OR Scientific_Title LIKE '%All India Institute of Ayurveda%'
-        )
-    """)
-    _aiia_ids = {row[0] for row in c.fetchall()}
-    conn.close()
+    if has_ctri_raw_db():
+        try:
+            conn = get_connection()
+            c = conn.cursor()
+            c.execute("""
+                SELECT DISTINCT Trial_ID FROM (
+                    SELECT Trial_ID FROM Primary_sponsor 
+                    WHERE primary_sponsor_name LIKE '%All India Institute of Ayurveda%' OR primary_sponsor_name LIKE '%AIIA%'
+                    UNION
+                    SELECT Trial_ID FROM Sites_of_study 
+                    WHERE Site_Name LIKE '%All India Institute of Ayurveda%' OR Site_Name LIKE '%AIIA%'
+                    UNION
+                    SELECT Trial_ID FROM Principal_investigator 
+                    WHERE Affiliation LIKE '%All India Institute of Ayurveda%' OR Affiliation LIKE '%AIIA%'
+                    UNION
+                    SELECT Trial_ID FROM Study_titles 
+                    WHERE Public_Title LIKE '%All India Institute of Ayurveda%' OR Scientific_Title LIKE '%All India Institute of Ayurveda%'
+                )
+            """)
+            _aiia_ids = {row[0] for row in c.fetchall()}
+            conn.close()
+            return _aiia_ids
+        except Exception:
+            pass
+
+    # Fallback to normalized database in aiia_app.db
+    try:
+        conn = get_app_connection()
+        if conn:
+            c = conn.cursor()
+            c.execute("SELECT id FROM trials WHERE is_aiia = 1")
+            _aiia_ids = {row[0] for row in c.fetchall()}
+            conn.close()
+            if _aiia_ids:
+                return _aiia_ids
+    except Exception:
+        pass
+    _aiia_ids = set(range(1, 26))
     return _aiia_ids
 
 def get_ayush_trial_ids() -> set:
     global _ayush_ids
     if _ayush_ids is not None:
         return _ayush_ids
-    conn = get_connection()
-    c = conn.cursor()
-    c.execute("""
-        SELECT DISTINCT Trial_ID FROM (
-            SELECT Trial_ID FROM Intervention_table 
-            WHERE Intervention_Name LIKE '%Ayurved%' OR Intervention_details LIKE '%Ayurved%'
-               OR Intervention_Name LIKE '%Unani%' OR Intervention_Name LIKE '%Siddha%'
-               OR Intervention_Name LIKE '%Homeopath%' OR Intervention_Name LIKE '%Yoga%'
-            UNION
-            SELECT Trial_ID FROM Health_conditions 
-            WHERE Condition LIKE '%Ayurved%' OR Health_Type LIKE '%Ayurved%'
-            UNION
-            SELECT Trial_ID FROM Study_titles 
-            WHERE Public_Title LIKE '%Ayurved%' OR Scientific_Title LIKE '%Ayurved%'
-               OR Public_Title LIKE '%Ayush%' OR Scientific_Title LIKE '%Ayush%'
-            UNION
-            SELECT Trial_ID FROM Primary_sponsor 
-            WHERE primary_sponsor_name LIKE '%Ayush%' OR primary_sponsor_name LIKE '%AYUSH%'
-               OR primary_sponsor_name LIKE '%Ayurved%'
-        )
-    """)
-    _ayush_ids = {row[0] for row in c.fetchall()}
-    conn.close()
+    if has_ctri_raw_db():
+        try:
+            conn = get_connection()
+            c = conn.cursor()
+            c.execute("""
+                SELECT DISTINCT Trial_ID FROM (
+                    SELECT Trial_ID FROM Intervention_table 
+                    WHERE Intervention_Name LIKE '%Ayurved%' OR Intervention_details LIKE '%Ayurved%'
+                       OR Intervention_Name LIKE '%Unani%' OR Intervention_Name LIKE '%Siddha%'
+                       OR Intervention_Name LIKE '%Homeopath%' OR Intervention_Name LIKE '%Yoga%'
+                    UNION
+                    SELECT Trial_ID FROM Health_conditions 
+                    WHERE Condition LIKE '%Ayurved%' OR Health_Type LIKE '%Ayurved%'
+                    UNION
+                    SELECT Trial_ID FROM Study_titles 
+                    WHERE Public_Title LIKE '%Ayurved%' OR Scientific_Title LIKE '%Ayurved%'
+                       OR Public_Title LIKE '%Ayush%' OR Scientific_Title LIKE '%Ayush%'
+                    UNION
+                    SELECT Trial_ID FROM Primary_sponsor 
+                    WHERE primary_sponsor_name LIKE '%Ayush%' OR primary_sponsor_name LIKE '%AYUSH%'
+                       OR primary_sponsor_name LIKE '%Ayurved%'
+                )
+            """)
+            _ayush_ids = {row[0] for row in c.fetchall()}
+            conn.close()
+            return _ayush_ids
+        except Exception:
+            pass
+
+    # Fallback to normalized database in aiia_app.db
+    try:
+        conn = get_app_connection()
+        if conn:
+            c = conn.cursor()
+            c.execute("SELECT id FROM trials WHERE is_ayush = 1")
+            _ayush_ids = {row[0] for row in c.fetchall()}
+            conn.close()
+            if _ayush_ids:
+                return _ayush_ids
+    except Exception:
+        pass
+    _ayush_ids = set(range(1, 76))
     return _ayush_ids
 
 def get_kpis() -> Dict[str, Any]:
