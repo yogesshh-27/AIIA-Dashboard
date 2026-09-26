@@ -66,7 +66,9 @@ async def export_report(type: str = "portfolio", format: str = "csv", request: R
 
 
 @router.get("/reports/{report_type}")
-async def get_report_by_type(report_type: str):
+async def get_report_by_type(report_type: str, type: str = "portfolio"):
+    if report_type == "data":
+        return _get_report_by_type(type)
     return _get_report_by_type(report_type)
 
 
@@ -82,6 +84,8 @@ def _get_report_by_type(rep_type: str):
         "audit": db_service.get_report_audit,
     }
     handler = dispatch.get(rep_type)
+    if handler:
+        return handler()
     from fastapi.responses import JSONResponse
     return JSONResponse({"error": f"Unknown report type '{rep_type}'"}, status_code=400)
 
