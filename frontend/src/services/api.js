@@ -148,6 +148,37 @@ async function fetchJSON(url, options = {}) {
   // For POST mutations when offline, simulate success and cache locally
   if (method === 'POST') {
     const payload = options.body ? JSON.parse(options.body) : {};
+
+    // Authentication resolver for demo and offline resilience
+    if (url.includes('/auth/login')) {
+      const staff_id = (payload.staff_id || payload.username || '').trim().toUpperCase();
+      const password = (payload.password || '').trim();
+      if (
+        (staff_id === 'AIIA001' && password === 'AIIA@123') ||
+        (staff_id === 'ADMIN' && password === 'admin123')
+      ) {
+        return {
+          success: true,
+          status: 'success',
+          token: 'ayur-demo-token-998811',
+          user: {
+            staff_id: 'AIIA001',
+            full_name: 'Dr. Research Admin',
+            role: 'AIIA Authorized Staff',
+            designation: 'Clinical Research Coordinator / Admin',
+            institution: 'All India Institute of Ayurveda (AIIA), New Delhi',
+          },
+          message: 'Login successful. Welcome to AYURCTMS.',
+        };
+      } else {
+        return {
+          success: false,
+          status: 'error',
+          message: 'Invalid Staff ID or Password. Demo credentials: Staff ID: AIIA001, Password: AIIA@123',
+        };
+      }
+    }
+
     return {
       success: true,
       status: 'success',
