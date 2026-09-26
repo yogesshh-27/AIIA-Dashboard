@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { api } from '../services/api';
-import { ArrowLeft, Search, RotateCcw, AlertTriangle, MapPin, Phone, Mail, Building, User, Calendar, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeft, Search, RotateCcw, AlertTriangle, MapPin, Phone, Mail, Building, User, Calendar, CheckCircle2, Mic, MicOff } from 'lucide-react';
 
 const CITIES = [
   'Mumbai', 'Delhi', 'Kolkata', 'Kerala', 'Lucknow', 'Noida', 'Jaipur', 'Hyderabad', 'Bengaluru'
@@ -12,6 +13,7 @@ const CONDITIONS = [
 ];
 
 export default function PatientPortal({ onBackToGate, onStaffLoginClick }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     fullname: '',
     age: '',
@@ -25,6 +27,58 @@ export default function PatientPortal({ onBackToGate, onStaffLoginClick }) {
   const [matches, setMatches] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [speechNotice, setSpeechNotice] = useState('');
+
+  const startVoiceSearch = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setSpeechNotice('Voice search is not supported in this browser.');
+      return;
+    }
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-IN';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      setIsListening(true);
+      setSpeechNotice('Listening... Speak a health condition or city (e.g. "Diabetes", "Mumbai")');
+
+      recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript.toLowerCase();
+        setIsListening(false);
+        setSpeechNotice(`Recognized: "${event.results[0][0].transcript}"`);
+
+        const matchedCond = CONDITIONS.find(c => text.includes(c.toLowerCase()));
+        if (matchedCond) {
+          setFormData(prev => ({ ...prev, condition: matchedCond }));
+        }
+
+        const matchedCity = CITIES.find(c => text.includes(c.toLowerCase()));
+        if (matchedCity) {
+          setFormData(prev => ({
+            ...prev,
+            selectedCities: prev.selectedCities.includes(matchedCity) ? prev.selectedCities : [...prev.selectedCities, matchedCity]
+          }));
+        }
+      };
+
+      recognition.onerror = () => {
+        setIsListening(false);
+        setSpeechNotice('Voice input cancelled or timed out.');
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.start();
+    } catch (e) {
+      setIsListening(false);
+      setSpeechNotice('Voice recognition error.');
+    }
+  };
 
   const toggleCity = (city) => {
     setFormData((prev) => {
@@ -159,7 +213,35 @@ export default function PatientPortal({ onBackToGate, onStaffLoginClick }) {
               </div>
 
               <div className="form-group">
-                <label htmlFor="p-condition">Target Health Condition / Area of Interest *</label>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                  <label htmlFor="p-condition">{t('patient.condition', 'Target Health Condition / Area of Interest')} *</label>
+                  <button
+                    type="button"
+                    onClick={startVoiceSearch}
+                    className={`btn btn-sm ${isListening ? 'btn-danger' : 'btn-outline'}`}
+                    style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 8px' }}
+                    aria-label="Activate voice search"
+                  >
+                    {isListening ? <MicOff size={13} className="animate-spin" /> : <Mic size={13} className="text-emerald-700" />}
+                    <span>{isListening ? t('patient.listening', 'Listening...') : t('patient.voiceSearch', 'Voice Search')}</span>
+                  </button>
+                </div>
+                {speechNotice && (
+                  <div
+                    style={{
+                      fontSize: '11.5px',
+                      color: isListening ? '#b45309' : '#047857',
+                      background: isListening ? '#fef3c7' : '#d1fae5',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      marginBottom: '8px'
+                    }}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {speechNotice}
+                  </div>
+                )}
                 <select
                   id="p-condition"
                   className="form-select"

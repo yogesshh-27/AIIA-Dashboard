@@ -1606,3 +1606,151 @@ code, pre {
   .staff-sidebar.mobile-open { transform: translateX(0); }
   .header-center { display: none; }
 }
+
+/* ============================================================
+   12. WCAG 2.1 AA & GIGW 3.0 ACCESSIBILITY SUITE
+   ============================================================ */
+
+/* GIGW Skip to Main Content Link */
+.gov-skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  background: #ffcc00;
+  color: #000000;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 13px;
+  z-index: 9999;
+  border-radius: 4px;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: top 0.2s ease;
+}
+.gov-skip-link:focus {
+  top: 10px;
+}
+
+/* Gov Top Bar Controls */
+.gov-control-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.gov-control-label {
+  display: inline-flex;
+  align-items: center;
+  color: #94a3b8;
+  margin-right: 2px;
+}
+.gov-btn-ctrl {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f1f5f9;
+  font-size: 10.5px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.3;
+}
+.gov-btn-ctrl:hover, .gov-btn-ctrl.active {
+  background: #005944;
+  border-color: #34d399;
+  color: #ffffff;
+  font-weight: 700;
+}
+.gov-lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 89, 68, 0.4);
+  border: 1px solid rgba(52, 211, 153, 0.5);
+  color: #6ee7b7;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.gov-lang-switcher:hover {
+  background: #005944;
+  color: #ffffff;
+}
+
+/* Font Size Scaling */
+html.font-size-sm { font-size: 14px; }
+html.font-size-md { font-size: 16px; }
+html.font-size-lg { font-size: 18.5px; }
+
+/* Focus Visible for WCAG 2.1 AA Keyboard Navigation */
+:focus-visible {
+  outline: 3px solid #005944 !important;
+  outline-offset: 2px !important;
+}
+
+/* High Contrast Dark Mode */
+html.contrast-dark body,
+html.contrast-dark .staff-portal-layout,
+html.contrast-dark .landing-gate-view,
+html.contrast-dark .patient-portal-view {
+  background: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+html.contrast-dark .active-trials-section-card,
+html.contrast-dark .sketch-kpi-card,
+html.contrast-dark .staff-header,
+html.contrast-dark .staff-sidebar,
+html.contrast-dark .card,
+html.contrast-dark .patient-form-card {
+  background: #131b2e !important;
+  border-color: #2e3d5b !important;
+  color: #f8fafc !important;
+}
+html.contrast-dark .text-muted {
+  color: #94a3b8 !important;
+}
+
+/* Yellow on Black (GIGW High Contrast Standard) */
+html.contrast-yellow-black,
+html.contrast-yellow-black body,
+html.contrast-yellow-black .staff-portal-layout,
+html.contrast-yellow-black .landing-gate-view,
+html.contrast-yellow-black .patient-portal-view {
+  background: #000000 !important;
+  color: #ffff00 !important;
+}
+html.contrast-yellow-black .active-trials-section-card,
+html.contrast-yellow-black .sketch-kpi-card,
+html.contrast-yellow-black .staff-header,
+html.contrast-yellow-black .staff-sidebar,
+html.contrast-yellow-black .card,
+html.contrast-yellow-black .patient-form-card,
+html.contrast-yellow-black .patient-card {
+  background: #000000 !important;
+  border: 2px solid #ffff00 !important;
+  color: #ffff00 !important;
+}
+html.contrast-yellow-black a,
+html.contrast-yellow-black button,
+html.contrast-yellow-black h1,
+html.contrast-yellow-black h2,
+html.contrast-yellow-black h3,
+html.contrast-yellow-black h4,
+html.contrast-yellow-black strong,
+html.contrast-yellow-black span,
+html.contrast-yellow-black p,
+html.contrast-yellow-black div {
+  color: #ffff00 !important;
+}
+html.contrast-yellow-black button,
+html.contrast-yellow-black input,
+html.contrast-yellow-black select {
+  border-color: #ffff00 !important;
+  background: #000000 !important;
+  color: #ffff00 !important;
+}
+html.contrast-yellow-black :focus-visible {
+  outline: 3px solid #ffff00 !important;
+  outline-offset: 3px !important;
+}

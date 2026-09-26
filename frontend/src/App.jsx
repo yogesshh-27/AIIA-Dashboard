@@ -54,27 +54,29 @@ export default function App() {
       {/* 1. GIGW Government Top Bar with Tricolor Ribbon */}
       <GovTopBar />
 
-      {/* 2. Main Viewport Switching */}
-      {currentView === 'gate' && (
-        <LandingGate
-          onSelectPatient={handleSelectPatientPortal}
-          onSelectStaff={handleOpenStaffLogin}
-        />
-      )}
+      {/* 2. Main Viewport Switching with accessibility landmark */}
+      <main id="main-content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }} tabIndex={-1}>
+        {currentView === 'gate' && (
+          <LandingGate
+            onSelectPatient={handleSelectPatientPortal}
+            onSelectStaff={handleOpenStaffLogin}
+          />
+        )}
 
-      {currentView === 'patient' && (
-        <PatientPortal
-          onBackToGate={() => setCurrentView('gate')}
-          onOpenStaffLogin={handleOpenStaffLogin}
-        />
-      )}
+        {currentView === 'patient' && (
+          <PatientPortal
+            onBackToGate={() => setCurrentView('gate')}
+            onOpenStaffLogin={handleOpenStaffLogin}
+          />
+        )}
 
-      {currentView === 'staff' && (
-        <StaffPortal
-          currentUser={currentUser}
-          onLogout={handleLogout}
-        />
-      )}
+        {currentView === 'staff' && (
+          <StaffPortal
+            currentUser={currentUser}
+            onLogout={handleLogout}
+          />
+        )}
+      </main>
 
       {/* 3. Staff Authentication Modal */}
       <StaffAuthModal
