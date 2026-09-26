@@ -1,16 +1,22 @@
 # STATE.md — Project State
 
 ## Current Focus
-- Modernizing Frontend: Completed migration of AYURCTMS to modern React (React 19 + Vite + Lucide Icons) with official AIIA design system (`aiia.gov.in`), dual-flow entry, 12 staff modules, intelligent overlap detection, 8-stage longitudinal patient treatment timeline, pharmacovigilance safety signals, FHIR R4/CDISC interop previews, and 75 CTRI registry trials.
+- AYURCTMS v2.0 Upgrade: Implementing 11 free, open-source upgrades across frontend and backend.
+- Starting with Phase 1: FastAPI Backend Migration
 
-## Completed Work
-- [x] Initialized `.gsd/SPEC.md` and `.gsd/ROADMAP.md`
-- [x] Implemented AYURCTMS data models and seeding in `db_service.py`
-- [x] Implemented REST endpoints in `server.py`
-- [x] Implemented official AIIA branding, GIGW top bar, and theme tokens in `app.css` and `index.css`
-- [x] Audited and verified all 9 backend capabilities against requirements
-- [x] Scaffolded and configured Vite + React frontend application with API proxy
-- [x] Implemented modular React component tree (`GovTopBar`, `LandingGate`, `PatientPortal`, `StaffAuthModal`, `StaffHeader`, `StaffSidebar`, `CreateTrialModal`, and all 12 `StaffPortal` views)
-- [x] Validated React production build (`npm run build` targeting `dist/`)
-- [x] Configured Python server (`server.py`) to serve compiled React application with seamless backend API routing
-- [x] Verified full regression test suite (all 67 unit and integration tests passing 100%)
+## Completed Work (v1.0 — Archived)
+- [x] Complete AYURCTMS v1.0 prototype with 9 backend capabilities
+- [x] React 19 + Vite frontend with 20 modular components
+- [x] 67 automated tests passing 100%
+- [x] Deployed to Cloudflare Pages
+- [x] AIIA official branding and GIGW top bar
+
+## v2.0 Progress
+- [ ] Phase 1: FastAPI Backend Migration
+- [ ] Phase 2: Advanced Clinical Charts (Recharts)
+- [ ] Phase 3: Interactive India Trial Map (Leaflet)
+- [ ] Phase 4: GIGW Accessibility + Hindi Language
+- [ ] Phase 5: WHO Pharmacovigilance + WebSocket Alerts
+- [ ] Phase 6: 21 CFR Part 11 E-Signatures
+- [ ] Phase 7: PostgreSQL + Background Workers
+- [ ] Phase 8: PWA / Offline-First

@@ -1,56 +1,112 @@
 # ROADMAP.md
 
-> **Current Milestone**: AYURCTMS v1.0 Production Prototype
-> **Status**: Completed
+> **Current Milestone**: AYURCTMS v2.0 — Production-Grade Upgrade
+> **Status**: In Progress
+
+## Must-Haves (from SPEC)
+- [ ] FastAPI backend with Swagger docs
+- [ ] Advanced clinical charts (Recharts)
+- [ ] Interactive India trial map (Leaflet)
+- [ ] WCAG 2.1 AA accessibility
+- [ ] Real-time WebSocket alerts
+- [ ] WHO pharmacovigilance algorithms
+- [ ] Hindi language support
+- [ ] PWA offline capability
+- [ ] 21 CFR Part 11 e-signatures
+- [ ] PostgreSQL migration
+- [ ] Background worker queue
 
 ## Phases
 
-### Phase 1: Data Model & Synthetic Clinical Seed Engine
-**Status**: ✅ Completed
-- SQLite database schema & seed scripts for AYURCTMS (`doctors`, `patients`, `ayur_trials`, `trial_sites`, `approvals`, `gcp_checklist`, `patient_treatments`, `patient_visits`, `ayur_adverse_events`, `safety_signals`, `ayur_notifications`, `ayur_audit_trail`).
-- Seeded 11 doctors, 25 patients, 8 trials, 9 sites across India, adverse events (including Ramlal Sharma / AYU-002 / Skin Rash cluster), 5 approvals, GCP checklist.
+### Phase 1: FastAPI Backend Migration
+**Status**: ⬜ Not Started
+**Objective**: Replace `http.server` with FastAPI + Pydantic for all 28+ endpoints
+**Deliverables**:
+- FastAPI application with route modules
+- Pydantic request/response models for all endpoints
+- Auto-generated Swagger UI at `/docs`
+- CORS middleware replacing manual headers
+- All 67 existing tests passing against new backend
+**Requirements**: SPEC Goal 1
 
-### Phase 2: Backend REST Services & Clinical Intelligence Endpoints
-**Status**: ✅ Completed
-- Patient trial-location matching algorithm with accessibility scoring.
-- Authentication service (`AIIA001` / `AIIA@123`).
-- Overlap detection for new trial planning.
-- Pharmacovigilance safety signal detection engine.
-- GCP checklist status manager, Report generator (CSV/PDF), and Global search engine.
+### Phase 2: Advanced Clinical Charts & Dashboard Visualization
+**Status**: ⬜ Not Started
+**Objective**: Add Recharts-powered interactive data visualizations
+**Deliverables**:
+- KPI trend line charts (enrollment velocity, AE rates over time)
+- Dosha balance radar charts (Vata/Pitta/Kapha pre/post treatment)
+- Recruitment burn-down charts (target vs actual)
+- Site-wise bar charts with outcome comparisons
+- Responsive chart containers with tooltips and legends
+**Requirements**: SPEC Goal 5
 
-### Phase 3: Modern Responsive Frontend UI & Interaction Flow
-**Status**: ✅ Completed
-- Landing page gate ("Who are you?" with Patient vs AIIA Authorized Staff cards).
-- Patient trial-matching flow with recommendation cards and detail modal.
-- Staff login screen with demo credentials.
-- Staff dashboard with 3 top KPI cards (Doctors, Patients, PV), Active trial progress bars, interactive Sites/Locations explorer (Mumbai, Delhi, Kolkata, Kerala, Lucknow, Noida, Jaipur, Hyderabad, Bengaluru).
-- Complete operational modules: Trials, New Trial Planning with Overlap Warning, Pending Approvals, GCP Checklist, Doctor Directory, Patient Profiles with 8-Stage Treatment Timeline, Pharmacovigilance & Safety Signals, Reports, Interoperability (FHIR/CDISC), and Audit Trail.
+### Phase 3: Interactive India Trial Map
+**Status**: ⬜ Not Started
+**Objective**: Leaflet.js geospatial visualization of 9 trial sites
+**Deliverables**:
+- Interactive India map with colored markers for each trial city
+- Click-to-filter: select a city pin to see its active trials
+- Recruitment density heatmap overlay toggle
+- Patient radius filter (25km / 50km / 100km from clicked location)
+- Mobile-responsive map container
+**Requirements**: SPEC Goal 4
 
-### Phase 4: Quality Assurance & Backend Verification
-**Status**: ✅ Completed
-- Comprehensive automated test suite for all AYURCTMS backend endpoints and logic (`tests/test_ayur_ctms.py` and `tests/test_compliance.py`).
-- 9 core backend requirements fully audited and verified.
+### Phase 4: GIGW 3.0 Accessibility & Multi-Lingual Support
+**Status**: ⬜ Not Started
+**Objective**: WCAG 2.1 AA compliance + Hindi/English language switcher
+**Deliverables**:
+- Font size controls (A-, A, A+) in GovTopBar
+- High-contrast mode toggle (Standard / Dark / Yellow-on-Black)
+- Full keyboard navigation with visible focus indicators
+- ARIA landmarks, live regions, and screen reader labels
+- i18next integration with Hindi (`hi`) and English (`en`) locales
+- Browser SpeechRecognition voice search for patient portal
+**Requirements**: SPEC Goals 6, 7
 
-### Phase 5: Modern React Ecosystem Migration
-**Status**: ✅ Completed
-- Scaffolded and configured modern Vite + React application in `frontend/` with Lucide Icons.
-- Configured development proxy forwarding `/api` to backend Python server (`http://127.0.0.1:8000`).
-- Created modular React components:
-  - `GovTopBar`: GIGW Government of India & Ministry of Ayush Identity strip with accessibility controls and tricolor ribbon.
-  - `LandingGate`: Dual-path entry portal (Patient vs AIIA Staff) with official institute branding.
-  - `PatientPortal`: Clinical trial discovery and location matching with accessibility filters and mandatory disclaimers.
-  - `StaffAuthModal`: Staff authentication with quick demo credentials and persona selection.
-  - `StaffPortal`: Complete operational CTMS interface with sidebar navigation, sticky header, global search, and notification center.
-  - `DashboardView`: Hero KPI cards (Doctors, Patients, PV), active trial velocity, and recruitment summaries.
-  - `SitesExplorerView`: Multi-center city cards across 9 regions with outcome trend charts.
-  - `ActiveTrialsView`: Protocol directory with enrollment progress and details modal.
-  - `TrialInfoView` & `CreateTrialModal`: Trial registry with Intelligent Overlap Warning engine.
-  - `PatientsView`: Patient roster and 8-stage longitudinal clinical treatment timeline (Ramlal Sharma).
-  - `PharmacovigilanceView`: Safety signal detection, AE cluster alerts, and expedited SAE reporting modal.
-  - `ApprovalsView`: Ethics Committee & DCGI review workflow.
-  - `GcpChecklistView`: Interactive 8-point Good Clinical Practice auditor checklist with verification stamps.
-  - `ReportsView`: Live report data generator with 7 institutional report types and CSV export.
-  - `InteropView`: Interactive HL7 FHIR R4 & CDISC SDTM dataset pipeline demonstrator with immutable audit trail.
-  - `CtriExplorerView`: CTRI registry database browser (75 trials) with verified official record links.
-- Built production bundle (`npm run build`) targeting `dist/` and integrated with Python backend server.
-- Verified all 67 test suites pass with 100% success rate.
+### Phase 5: WHO Pharmacovigilance Algorithms & Real-Time WebSocket Alerts
+**Status**: ⬜ Not Started
+**Objective**: Statistical signal detection + instant push notifications
+**Deliverables**:
+- PRR (Proportional Reporting Ratio) algorithm implementation
+- ROR (Reporting Odds Ratio) algorithm implementation
+- Signal detection dashboard with statistical confidence indicators
+- WebSocket server endpoint for real-time SAE alerts
+- Frontend WebSocket client with toast notification system
+- Auto-reconnect and connection status indicator
+**Requirements**: SPEC Goals 2, 3
+
+### Phase 6: 21 CFR Part 11 E-Signatures & Cryptographic Audit Trail
+**Status**: ⬜ Not Started
+**Objective**: Regulatory-grade electronic signatures with tamper-evident audit chain
+**Deliverables**:
+- Re-authentication modal before signing clinical records
+- Intent declaration (e.g., "I certify these results are accurate")
+- Merkle tree hash chain for audit trail entries
+- Signature verification API endpoint
+- E-signature status badges on approved records
+**Requirements**: SPEC Goal 9
+
+### Phase 7: PostgreSQL Migration & Background Workers
+**Status**: ⬜ Not Started
+**Objective**: Enterprise database + async task processing
+**Deliverables**:
+- SQLAlchemy ORM models replacing raw SQL
+- Alembic migration scripts (SQLite → PostgreSQL)
+- Dual-mode support (SQLite for dev, PostgreSQL for production)
+- Celery + Redis worker setup for background tasks
+- Async PDF report generation
+- Scheduled CTRI registry scraper (daily cron)
+**Requirements**: SPEC Goals 10, 11
+
+### Phase 8: PWA / Offline-First & Final Integration
+**Status**: ⬜ Not Started
+**Objective**: Progressive Web App with offline data collection
+**Deliverables**:
+- Service Worker with cache-first strategy for static assets
+- IndexedDB local storage for offline form submissions
+- Background sync: auto-upload when connection restored
+- PWA manifest with AIIA branding (icons, splash screen)
+- Install prompt for mobile devices
+- Full regression test suite (all 67+ tests passing)
+- Production build and deployment
+**Requirements**: SPEC Goal 8

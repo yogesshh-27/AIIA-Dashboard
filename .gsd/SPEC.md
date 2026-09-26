@@ -1,31 +1,52 @@
 # SPEC.md — Project Specification
 
 > **Status**: `FINALIZED`
-> **Project Name**: AYURCTMS
-> **Subtitle**: AIIA Clinical Trial Management & Research Portal
-> **Problem Statement ID**: 26046
+> **Project Name**: AYURCTMS v2.0
+> **Subtitle**: Production-Grade Upgrade — Frontend & Backend Modernization
+> **Predecessor**: v1.0 (archived in `.gsd/archive/v1.0/`)
 
 ## Vision
-AYURCTMS is a real-time, cloud-based, GCP-compliant Clinical Trial Management System (CTMS) purpose-built for Ayurveda clinical research at the All India Institute of Ayurveda (AIIA). It bridges patient trial discovery with rigorous institutional governance—offering intelligent patient-location trial matching, multi-site operational tracking across India, doctor & participant lifecycle management with 8-stage treatment flows, integrated pharmacovigilance with automated safety signal detection, CTRI/NDCT Rules 2019 compliance, and CDISC/FHIR data interoperability.
+Elevate AYURCTMS from a functional prototype to an enterprise-grade, production-ready Clinical Trial Management System. This milestone focuses on 11 free, open-source upgrades across frontend and backend — adding interactive geospatial visualization, advanced clinical charts, WCAG accessibility compliance, FastAPI migration, WHO-standard pharmacovigilance algorithms, real-time WebSocket alerts, and offline-first PWA capabilities.
 
 ## Goals
-1. **Dual Entry Flow**: Distinct landing page experience separating public patient trial-discovery from authenticated AIIA research staff management.
-2. **Patient Trial-Location Matching**: Clean intake form matching patients to recruiting Ayurvedic trials across 9 Indian cities without medical diagnosis overreach.
-3. **Staff CTMS Portal**: Full operational suite following hand-drawn institutional dashboard layout: 3 top KPI cards (Doctors, Patients, PV), Active Trial progress tracking, interactive Sites/Locations explorer, and smart trial planning with overlap detection.
-4. **Clinical Governance & Safety**: Interactive GCP compliance checklist, Pending Approvals workflow, dedicated Pharmacovigilance module with cluster signal detection, immutable audit trail, and CDISC/FHIR interoperability pipeline.
-5. **Demonstration Dataset**: Realistic synthetic data featuring 10+ doctors, 25+ patients, 8+ trials, 9 sites, 10+ adverse events, approvals, and verified treatment flows (including Ramlal / AYU-002 / Skin Rash scenario).
+1. **Backend Modernization**: Migrate from `http.server` to FastAPI with Pydantic validation, auto-generated Swagger docs, and async concurrency.
+2. **Advanced Pharmacovigilance**: Implement WHO-standard PRR/ROR statistical disproportionality algorithms for safety signal detection.
+3. **Real-Time Alerts**: WebSocket-based instant SAE push notifications to Safety Monitor dashboards.
+4. **Interactive India Trial Map**: Leaflet.js + OpenStreetMap geospatial visualization with recruitment heatmaps and radius filters.
+5. **Advanced Clinical Charts**: Recharts-powered KPI timelines, Dosha radar charts, and recruitment burn-down visualizations.
+6. **GIGW 3.0 / WCAG 2.1 AA Accessibility**: Font resizer, high-contrast mode, screen reader support, keyboard navigation.
+7. **Multi-Lingual Support**: i18next-based Hindi/English language switcher with browser SpeechRecognition voice search.
+8. **PWA / Offline-First**: Service Workers + IndexedDB for field data collection at rural Ayush clinics.
+9. **21 CFR Part 11 E-Signatures**: Dual-factor electronic signatures with Merkle tree cryptographic audit hash chain.
+10. **PostgreSQL + Alembic**: Enterprise database migration with version-controlled schema changes.
+11. **Background Worker Queue**: Celery/Redis for async PDF generation, CDISC exports, and scheduled CTRI scraping.
 
 ## Non-Goals (Out of Scope)
-- Commercial EHR / Hospital billing or inpatient bed management (the app is strictly for clinical trials).
-- Automated AI medical diagnosis or claiming legal authority over regulatory approvals.
-- Storing real unmasked patient identification data.
+- TypeScript migration (deferred to v3.0 — not essential for functionality).
+- Commercial cloud database hosting (PostgreSQL runs locally or on free tiers).
+- Bhashini API integration (using free browser SpeechRecognition instead).
+- Mobile native apps (PWA covers mobile needs).
 
 ## Users & Personas
-- **Patient / Research Participant**: Searches for nearby relevant clinical trials by condition and accessible locations.
-- **AIIA Clinical Research Staff / Investigator**: Manages trial protocols, participants, doctor assignments, multi-site operations, safety event reporting, and GCP compliance.
-- **Institutional Leadership / Auditor**: Inspects aggregated KPIs, multi-site progress, pharmacovigilance signals, and regulatory reports.
+- **Patient / Research Participant**: Discovers trials via interactive map, uses Hindi voice search.
+- **Field Investigator (Rural)**: Records patient data offline via PWA, syncs when connected.
+- **AIIA Clinical Staff**: Uses advanced charts and real-time safety alerts for decision-making.
+- **Ethics Board / Regulator**: Verifies compliance via e-signatures and cryptographic audit trail.
 
-## Key Constraints & Standards
-- Python standard HTTP server + SQLite backend with zero external runtime dependencies.
-- Vanilla CSS + JavaScript with medical/research aesthetic (Deep Teal `#0d5c56`, Slate `#1e293b`, Soft Grey `#f8fafc`).
-- Fully responsive across desktop, laptop, tablet, and mobile.
+## Constraints
+- All tools and libraries must be **100% free and open-source**.
+- Backward compatibility with existing v1.0 API contracts and data.
+- Zero downtime migration — existing deployed site must remain functional.
+- Python 3.10+ for backend, React 19 + Vite 8 for frontend.
+
+## Success Criteria
+- [ ] FastAPI serves all 28+ existing endpoints with auto-generated `/docs` Swagger UI
+- [ ] PRR/ROR algorithms flag statistical safety signals from existing AE dataset
+- [ ] WebSocket connection pushes real-time SAE alerts to connected dashboards
+- [ ] Interactive India map renders 9 trial sites with click-to-filter functionality
+- [ ] Recharts renders at least 3 chart types (line, bar, radar) in DashboardView
+- [ ] WCAG 2.1 AA: font resizer, contrast toggle, and full keyboard navigation work
+- [ ] Hindi translation covers all UI labels and navigation elements
+- [ ] PWA installs on mobile and caches critical pages for offline access
+- [ ] E-signature workflow requires re-authentication before approving clinical records
+- [ ] All existing 67 tests continue to pass after upgrades
