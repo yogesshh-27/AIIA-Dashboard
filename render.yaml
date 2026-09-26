@@ -4,7 +4,7 @@
 ##############################################################
 services:
   - type: web
-    name: aiia-dashboard-api
+    name: aiia-dashboard
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
@@ -14,5 +14,5 @@ services:
         value: "3.11"
       - key: PORT
         value: "10000"
-    healthCheckPath: /api/ayur/dashboard/stats
+    healthCheckPath: /health
     autoDeploy: true

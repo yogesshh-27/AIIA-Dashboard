@@ -142,6 +142,13 @@ async def serve_manifest():
     return Response(status_code=404)
 
 
+@app.get("/health", include_in_schema=False)
+@app.get("/healthz", include_in_schema=False)
+async def health_check():
+    """Health check endpoint for Render, orchestrators, and uptime monitors."""
+    return {"status": "ok", "service": "AYURCTMS FastAPI Backend", "timestamp": "2026-09-27"}
+
+
 @app.get("/", include_in_schema=False)
 async def serve_index():
     """Serve the React SPA index page."""
