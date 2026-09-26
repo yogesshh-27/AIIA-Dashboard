@@ -102,30 +102,30 @@ export default function CtriExplorerView() {
         </div>
       </div>
 
-      {/* 4 Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="patient-card p-4 border-l-4 border-l-[#005944]">
-          <div className="text-[11px] font-bold text-slate-500 uppercase">Extracted Trials</div>
-          <div className="text-2xl font-extrabold text-[#005944] mt-1">{trials.length || 75}</div>
-          <div className="text-xs text-emerald-600 mt-0.5">✓ 100% Unique / Deduplicated</div>
+      {/* 4 Metric Cards - Compact 4-Column Layout */}
+      <div className="sketch-kpi-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '20px' }}>
+        <div className="sketch-kpi-card" style={{ padding: '14px 18px', borderLeft: '4px solid #005944' }}>
+          <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Extracted Trials</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#005944', marginTop: '2px', lineHeight: 1.2 }}>{trials.length || 75}</div>
+          <div style={{ fontSize: '11px', color: '#059669', marginTop: '2px', fontWeight: 600 }}>✓ 100% Unique / Deduplicated</div>
         </div>
 
-        <div className="patient-card p-4 border-l-4 border-l-emerald-600">
-          <div className="text-[11px] font-bold text-slate-500 uppercase">Field Completeness</div>
-          <div className="text-2xl font-extrabold text-emerald-600 mt-1">100.0%</div>
-          <div className="text-xs text-slate-500 mt-0.5">Title, Condition, Investigator, Sites</div>
+        <div className="sketch-kpi-card" style={{ padding: '14px 18px', borderLeft: '4px solid #059669' }}>
+          <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Field Completeness</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#059669', marginTop: '2px', lineHeight: 1.2 }}>100.0%</div>
+          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>Title, Condition, Investigator, Sites</div>
         </div>
 
-        <div className="patient-card p-4 border-l-4 border-l-sky-600">
-          <div className="text-[11px] font-bold text-slate-500 uppercase">Ayurveda / Integrative</div>
-          <div className="text-2xl font-extrabold text-sky-600 mt-1">67 / 8</div>
-          <div className="text-xs text-slate-500 mt-0.5">Polyherbal & Holistic Regimens</div>
+        <div className="sketch-kpi-card" style={{ padding: '14px 18px', borderLeft: '4px solid #0284c7' }}>
+          <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Ayurveda / Integrative</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#0284c7', marginTop: '2px', lineHeight: 1.2 }}>67 / 8</div>
+          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>Polyherbal & Holistic Regimens</div>
         </div>
 
-        <div className="patient-card p-4 border-l-4 border-l-amber-500">
-          <div className="text-[11px] font-bold text-slate-500 uppercase">Rule 2 Compliance</div>
-          <div className="text-2xl font-extrabold text-amber-600 mt-1">100%</div>
-          <div className="text-xs text-slate-500 mt-0.5">Zero Bot/Bypass, Verified Public URLs</div>
+        <div className="sketch-kpi-card" style={{ padding: '14px 18px', borderLeft: '4px solid #d97706' }}>
+          <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Rule 2 Compliance</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#d97706', marginTop: '2px', lineHeight: 1.2 }}>100%</div>
+          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>Zero Bot/Bypass, Verified Public URLs</div>
         </div>
       </div>
 
