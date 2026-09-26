@@ -808,10 +808,11 @@ def get_cdisc_terms(search: str = "", limit: int = 50) -> List[Dict[str, Any]]:
             ("ADaM Terminology.xls", 1, "CDISC ADaM Standard"),
         ]
         for fname, sheet_idx, standard_label in files:
-            if not os.path.exists(fname):
+            fpath = os.path.join("data", "cdisc_terminology", fname) if os.path.exists(os.path.join("data", "cdisc_terminology", fname)) else fname
+            if not os.path.exists(fpath):
                 continue
             try:
-                wb = xlrd.open_workbook(fname)
+                wb = xlrd.open_workbook(fpath)
                 if len(wb.sheet_names()) > sheet_idx:
                     sheet = wb.sheet_by_index(sheet_idx)
                     for r in range(1, min(sheet.nrows, 1000)):

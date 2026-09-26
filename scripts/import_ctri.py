@@ -119,10 +119,11 @@ def ingest_cdisc(db_session):
     ]
     total_cdisc = 0
     for fname, sheet_idx, standard_label, mapped_domain in cdisc_files:
-        if not os.path.exists(fname):
+        fpath = os.path.join("data", "cdisc_terminology", fname) if os.path.exists(os.path.join("data", "cdisc_terminology", fname)) else fname
+        if not os.path.exists(fpath):
             continue
         try:
-            wb = xlrd.open_workbook(fname)
+            wb = xlrd.open_workbook(fpath)
             if len(wb.sheet_names()) > sheet_idx:
                 sheet = wb.sheet_by_index(sheet_idx)
                 for r in range(1, min(sheet.nrows, 1500)):
