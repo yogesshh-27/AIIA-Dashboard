@@ -267,6 +267,20 @@ code, pre {
   align-items: center;
   gap: 8px;
 }
+.gov-emblem-img {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+  vertical-align: middle;
+}
+.gov-ayush-emblem-img {
+  height: 22px;
+  width: 22px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  vertical-align: middle;
+}
 .gov-emblem {
   font-size: 13px;
 }
@@ -345,6 +359,29 @@ code, pre {
   justify-content: center;
   box-shadow: 0 4px 14px rgba(0, 89, 68, 0.25);
   border: 2px solid #ffffff;
+}
+.landing-brand-aiia-logo {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 10px rgba(0, 70, 50, 0.22));
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.landing-brand-aiia-logo:hover {
+  transform: scale(1.06);
+}
+.landing-brand-divider {
+  width: 1.5px;
+  height: 48px;
+  background: rgba(15, 23, 42, 0.15);
+  margin: 0 8px;
+}
+.landing-brand-ayush-logo {
+  height: 44px;
+  width: auto;
+  max-width: 190px;
+  object-fit: contain;
+  opacity: 0.95;
 }
 .landing-brand-hindi {
   font-size: 13.5px;
@@ -564,6 +601,13 @@ code, pre {
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 4px;
+}
+.patient-portal-logo-img {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 70, 50, 0.15));
+  vertical-align: middle;
 }
 .brand-text {
   font-weight: 700;
@@ -815,6 +859,13 @@ code, pre {
   justify-content: center;
   margin: 0 auto 12px auto;
 }
+.login-emblem-img {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 14px auto;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0, 70, 50, 0.22));
+}
 .login-header h3 { font-size: 18px; color: var(--text-primary); }
 .login-header p { font-size: 12px; color: var(--text-muted); }
 
@@ -914,6 +965,13 @@ code, pre {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.header-emblem-img {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 70, 50, 0.2));
+  vertical-align: middle;
 }
 .header-title-text {
   display: flex;
@@ -1815,5 +1873,25 @@ html.contrast-yellow-black :focus-visible {
   .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .lg\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+@media (max-width: 768px) {
+  .landing-brand {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .landing-brand-divider {
+    display: none;
+  }
+  .landing-brand-ayush-logo {
+    display: none;
+  }
+  .gov-top-bar-inner {
+    justify-content: center;
+  }
+  .gov-identity {
+    justify-content: center;
+    text-align: center;
+  }
 }
 

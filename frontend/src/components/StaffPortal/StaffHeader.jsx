@@ -107,10 +107,16 @@ export default function StaffHeader({
           ☰
         </button>
         <div className="header-logo-group">
-          <div className="header-emblem-small">AIIA</div>
+          <img
+            src="/logos/aiia-logo.svg"
+            alt="AIIA Crest"
+            className="header-emblem-img"
+            width="36"
+            height="36"
+          />
           <div className="header-title-text">
             <span className="header-main-name">अखिल भारतीय आयुर्वेद संस्थान | AIIA</span>
-            <span className="header-sub-name">AYURCTMS • Clinical Trial Management & Research Portal</span>
+            <span className="header-sub-name">AYURCTMS • Clinical Trial Management Portal</span>
           </div>
         </div>
       </div>

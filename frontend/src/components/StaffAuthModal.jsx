@@ -40,7 +40,13 @@ export default function StaffAuthModal({ isOpen, onClose, onLoginSuccess }) {
     <div className="modal-overlay" style={{ display: 'flex' }}>
       <div className="login-card-modal">
         <div className="login-header">
-          <div className="login-emblem">AIIA</div>
+          <img
+            src="/logos/aiia-logo.svg"
+            alt="AIIA Emblem"
+            className="login-emblem-img"
+            width="56"
+            height="56"
+          />
           <h3>AIIA Staff Authentication</h3>
           <p>AYURCTMS Clinical Trial Management Portal</p>
         </div>

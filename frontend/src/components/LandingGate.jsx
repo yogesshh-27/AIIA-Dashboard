@@ -6,12 +6,25 @@ export default function LandingGate({ onSelectPatient, onSelectStaff }) {
     <div id="landing-gate" className="landing-gate-view">
       <div className="landing-header">
         <div className="landing-brand">
-          <div className="landing-emblem" aria-label="AIIA Logo">AIIA</div>
+          <img
+            src="/logos/aiia-logo.svg"
+            alt="All India Institute of Ayurveda"
+            className="landing-brand-aiia-logo"
+            width="56"
+            height="56"
+          />
           <div className="landing-brand-text">
             <div className="landing-brand-hindi">अखिल भारतीय आयुर्वेद संस्थान</div>
             <h1>ALL INDIA INSTITUTE OF AYURVEDA</h1>
             <p>An Autonomous Organization under the Ministry of Ayush, Govt. of India • AYURCTMS Portal</p>
           </div>
+          <div className="landing-brand-divider" aria-hidden="true"></div>
+          <img
+            src="/logos/ayush-logo.svg"
+            alt="Ministry of Ayush"
+            className="landing-brand-ayush-logo"
+            height="44"
+          />
         </div>
         <div className="landing-official-badge">
           <span>🌿 Clinical Trial Management Portal</span>

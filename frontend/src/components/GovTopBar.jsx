@@ -39,11 +39,24 @@ export default function GovTopBar() {
 
       <div className="gov-top-bar-inner">
         <div className="gov-identity">
-          <span className="gov-emblem" aria-hidden="true">🏛️</span>
+          <img
+            src="/logos/national-emblem.svg"
+            alt="State Emblem of India"
+            className="gov-emblem-img"
+            width="20"
+            height="26"
+          />
           <span className="gov-text">
             <strong>{t('gov.india', 'भारत सरकार')}</strong> | Government of India
           </span>
           <span className="gov-sep" aria-hidden="true">•</span>
+          <img
+            src="/logos/ayush-emblem.svg"
+            alt="Ministry of Ayush"
+            className="gov-ayush-emblem-img"
+            width="22"
+            height="22"
+          />
           <span className="gov-text">
             <strong>{t('gov.ayush', 'आयुष मंत्रालय')}</strong> | Ministry of Ayush
           </span>

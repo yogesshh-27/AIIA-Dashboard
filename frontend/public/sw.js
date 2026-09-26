@@ -1,7 +1,11 @@
-const CACHE_NAME = 'ayurctms-v2-cache-v4';
+const CACHE_NAME = 'ayurctms-v2-cache-v5';
 const STATIC_ASSETS = [
   '/manifest.json',
   '/favicon.svg',
+  '/logos/national-emblem.svg',
+  '/logos/ayush-logo.svg',
+  '/logos/ayush-emblem.svg',
+  '/logos/aiia-logo.svg',
   'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png'

@@ -145,7 +145,13 @@ export default function PatientPortal({ onBackToGate, onStaffLoginClick }) {
             Back to Portal Selection
           </button>
           <div className="brand-inline">
-            <span className="brand-pill">AIIA</span>
+            <img
+              src="/logos/aiia-logo.svg"
+              alt="AIIA Logo"
+              className="patient-portal-logo-img"
+              width="32"
+              height="32"
+            />
             <span className="brand-text">AYURCTMS • Patient Trial Matching Portal</span>
           </div>
         </div>
