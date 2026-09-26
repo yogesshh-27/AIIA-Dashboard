@@ -72,6 +72,7 @@ export default function PatientsView() {
                 <th>Name</th>
                 <th>Age / Gender</th>
                 <th>Condition</th>
+                <th>Prakriti</th>
                 <th>Location</th>
                 <th>Assigned Trial</th>
                 <th>Treatment Site</th>
@@ -94,6 +95,11 @@ export default function PatientsView() {
                     {p.age} Y / {p.gender}
                   </td>
                   <td>{p.condition}</td>
+                  <td>
+                    <span className="badge badge-outline text-[11px] text-emerald-800 bg-emerald-50 border-emerald-300">
+                      🌿 {p.prakriti || 'Vata-Pitta'}
+                    </span>
+                  </td>
                   <td>{p.area_city}</td>
                   <td>
                     <span className="trial-id-badge">{p.assigned_trial_id}</span>
@@ -117,7 +123,7 @@ export default function PatientsView() {
                       className="btn btn-outline btn-xs"
                       onClick={() => handleOpenPatient(p.patient_id)}
                     >
-                      Timeline
+                      Ayurvedic Timeline
                     </button>
                   </td>
                 </tr>
@@ -133,7 +139,7 @@ export default function PatientsView() {
           <div className="modal-card max-w-3xl w-full p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4 border-b pb-3">
               <div>
-                <span className="badge badge-info text-xs">Participant Profile & Longitudinal Flow</span>
+                <span className="badge badge-info text-xs">Ayurvedic Clinical Trial Participant</span>
                 <h3 className="text-xl font-bold text-emerald-950 mt-1">
                   {selectedPatient.full_name} ({selectedPatient.patient_id})
                 </h3>
@@ -170,11 +176,59 @@ export default function PatientsView() {
                 <strong>Treatment Site:</strong> {selectedPatient.treatment_site}
               </div>
               <div>
-                <strong>Treatment Duration:</strong> {selectedPatient.treatment_duration_weeks} Weeks
+                <strong>Treatment Duration:</strong> {selectedPatient.treatment_duration_weeks || 16} Weeks
               </div>
               <div>
-                <strong>Dose / Regimen:</strong> {selectedPatient.dosage_frequency}
+                <strong>Dosage Regimen:</strong> {selectedPatient.dosage_frequency || 'Standard Protocol Dose'}
               </div>
+            </div>
+
+            {/* 🌿 AYURVEDA-SPECIFIC CLINICAL PARAMETERS (Prakriti, Vikriti, Agni, Koshtha, Anupana, Pathya) */}
+            <div className="bg-emerald-50/70 border border-emerald-200 rounded-lg p-3.5 mb-4">
+              <h4 className="text-xs font-bold text-emerald-950 uppercase tracking-wide mb-2.5 flex items-center gap-1.5">
+                <span>🌿</span>
+                <span>Ayurveda-Specific Clinical Parameters (Prakriti, Agni, Koshtha & Anupana)</span>
+              </h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
+                <div className="bg-white p-2 rounded border border-emerald-100 shadow-2xs">
+                  <span className="text-[10px] text-emerald-700 font-semibold uppercase block">Prakriti (Constitutional Type)</span>
+                  <strong className="text-slate-800">{selectedPatient.prakriti || 'Vata-Pitta (द्वन्द्वज)'}</strong>
+                </div>
+                <div className="bg-white p-2 rounded border border-emerald-100 shadow-2xs">
+                  <span className="text-[10px] text-emerald-700 font-semibold uppercase block">Vikriti (Dosha Imbalance)</span>
+                  <strong className="text-slate-800">{selectedPatient.vikriti || 'Pitta-Kapha Dushti'}</strong>
+                </div>
+                <div className="bg-white p-2 rounded border border-emerald-100 shadow-2xs">
+                  <span className="text-[10px] text-emerald-700 font-semibold uppercase block">Agni (Digestive State)</span>
+                  <strong className="text-slate-800">{selectedPatient.agni || 'Vishama Agni (विषामाग्नि)'}</strong>
+                </div>
+                <div className="bg-white p-2 rounded border border-emerald-100 shadow-2xs">
+                  <span className="text-[10px] text-emerald-700 font-semibold uppercase block">Koshtha (Bowel Tone)</span>
+                  <strong className="text-slate-800">{selectedPatient.koshtha || 'Madhyama Koshtha (मध्यम)'}</strong>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-xs mt-2.5">
+                <div className="bg-white p-2 rounded border border-emerald-100 shadow-2xs">
+                  <span className="text-[10px] text-emerald-700 font-semibold uppercase block">Anupana (Vehicle / Adjuvant)</span>
+                  <strong className="text-slate-800">{selectedPatient.anupana || 'Ushnodaka (Luke-warm Water)'}</strong>
+                </div>
+                <div className="bg-white p-2 rounded border border-emerald-100 shadow-2xs">
+                  <span className="text-[10px] text-emerald-700 font-semibold uppercase block">Diet (Pathya / Apathya)</span>
+                  <span className="text-slate-800 font-medium">{selectedPatient.diet_pathya || 'Yava (Barley), Karela, Mudga Yusha'}</span>
+                </div>
+                <div className="bg-white p-2 rounded border border-emerald-100 shadow-2xs">
+                  <span className="text-[10px] text-emerald-700 font-semibold uppercase block">Lifestyle (Vihara)</span>
+                  <span className="text-slate-800 font-medium">{selectedPatient.lifestyle_vihara || 'Pratahkala Vihara, Pranayama'}</span>
+                </div>
+              </div>
+
+              {selectedPatient.ayurvedic_history && (
+                <div className="bg-white p-2 rounded border border-emerald-100 shadow-2xs mt-2.5 text-xs">
+                  <span className="text-[10px] text-emerald-700 font-semibold uppercase block">Ayurvedic Clinical History</span>
+                  <p className="text-slate-700 m-0">{selectedPatient.ayurvedic_history}</p>
+                </div>
+              )}
             </div>
 
             {/* VISUAL 8-STAGE TREATMENT TIMELINE */}
