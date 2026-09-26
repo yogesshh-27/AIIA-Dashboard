@@ -4,7 +4,6 @@ import io
 import csv
 import json
 import re
-import xlrd
 import datetime
 import hashlib
 import secrets

@@ -118,6 +118,29 @@ if os.path.isdir(dist_dir):
     if os.path.isdir(assets_dir):
         app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
+# Mount logos directory (from dist/logos or frontend/public/logos)
+logos_dir = os.path.join(dist_dir, "logos")
+if not os.path.isdir(logos_dir):
+    logos_dir = os.path.join(ROOT_DIR, "frontend", "public", "logos")
+if os.path.isdir(logos_dir):
+    app.mount("/logos", StaticFiles(directory=logos_dir), name="logos")
+
+
+@app.get("/favicon.svg", include_in_schema=False)
+async def serve_favicon():
+    for fav_path in [os.path.join(dist_dir, "favicon.svg"), os.path.join(ROOT_DIR, "frontend", "public", "favicon.svg")]:
+        if os.path.isfile(fav_path):
+            return FileResponse(fav_path, media_type="image/svg+xml")
+    return Response(status_code=404)
+
+
+@app.get("/manifest.json", include_in_schema=False)
+async def serve_manifest():
+    for m_path in [os.path.join(dist_dir, "manifest.json"), os.path.join(ROOT_DIR, "frontend", "public", "manifest.json")]:
+        if os.path.isfile(m_path):
+            return FileResponse(m_path, media_type="application/json")
+    return Response(status_code=404)
+
 
 @app.get("/", include_in_schema=False)
 async def serve_index():
@@ -129,7 +152,7 @@ async def serve_index():
     if os.path.isfile(legacy_index):
         return FileResponse(legacy_index)
     from fastapi.responses import JSONResponse
-    return JSONResponse({"error": "Frontend not built. Run: cd frontend && npm run build"}, status_code=503)
+    return JSONResponse({"status": "healthy", "service": "AYURCTMS FastAPI Backend", "docs": "/docs"}, status_code=200)
 
 
 # Custom 404 handler: serve SPA for non-API routes, JSON error for API routes

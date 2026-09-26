@@ -1,5 +1,5 @@
 ##############################################################
-# Render Blueprint — AIIA Dashboard Python Backend (Flask)
+# Render Blueprint — AIIA AYURCTMS FastAPI Backend
 # Docs: https://docs.render.com/blueprint-spec
 ##############################################################
 services:
@@ -8,7 +8,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi_app:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+    startCommand: uvicorn app_fastapi:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: "3.11"

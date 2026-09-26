@@ -6,6 +6,8 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 # or connects to PostgreSQL if DATABASE_URL is configured.
 DEFAULT_DB_URL = "sqlite:///aiia_app.db"
 DATABASE_URL = os.environ.get("DATABASE_URL", DEFAULT_DB_URL)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 is_sqlite = DATABASE_URL.startswith("sqlite")
 
