@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../../services/api';
-import { Search, Bell, LogOut, User, Check, X, Shield, Hospital, Stethoscope, AlertTriangle } from 'lucide-react';
+import { useWebSocketAlerts } from '../../services/useWebSocketAlerts';
+import { Search, Bell, LogOut, User, Check, X, Shield, Hospital, Stethoscope, AlertTriangle, Radio } from 'lucide-react';
 
 export default function StaffHeader({
   currentUser,
@@ -13,6 +14,8 @@ export default function StaffHeader({
   const [searchResults, setSearchResults] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+
+  const { alerts, latestAlert, connectionStatus, dismissLatest } = useWebSocketAlerts();
 
   const [notifications, setNotifications] = useState([]);
   const [showNotifDrawer, setShowNotifDrawer] = useState(false);
@@ -188,7 +191,35 @@ export default function StaffHeader({
         </div>
       </div>
 
-      <div className="header-right">
+      <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* WEBSOCKET LIVE ALERT STATUS BADGE */}
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            fontSize: '11px',
+            fontWeight: 600,
+            padding: '3px 8px',
+            borderRadius: '12px',
+            background: connectionStatus === 'connected' ? 'rgba(5, 150, 105, 0.12)' : 'rgba(217, 119, 6, 0.12)',
+            color: connectionStatus === 'connected' ? '#059669' : '#d97706',
+            border: `1px solid ${connectionStatus === 'connected' ? '#a7f3d0' : '#fde68a'}`,
+          }}
+          title={connectionStatus === 'connected' ? 'Connected to Real-Time SAE Alert Stream' : 'Connecting to Alert Stream...'}
+        >
+          <span
+            style={{
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              backgroundColor: connectionStatus === 'connected' ? '#10b981' : '#f59e0b',
+              animation: 'pulse 2s infinite',
+            }}
+          />
+          <span>{connectionStatus === 'connected' ? 'Live SAE Feed' : 'Connecting...'}</span>
+        </div>
+
         {/* NOTIFICATIONS BELL */}
         <div className="notification-wrapper" ref={notifRef}>
           <button
@@ -239,6 +270,47 @@ export default function StaffHeader({
           </button>
         </div>
       </div>
+
+      {/* FLOATING REAL-TIME SAE ALERT TOAST */}
+      {latestAlert && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '80px',
+            right: '20px',
+            zIndex: 9999,
+            maxWidth: '380px',
+            background: '#fff1f2',
+            border: '2px solid #f43f5e',
+            borderRadius: '10px',
+            padding: '14px 16px',
+            boxShadow: '0 10px 25px -5px rgba(225, 29, 72, 0.25)',
+            animation: 'slideIn 0.3s ease',
+          }}
+          role="alert"
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <AlertTriangle size={18} className="text-rose-600" />
+              <strong style={{ fontSize: '13px', color: '#9f1239' }}>{latestAlert.title || 'Serious Adverse Event'}</strong>
+            </div>
+            <button
+              onClick={dismissLatest}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9f1239', padding: '2px' }}
+              aria-label="Dismiss alert"
+            >
+              <X size={15} />
+            </button>
+          </div>
+          <p style={{ margin: '8px 0 4px', fontSize: '12px', color: '#881337', lineHeight: 1.4 }}>
+            {latestAlert.message}
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', color: '#be123c', marginTop: '6px' }}>
+            <span><strong>Patient:</strong> {latestAlert.patient_name}</span>
+            <span>{latestAlert.receivedAt}</span>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

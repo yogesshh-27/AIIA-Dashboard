@@ -10,7 +10,7 @@ import os
 import sys
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -44,10 +44,10 @@ async def lifespan(app: FastAPI):
     """Application startup and shutdown lifecycle."""
     # Startup: initialize database indexes
     db_service.init_indexes()
-    print("✓ AYURCTMS FastAPI server started — database indexes initialized")
+    print("[OK] AYURCTMS FastAPI server started - database indexes initialized")
     yield
     # Shutdown
-    print("✓ AYURCTMS FastAPI server shutting down")
+    print("[OK] AYURCTMS FastAPI server shutting down")
 
 
 app = FastAPI(
@@ -95,6 +95,20 @@ app.include_router(documents_router, prefix="/api", tags=["Document Repository"]
 app.include_router(ctri_router, prefix="/api", tags=["CTRI Registry"])
 app.include_router(search_router, prefix="/api", tags=["Search & Notifications"])
 app.include_router(legacy_router, prefix="/api", tags=["Legacy Endpoints"])
+
+from services.websocket_manager import ws_manager
+
+@app.websocket("/ws/alerts")
+async def websocket_alerts_endpoint(websocket: WebSocket):
+    """Real-time WebSocket endpoint for instant SAE and clinical safety alerts."""
+    await ws_manager.connect(websocket)
+    try:
+        while True:
+            msg = await websocket.receive_text()
+            if msg == "ping":
+                await websocket.send_text('{"type":"pong"}')
+    except (WebSocketDisconnect, Exception):
+        ws_manager.disconnect(websocket)
 
 # Serve React frontend from dist/ directory
 dist_dir = os.path.join(ROOT_DIR, "dist")
