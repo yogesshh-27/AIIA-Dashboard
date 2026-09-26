@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { FALLBACK_DATA } from '../../services/fallbackData';
 import { Plus, Search, Filter, X, Shield, ExternalLink } from 'lucide-react';
 
+const INITIAL_TRIALS = FALLBACK_DATA['/api/ayur/trials']?.trials || [];
+
 export default function TrialInfoView({ onOpenCreateTrial }) {
-  const [trials, setTrials] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [trials, setTrials] = useState(INITIAL_TRIALS);
+  const [loading, setLoading] = useState(INITIAL_TRIALS.length === 0);
   const [error, setError] = useState(null);
   const [selectedTrial, setSelectedTrial] = useState(null);
   const [search, setSearch] = useState('');
@@ -12,11 +15,13 @@ export default function TrialInfoView({ onOpenCreateTrial }) {
   useEffect(() => {
     async function loadTrials() {
       try {
-        setLoading(true);
+        if (trials.length === 0) setLoading(true);
         const data = await api.getTrials();
-        setTrials(data.trials || []);
+        if (data.trials && data.trials.length > 0) {
+          setTrials(data.trials);
+        }
       } catch (err) {
-        setError(err.message || 'Failed to load trials');
+        if (trials.length === 0) setError(err.message || 'Failed to load trials');
       } finally {
         setLoading(false);
       }

@@ -1,10 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { FALLBACK_DATA } from '../../services/fallbackData';
 import { Database, Search, Filter, ExternalLink, RefreshCw, FileText, Download } from 'lucide-react';
 
+const INITIAL_TRIALS = (FALLBACK_DATA['/api/ayur/trials']?.trials || []).map(t => ({
+  ctri_number: t.trial_id,
+  public_title: t.trial_name,
+  health_condition: t.condition,
+  study_type: 'Interventional',
+  scientific_title: t.description || t.trial_name,
+  phase: t.phase || 'Phase II',
+  recruitment_status: t.recruitment_status || 'Open to Recruitment',
+  primary_sponsor: t.hospital_name || 'All India Institute of Ayurveda (AIIA)',
+  date_of_registration: t.start_date || '2024-01-15'
+}));
+
 export default function CtriExplorerView() {
-  const [trials, setTrials] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [trials, setTrials] = useState(INITIAL_TRIALS);
+  const [loading, setLoading] = useState(INITIAL_TRIALS.length === 0);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -12,10 +25,12 @@ export default function CtriExplorerView() {
 
   const fetchTrials = async () => {
     try {
-      setLoading(true);
+      if (trials.length === 0) setLoading(true);
       setError(null);
       const res = await api.getCTRIExtractorTrials();
-      setTrials(res.trials || []);
+      if (res && res.trials && res.trials.length > 0) {
+        setTrials(res.trials);
+      }
     } catch (err) {
       console.warn('API fetch failed, trying static json fallback...', err);
       try {

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { FALLBACK_DATA } from '../../services/fallbackData';
 import { CheckCircle2, Clock, AlertOctagon, X, MessageSquare, Check, Shield, FileCheck, KeyRound, CheckCheck, Lock } from 'lucide-react';
 
+const INITIAL_APPROVALS = FALLBACK_DATA['/api/ayur/approvals']?.approvals || [];
+
 export default function ApprovalsView({ currentUser }) {
-  const [approvals, setApprovals] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [approvals, setApprovals] = useState(INITIAL_APPROVALS);
+  const [loading, setLoading] = useState(INITIAL_APPROVALS.length === 0);
   const [error, setError] = useState(null);
   const [selectedApproval, setSelectedApproval] = useState(null);
   const [decision, setDecision] = useState('APPROVED');
@@ -21,11 +24,13 @@ export default function ApprovalsView({ currentUser }) {
 
   const fetchApprovals = async () => {
     try {
-      setLoading(true);
+      if (approvals.length === 0) setLoading(true);
       const data = await api.getApprovals();
-      setApprovals(data.approvals || []);
+      if (data.approvals && data.approvals.length > 0) {
+        setApprovals(data.approvals);
+      }
     } catch (err) {
-      setError(err.message || 'Failed to load approvals');
+      if (approvals.length === 0) setError(err.message || 'Failed to load approvals');
     } finally {
       setLoading(false);
     }

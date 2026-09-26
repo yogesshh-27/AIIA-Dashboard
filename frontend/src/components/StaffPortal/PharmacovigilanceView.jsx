@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { FALLBACK_DATA } from '../../services/fallbackData';
 import { AlertTriangle, Plus, ShieldAlert, CheckCircle, X, Search, FileDown } from 'lucide-react';
 
+const INITIAL_SUMMARY = FALLBACK_DATA['/api/ayur/pv/summary']?.summary || {};
+const INITIAL_EVENTS = FALLBACK_DATA['/api/ayur/pv/events']?.events || [];
+const INITIAL_SIGNALS = FALLBACK_DATA['/api/ayur/pv/signals']?.signals || [];
+
 export default function PharmacovigilanceView({ currentUser }) {
-  const [summary, setSummary] = useState({});
-  const [events, setEvents] = useState([]);
-  const [signals, setSignals] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [summary, setSummary] = useState(INITIAL_SUMMARY);
+  const [events, setEvents] = useState(INITIAL_EVENTS);
+  const [signals, setSignals] = useState(INITIAL_SIGNALS);
+  const [loading, setLoading] = useState(INITIAL_EVENTS.length === 0);
   const [error, setError] = useState(null);
   const [showReportModal, setShowReportModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -27,17 +32,17 @@ export default function PharmacovigilanceView({ currentUser }) {
 
   const loadPvData = async () => {
     try {
-      setLoading(true);
+      if (events.length === 0) setLoading(true);
       const [sumRes, evRes, sigRes] = await Promise.all([
         api.getPvSummary(),
         api.getAdverseEvents(),
         api.getSafetySignals(),
       ]);
-      setSummary(sumRes.summary || {});
-      setEvents(evRes.events || []);
-      setSignals(sigRes.signals || []);
+      if (sumRes.summary) setSummary(sumRes.summary);
+      if (evRes.events && evRes.events.length > 0) setEvents(evRes.events);
+      if (sigRes.signals && sigRes.signals.length > 0) setSignals(sigRes.signals);
     } catch (err) {
-      setError(err.message || 'Failed to load pharmacovigilance data');
+      if (events.length === 0) setError(err.message || 'Failed to load pharmacovigilance data');
     } finally {
       setLoading(false);
     }

@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { FALLBACK_DATA } from '../../services/fallbackData';
 import { Stethoscope, Mail, Phone, MapPin, Award, X, User } from 'lucide-react';
 
+const INITIAL_DOCTORS = FALLBACK_DATA['/api/ayur/doctors']?.doctors || [];
+
 export default function DoctorsView() {
-  const [doctors, setDoctors] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [doctors, setDoctors] = useState(INITIAL_DOCTORS);
+  const [loading, setLoading] = useState(INITIAL_DOCTORS.length === 0);
   const [error, setError] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
 
   useEffect(() => {
     async function loadDoctors() {
       try {
-        setLoading(true);
+        if (doctors.length === 0) setLoading(true);
         const data = await api.getDoctors();
-        setDoctors(data.doctors || []);
+        if (data.doctors && data.doctors.length > 0) {
+          setDoctors(data.doctors);
+        }
       } catch (err) {
-        setError(err.message || 'Failed to load doctors');
+        if (doctors.length === 0) setError(err.message || 'Failed to load doctors');
       } finally {
         setLoading(false);
       }

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="Ministry of Ayush Emblem">
+  <defs>
+    <linearGradient id="embSaffron" x1="0%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#C2410C"/>
+      <stop offset="60%" stop-color="#EA580C"/>
+      <stop offset="100%" stop-color="#FB923C"/>
+    </linearGradient>
+    <linearGradient id="embGold" x1="0%" y1="100%" x2="80%" y2="0%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#FDE047"/>
+    </linearGradient>
+    <linearGradient id="embGreen" x1="0%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#047857"/>
+      <stop offset="50%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#34D399"/>
+    </linearGradient>
+    <linearGradient id="embCyan" x1="0%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#0369A1"/>
+      <stop offset="50%" stop-color="#0EA5E9"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="embPurple" x1="0%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#6D28D9"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#A78BFA"/>
+    </linearGradient>
+    <filter id="embGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(2, 2)" filter="url(#embGlow)">
+    <!-- Central Rising Sun / Circle of Vitality -->
+    <circle cx="30" cy="30" r="10" fill="url(#embGold)"/>
+    <circle cx="30" cy="30" r="6" fill="#FFF7ED"/>
+
+    <!-- Left Petal - Green (Ayurveda - Herbs & Nature) -->
+    <path d="M 30,30 C 18,28 6,18 8,6 C 18,8 28,18 30,30 Z" fill="url(#embGreen)"/>
+    <!-- Top-Left Petal - Saffron (Yoga & Naturopathy - Energy & Spirit) -->
+    <path d="M 30,30 C 26,16 20,4 30,0 C 40,4 34,16 30,30 Z" fill="url(#embSaffron)"/>
+    <!-- Right Petal - Cyan (Unani - Equilibrium & Air/Water) -->
+    <path d="M 30,30 C 42,28 54,18 52,6 C 42,8 32,18 30,30 Z" fill="url(#embCyan)"/>
+    <!-- Bottom Right Petal - Purple (Siddha - Ancient Alchemy) -->
+    <path d="M 30,30 C 46,38 52,50 44,56 C 36,54 32,42 30,30 Z" fill="url(#embPurple)"/>
+    <!-- Bottom Left Petal - Deep Green (Homoeopathy - Vital Force) -->
+    <path d="M 30,30 C 14,38 8,50 16,56 C 24,54 28,42 30,30 Z" fill="url(#embGreen)"/>
+
+    <!-- Stem / Supporting Base Arc -->
+    <path d="M 12,48 C 22,58 38,58 48,48" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>

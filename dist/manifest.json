@@ -1,0 +1,18 @@
+{
+  "short_name": "AYURCTMS",
+  "name": "AYURCTMS — All India Institute of Ayurveda Clinical Trial Management System",
+  "description": "Enterprise-grade AYUSH Clinical Trial Management System with offline-first field data collection",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#005944",
+  "theme_color": "#005944",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "categories": ["medical", "health", "government"]
+}

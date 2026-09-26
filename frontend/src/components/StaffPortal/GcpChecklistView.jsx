@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { FALLBACK_DATA } from '../../services/fallbackData';
 import { ShieldCheck, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
 
+const INITIAL_GCP = FALLBACK_DATA['/api/ayur/gcp'] || null;
+
 export default function GcpChecklistView({ currentUser }) {
-  const [checklist, setChecklist] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [checklist, setChecklist] = useState(INITIAL_GCP);
+  const [loading, setLoading] = useState(INITIAL_GCP === null);
   const [error, setError] = useState(null);
   const [togglingId, setTogglingId] = useState(null);
 
   const fetchChecklist = async () => {
     try {
-      setLoading(true);
+      if (!checklist) setLoading(true);
       const data = await api.getGcpChecklist();
-      setChecklist(data);
+      if (data && data.checklist) {
+        setChecklist(data);
+      }
     } catch (err) {
-      setError(err.message || 'Failed to load GCP checklist');
+      if (!checklist) setError(err.message || 'Failed to load GCP checklist');
     } finally {
       setLoading(false);
     }

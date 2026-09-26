@@ -20,12 +20,12 @@ export default function ReportsView() {
 
   const fetchReport = async (type) => {
     try {
-      setLoading(true);
+      if (!reportData) setLoading(true);
       setError(null);
       const res = await api.getReportData(type);
-      setReportData(res);
+      if (res) setReportData(res);
     } catch (err) {
-      setError(err.message || 'Failed to generate report');
+      if (!reportData) setError(err.message || 'Failed to generate report');
     } finally {
       setLoading(false);
     }

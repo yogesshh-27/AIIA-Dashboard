@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { FALLBACK_DATA } from '../../services/fallbackData';
 import { MapPin, Building, Users, Calendar, Activity, X, BarChart3, AlertCircle } from 'lucide-react';
 
+const INITIAL_SITES = FALLBACK_DATA['/api/ayur/sites']?.sites || [];
+
 export default function SitesExplorerView({ onNavigateToTrial }) {
-  const [sites, setSites] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [sites, setSites] = useState(INITIAL_SITES);
+  const [loading, setLoading] = useState(INITIAL_SITES.length === 0);
   const [error, setError] = useState(null);
   const [selectedSite, setSelectedSite] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -12,11 +15,13 @@ export default function SitesExplorerView({ onNavigateToTrial }) {
   useEffect(() => {
     async function loadSites() {
       try {
-        setLoading(true);
+        if (sites.length === 0) setLoading(true);
         const data = await api.getSites();
-        setSites(data.sites || []);
+        if (data.sites && data.sites.length > 0) {
+          setSites(data.sites);
+        }
       } catch (err) {
-        setError(err.message || 'Failed to load sites');
+        if (sites.length === 0) setError(err.message || 'Failed to load sites');
       } finally {
         setLoading(false);
       }

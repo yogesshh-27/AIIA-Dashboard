@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { FALLBACK_DATA } from '../../services/fallbackData';
 import { Users, Lock, X, Check, Clock, AlertTriangle, Calendar, FileText } from 'lucide-react';
 
+const INITIAL_PATIENTS = FALLBACK_DATA['/api/ayur/patients']?.patients || [];
+
 export default function PatientsView() {
-  const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [patients, setPatients] = useState(INITIAL_PATIENTS);
+  const [loading, setLoading] = useState(INITIAL_PATIENTS.length === 0);
   const [error, setError] = useState(null);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [patientLoading, setPatientLoading] = useState(false);
@@ -12,11 +15,13 @@ export default function PatientsView() {
   useEffect(() => {
     async function loadPatients() {
       try {
-        setLoading(true);
+        if (patients.length === 0) setLoading(true);
         const data = await api.getPatients();
-        setPatients(data.patients || []);
+        if (data.patients && data.patients.length > 0) {
+          setPatients(data.patients);
+        }
       } catch (err) {
-        setError(err.message || 'Failed to load patients');
+        if (patients.length === 0) setError(err.message || 'Failed to load patients');
       } finally {
         setLoading(false);
       }
