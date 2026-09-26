@@ -38,6 +38,14 @@ def get_resolved_app_db_path():
 def has_ctri_raw_db() -> bool:
     base_dir = os.path.dirname(os.path.abspath(__file__))
     ctri_file = os.path.join(base_dir, "JM_CTRIdb.sqlite")
+    if not (os.path.exists(ctri_file) and os.path.getsize(ctri_file) > 10000000):
+        gz_file = os.path.join(base_dir, "JM_CTRIdb.sqlite.gz")
+        if os.path.exists(gz_file):
+            try:
+                from unpack_db import unpack_database
+                unpack_database()
+            except Exception as e:
+                print(f"[WARN] Automatic unpacking failed: {e}")
     return os.path.exists(ctri_file) and os.path.getsize(ctri_file) > 10000000
 
 def get_connection():

@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.sqlite
+!JM_CTRIdb.sqlite.gz
 .env
 .env.local
 .DS_Store

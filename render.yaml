@@ -7,7 +7,7 @@ services:
     name: aiia-dashboard
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && python unpack_db.py
     startCommand: uvicorn app_fastapi:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
