@@ -94,3 +94,49 @@ async def restore_demo(request: Request):
     if perm_err:
         return JSONResponse(perm_err, status_code=403)
     return db_service.restore_audit_chain_demo()
+
+
+# ============================================================
+# 21 CFR PART 11 ELECTRONIC SIGNATURES
+# ============================================================
+from services.esignature_service import sign_record, verify_signature, get_record_signature
+
+
+class ESignatureRequest(BaseModel):
+    record_type: str = "approval"
+    record_id: str
+    signer_name: str
+    signer_role: str = "Ethics Reviewer"
+    intent: str = "I hereby certify that I have reviewed this clinical trial documentation and approve it in accordance with GCP and 21 CFR Part 11."
+    reauth_password: str
+
+
+@router.post("/audit/esign")
+async def execute_esignature(body: ESignatureRequest):
+    """Executes a 21 CFR Part 11 compliant re-authenticated electronic signature."""
+    res = sign_record(
+        record_type=body.record_type,
+        record_id=body.record_id,
+        signer_name=body.signer_name,
+        signer_role=body.signer_role,
+        intent=body.intent,
+        reauth_password=body.reauth_password
+    )
+    if not res.get("success"):
+        return JSONResponse(res, status_code=401)
+    return res
+
+
+@router.get("/audit/esign/verify/{signature_id}")
+async def verify_record_signature(signature_id: str):
+    """Cryptographically verifies a 21 CFR Part 11 signature hash."""
+    return verify_signature(signature_id)
+
+
+@router.get("/audit/esign/record/{record_type}/{record_id}")
+async def get_record_signature_details(record_type: str, record_id: str):
+    """Retrieves e-signature details for an audited clinical record."""
+    sig = get_record_signature(record_type, record_id)
+    if not sig:
+        return {"has_signature": False, "signature": None}
+    return {"has_signature": True, "signature": sig}

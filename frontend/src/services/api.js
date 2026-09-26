@@ -98,6 +98,15 @@ export const api = {
   // Interoperability (FHIR & CDISC)
   getInteropDemo: () => fetchJSON('/api/ayur/interop/demo'),
 
+  // 21 CFR Part 11 Electronic Signatures
+  executeEsignature: (data) =>
+    fetchJSON('/api/audit/esign', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  verifyEsignature: (sigId) => fetchJSON(`/api/audit/esign/verify/${sigId}`),
+  getRecordSignature: (type, id) => fetchJSON(`/api/audit/esign/record/${type}/${id}`),
+
   // CTRI Extractor Registry Dataset
   getCTRIExtractorTrials: () => fetchJSON('/api/ctri-extractor/trials?limit=100'),
 
