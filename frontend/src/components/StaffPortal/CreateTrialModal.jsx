@@ -69,17 +69,57 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
   };
 
   return (
-    <div className="modal-overlay" style={{ display: 'flex' }}>
-      <div className="modal-card max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4 border-b pb-3">
+    <div
+      className="modal-overlay"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(15, 23, 42, 0.75)',
+        backdropFilter: 'blur(6px)',
+        zIndex: 10000,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="modal-card"
+        style={{
+          background: '#ffffff',
+          borderRadius: '16px',
+          maxWidth: '720px',
+          width: '100%',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          padding: '28px',
+          boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.08)',
+          border: '1px solid #cbd5e1',
+          color: '#0f172a',
+          position: 'relative',
+        }}
+      >
+        <div className="flex justify-between items-center mb-5 border-b pb-3.5">
           <div>
             <span className="badge badge-info text-xs">Protocol Planning & Registration</span>
             <h3 className="text-lg font-bold text-emerald-950 mt-1">
               + Register New Ayurvedic Clinical Trial
             </h3>
           </div>
-          <button className="btn btn-ghost btn-xs text-slate-500" onClick={onClose}>
-            <X size={18} />
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm text-slate-400 hover:text-slate-700"
+            onClick={onClose}
+            aria-label="Close dialog"
+            style={{ padding: '6px', borderRadius: '8px' }}
+          >
+            <X size={20} />
           </button>
         </div>
 
@@ -106,21 +146,21 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-3 text-xs">
-          <div className="form-row-grid">
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
             <div className="form-group">
-              <label className="font-semibold">Trial Name *</label>
+              <label className="font-semibold text-slate-700">Trial Name *</label>
               <input
                 type="text"
                 className="form-input"
-                placeholder="e.g. Randomized Clinical Evaluation of Rasayana in Arthritis"
+                placeholder="e.g. Clinical Evaluation of Rasayana in Arthritis"
                 value={formData.trial_name}
                 onChange={(e) => handleFieldChange('trial_name', e.target.value)}
                 required
               />
             </div>
             <div className="form-group">
-              <label className="font-semibold">Trial ID *</label>
+              <label className="font-semibold text-slate-700">Trial ID *</label>
               <input
                 type="text"
                 className="form-input"
@@ -131,9 +171,9 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
             </div>
           </div>
 
-          <div className="form-row-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
             <div className="form-group">
-              <label className="font-semibold">Condition / Illness *</label>
+              <label className="font-semibold text-slate-700">Condition / Illness *</label>
               <select
                 className="form-select"
                 value={formData.condition}
@@ -150,7 +190,7 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
               </select>
             </div>
             <div className="form-group">
-              <label className="font-semibold">Ayurvedic Intervention *</label>
+              <label className="font-semibold text-slate-700">Ayurvedic Intervention *</label>
               <input
                 type="text"
                 className="form-input"
@@ -162,9 +202,9 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
             </div>
           </div>
 
-          <div className="form-row-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
             <div className="form-group">
-              <label className="font-semibold">City / Location *</label>
+              <label className="font-semibold text-slate-700">City / Location *</label>
               <select
                 className="form-select"
                 value={formData.city}
@@ -183,7 +223,7 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
               </select>
             </div>
             <div className="form-group">
-              <label className="font-semibold">Hospital / Clinical Site *</label>
+              <label className="font-semibold text-slate-700">Hospital / Clinical Site *</label>
               <input
                 type="text"
                 className="form-input"
@@ -195,9 +235,9 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
             </div>
           </div>
 
-          <div className="form-row-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
             <div className="form-group">
-              <label className="font-semibold">Principal Investigator *</label>
+              <label className="font-semibold text-slate-700">Principal Investigator *</label>
               <input
                 type="text"
                 className="form-input"
@@ -208,7 +248,7 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
               />
             </div>
             <div className="form-group">
-              <label className="font-semibold">Target Participants *</label>
+              <label className="font-semibold text-slate-700">Target Participants *</label>
               <input
                 type="number"
                 className="form-input"
@@ -220,7 +260,7 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
               />
             </div>
             <div className="form-group">
-              <label className="font-semibold">Duration (Weeks) *</label>
+              <label className="font-semibold text-slate-700">Duration (Weeks) *</label>
               <input
                 type="number"
                 className="form-input"
@@ -234,19 +274,19 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
           </div>
 
           <div className="form-group">
-            <label className="font-semibold">Trial Description & Protocol Synopsis</label>
+            <label className="font-semibold text-slate-700">Trial Description & Protocol Synopsis</label>
             <textarea
               className="form-textarea"
               rows={3}
-              placeholder="Describe therapeutic objectives and methodology..."
+              placeholder="Describe therapeutic objectives, dosha targeting, and clinical methodology..."
               value={formData.description}
               onChange={(e) => handleFieldChange('description', e.target.value)}
             />
           </div>
 
-          <div className="form-row-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
             <div className="form-group">
-              <label className="font-semibold">Ethics Approval Status</label>
+              <label className="font-semibold text-slate-700">Ethics Approval Status</label>
               <select
                 className="form-select"
                 value={formData.ethics_approval_status}
@@ -257,7 +297,7 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
               </select>
             </div>
             <div className="form-group">
-              <label className="font-semibold">CTRI Registration Status</label>
+              <label className="font-semibold text-slate-700">CTRI Registration Status</label>
               <select
                 className="form-select"
                 value={formData.ctri_registration_status}
@@ -268,7 +308,7 @@ export default function CreateTrialModal({ isOpen, onClose, onTrialCreated }) {
               </select>
             </div>
             <div className="form-group">
-              <label className="font-semibold">Regulatory Status (NDCT 2019)</label>
+              <label className="font-semibold text-slate-700">Regulatory Status (NDCT 2019)</label>
               <select
                 className="form-select"
                 value={formData.regulatory_status}
