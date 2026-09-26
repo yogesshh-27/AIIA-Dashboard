@@ -2180,29 +2180,29 @@ async function renderCTRIExtractorView(container) {
       </div>
 
       <!-- METRIC CARDS -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-        <div class="patient-card" style="padding: 16px; border-left: 4px solid var(--ayur-primary);">
-          <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Extracted Trials</div>
-          <div style="font-size: 28px; font-weight: 800; color: var(--ayur-primary); margin-top: 4px;" id="ctri-metric-count">75</div>
-          <div style="font-size: 12px; color: #16a34a; margin-top: 2px;">✓ 100% Unique / Deduplicated</div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; width: 100%;">
+        <div class="patient-card" style="padding: 12px 14px; border-left: 4px solid var(--ayur-primary); min-width: 0;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Extracted Trials</div>
+          <div style="font-size: 22px; font-weight: 800; color: var(--ayur-primary); margin-top: 2px; line-height: 1.2;" id="ctri-metric-count">75</div>
+          <div style="font-size: 11px; color: #16a34a; margin-top: 2px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">✓ 100% Unique</div>
         </div>
 
-        <div class="patient-card" style="padding: 16px; border-left: 4px solid #16a34a;">
-          <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Field Completeness</div>
-          <div style="font-size: 28px; font-weight: 800; color: #16a34a; margin-top: 4px;">100.0%</div>
-          <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Title, Condition, Investigator, Sites</div>
+        <div class="patient-card" style="padding: 12px 14px; border-left: 4px solid #16a34a; min-width: 0;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Field Completeness</div>
+          <div style="font-size: 22px; font-weight: 800; color: #16a34a; margin-top: 2px; line-height: 1.2;">100.0%</div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Title, Condition, Sites</div>
         </div>
 
-        <div class="patient-card" style="padding: 16px; border-left: 4px solid #0284c7;">
-          <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Ayurveda / Integrative</div>
-          <div style="font-size: 28px; font-weight: 800; color: #0284c7; margin-top: 4px;">67 / 8</div>
-          <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Polyherbal & Holistic Regimens</div>
+        <div class="patient-card" style="padding: 12px 14px; border-left: 4px solid #0284c7; min-width: 0;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ayurveda / Integrative</div>
+          <div style="font-size: 22px; font-weight: 800; color: #0284c7; margin-top: 2px; line-height: 1.2;">67 / 8</div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Polyherbal Regimens</div>
         </div>
 
-        <div class="patient-card" style="padding: 16px; border-left: 4px solid #eab308;">
-          <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Rule 2 Compliance</div>
-          <div style="font-size: 28px; font-weight: 800; color: #ca8a04; margin-top: 4px;">100%</div>
-          <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Zero Bot/Bypass, Verified Public URLs</div>
+        <div class="patient-card" style="padding: 12px 14px; border-left: 4px solid #eab308; min-width: 0;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Rule 2 Compliance</div>
+          <div style="font-size: 22px; font-weight: 800; color: #ca8a04; margin-top: 2px; line-height: 1.2;">100%</div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Verified Public URLs</div>
         </div>
       </div>
 
