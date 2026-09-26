@@ -102,30 +102,30 @@ export default function CtriExplorerView() {
         </div>
       </div>
 
-      {/* 4 Metric Cards - Strictly Horizontal Side-by-Side (4 Columns) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px', width: '100%', marginBottom: '20px' }}>
-        <div className="sketch-kpi-card" style={{ padding: '12px 14px', borderLeft: '4px solid #005944', minWidth: 0 }}>
+      {/* 4 Metric Cards - Strictly Horizontal Side-by-Side Flex */}
+      <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap: '12px', width: '100%', marginBottom: '22px' }}>
+        <div style={{ flex: '1 1 0', minWidth: 0, background: '#ffffff', borderRadius: '8px', padding: '12px 14px', borderLeft: '4px solid #005944', borderTop: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
           <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.03em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Extracted Trials</div>
-          <div style={{ fontSize: '22px', fontWeight: 800, color: '#005944', marginTop: '2px', lineHeight: 1.2 }}>{trials.length || 75}</div>
-          <div style={{ fontSize: '11px', color: '#059669', marginTop: '2px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>✓ 100% Unique</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#005944', marginTop: '2px', lineHeight: 1.2 }}>{trials.length || 75}</div>
+          <div style={{ fontSize: '11px', color: '#059669', marginTop: '2px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>✓ 100% Unique / Deduplicated</div>
         </div>
 
-        <div className="sketch-kpi-card" style={{ padding: '12px 14px', borderLeft: '4px solid #059669', minWidth: 0 }}>
+        <div style={{ flex: '1 1 0', minWidth: 0, background: '#ffffff', borderRadius: '8px', padding: '12px 14px', borderLeft: '4px solid #059669', borderTop: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
           <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.03em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Field Completeness</div>
-          <div style={{ fontSize: '22px', fontWeight: 800, color: '#059669', marginTop: '2px', lineHeight: 1.2 }}>100.0%</div>
-          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Title, Condition, Sites</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#059669', marginTop: '2px', lineHeight: 1.2 }}>100.0%</div>
+          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Title, Condition, Investigator, Sites</div>
         </div>
 
-        <div className="sketch-kpi-card" style={{ padding: '12px 14px', borderLeft: '4px solid #0284c7', minWidth: 0 }}>
+        <div style={{ flex: '1 1 0', minWidth: 0, background: '#ffffff', borderRadius: '8px', padding: '12px 14px', borderLeft: '4px solid #0284c7', borderTop: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
           <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.03em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Ayurveda / Integrative</div>
-          <div style={{ fontSize: '22px', fontWeight: 800, color: '#0284c7', marginTop: '2px', lineHeight: 1.2 }}>67 / 8</div>
-          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Polyherbal Regimens</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#0284c7', marginTop: '2px', lineHeight: 1.2 }}>67 / 8</div>
+          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Polyherbal & Holistic Regimens</div>
         </div>
 
-        <div className="sketch-kpi-card" style={{ padding: '12px 14px', borderLeft: '4px solid #d97706', minWidth: 0 }}>
+        <div style={{ flex: '1 1 0', minWidth: 0, background: '#ffffff', borderRadius: '8px', padding: '12px 14px', borderLeft: '4px solid #d97706', borderTop: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
           <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.03em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Rule 2 Compliance</div>
-          <div style={{ fontSize: '22px', fontWeight: 800, color: '#d97706', marginTop: '2px', lineHeight: 1.2 }}>100%</div>
-          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Verified Public URLs</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#d97706', marginTop: '2px', lineHeight: 1.2 }}>100%</div>
+          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Zero Bot/Bypass, Verified URLs</div>
         </div>
       </div>
 
