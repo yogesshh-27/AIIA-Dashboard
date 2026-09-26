@@ -17,10 +17,21 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 @router.get("/ctri-extractor/trials")
 @router.get("/ctri/dataset")
 async def get_ctri_extractor_trials(search: str = "", limit: int = 100):
-    json_file = os.path.join(ROOT_DIR, "ctri-extractor", "output", "ctri_trials.json")
-    if os.path.exists(json_file):
-        with open(json_file, "r", encoding="utf-8") as f:
-            trials = json.load(f)
+    json_candidates = [
+        os.path.join(ROOT_DIR, "output", "ctri_trials.json"),
+        os.path.join(ROOT_DIR, "ctri-extractor", "output", "ctri_trials.json"),
+        os.path.join(ROOT_DIR, "dist", "output", "ctri_trials.json"),
+    ]
+    trials = []
+    for j_path in json_candidates:
+        if os.path.exists(j_path):
+            try:
+                with open(j_path, "r", encoding="utf-8") as f:
+                    trials = json.load(f)
+                if trials:
+                    break
+            except Exception:
+                pass
         # Fix CTRI source URLs
         for t in trials:
             c_num = t.get("ctri_number", "")

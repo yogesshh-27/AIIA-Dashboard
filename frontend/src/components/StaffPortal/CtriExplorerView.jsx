@@ -3,17 +3,7 @@ import { api } from '../../services/api';
 import { FALLBACK_DATA } from '../../services/fallbackData';
 import { Database, Search, Filter, ExternalLink, RefreshCw, FileText, Download } from 'lucide-react';
 
-const INITIAL_TRIALS = (FALLBACK_DATA['/api/ayur/trials']?.trials || []).map(t => ({
-  ctri_number: t.trial_id,
-  public_title: t.trial_name,
-  health_condition: t.condition,
-  study_type: 'Interventional',
-  scientific_title: t.description || t.trial_name,
-  phase: t.phase || 'Phase II',
-  recruitment_status: t.recruitment_status || 'Open to Recruitment',
-  primary_sponsor: t.hospital_name || 'All India Institute of Ayurveda (AIIA)',
-  date_of_registration: t.start_date || '2024-01-15'
-}));
+const INITIAL_TRIALS = FALLBACK_DATA['/api/ctri-extractor/trials?limit=100']?.trials || [];
 
 export default function CtriExplorerView() {
   const [trials, setTrials] = useState(INITIAL_TRIALS);
@@ -30,19 +20,23 @@ export default function CtriExplorerView() {
       const res = await api.getCTRIExtractorTrials();
       if (res && res.trials && res.trials.length > 0) {
         setTrials(res.trials);
+        return;
       }
     } catch (err) {
-      console.warn('API fetch failed, trying static json fallback...', err);
+      console.warn('API fetch failed, checking static mirror...', err);
       try {
         const staticRes = await fetch('/output/ctri_trials.json');
         if (staticRes.ok) {
           const sData = await staticRes.json();
-          setTrials(Array.isArray(sData) ? sData : []);
-        } else {
-          throw new Error('Static mirror unavailable');
+          if (Array.isArray(sData) && sData.length > 0) {
+            setTrials(sData);
+            return;
+          }
         }
       } catch (fbErr) {
-        setError('Failed to load CTRI dataset');
+        if (trials.length === 0) {
+          setError('Failed to load CTRI dataset');
+        }
       }
     } finally {
       setLoading(false);
@@ -81,17 +75,21 @@ export default function CtriExplorerView() {
     const ctriNum = t.ctri_number || '';
     let link = t.source_url || '';
     if (link && link.includes('showallp.php')) {
-      if (link.includes('userName=')) {
-        return link.replace(/userName=[^&]*/, 'userName=' + encodeURIComponent(ctriNum));
-      } else {
-        return link + (link.includes('?') ? '&' : '?') + 'userName=' + encodeURIComponent(ctriNum);
+      if (ctriNum && ctriNum.startsWith('CTRI/')) {
+        if (link.includes('userName=')) {
+          return link.replace(/userName=[^&]*/, 'userName=' + encodeURIComponent(ctriNum));
+        } else {
+          return link + (link.includes('?') ? '&' : '?') + 'userName=' + encodeURIComponent(ctriNum);
+        }
       }
-    } else if (t.trial_id && ctriNum) {
-      return `https://ctri.nic.in/Clinicaltrials/showallp.php?mid1=${t.trial_id}&EncHid=&userName=${encodeURIComponent(ctriNum)}`;
-    } else if (ctriNum) {
+      return link;
+    } else if (ctriNum && ctriNum.startsWith('CTRI/')) {
+      if (t.trial_id && !isNaN(t.trial_id)) {
+        return `https://ctri.nic.in/Clinicaltrials/showallp.php?mid1=${t.trial_id}&EncHid=&userName=${encodeURIComponent(ctriNum)}`;
+      }
       return `https://ctri.nic.in/Clinicaltrials/showallp.php?userName=${encodeURIComponent(ctriNum)}`;
     }
-    return 'https://ctri.nic.in/';
+    return 'https://ctri.nic.in/Clinicaltrials/advancesearchmain.php';
   };
 
   return (
