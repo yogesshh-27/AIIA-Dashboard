@@ -1,26 +1,52 @@
 // Centralized API client for AYURCTMS backend
-// In development, Vite proxy forwards /api to localhost:8000 so BASE_URL stays empty.
-// In production (Cloudflare Pages), set VITE_API_URL to the Render backend URL.
-const BASE_URL = import.meta.env.VITE_API_URL || '';
+const RAW_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+let activeBaseUrl = localStorage.getItem('ayurctms_active_api_url') || RAW_URL;
+
+// Auto-fallback candidates across standard Render domains to prevent 404s/timeouts
+const CANDIDATES = [
+  activeBaseUrl,
+  RAW_URL,
+  'https://aiia-dashboard.onrender.com',
+  'https://aiia-dashboard-api.onrender.com',
+  ''
+].filter((val, idx, arr) => val !== undefined && arr.indexOf(val) === idx);
 
 async function fetchJSON(url, options = {}) {
-  try {
-    const res = await fetch(`${BASE_URL}${url}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      ...options,
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ message: res.statusText }));
-      throw new Error(err.message || err.error || `HTTP ${res.status}`);
+  let lastErr = null;
+  for (const base of CANDIDATES) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 12000);
+      const res = await fetch(`${base}${url}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.headers || {}),
+        },
+        signal: controller.signal,
+        ...options,
+      });
+      clearTimeout(timer);
+
+      if (res.status === 404 && base) {
+        // Subdomain mismatch or not found, proceed to next candidate
+        continue;
+      }
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: res.statusText }));
+        throw new Error(err.message || err.error || `HTTP ${res.status}`);
+      }
+
+      if (base !== activeBaseUrl) {
+        activeBaseUrl = base;
+        try { localStorage.setItem('ayurctms_active_api_url', base); } catch {}
+      }
+      return await res.json();
+    } catch (err) {
+      lastErr = err;
     }
-    return await res.json();
-  } catch (error) {
-    console.error(`API call failed for ${url}:`, error);
-    throw error;
   }
+  throw lastErr || new Error('Backend server is waking up or temporarily unreachable.');
 }
 
 export const api = {
