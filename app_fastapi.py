@@ -1,0 +1,145 @@
+"""
+AYURCTMS FastAPI Application
+All India Institute of Ayurveda — Clinical Trial Management System
+
+Replaces the legacy http.server-based server.py with a modern FastAPI application.
+Provides auto-generated Swagger UI at /docs and ReDoc at /redoc.
+"""
+
+import os
+import sys
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# Ensure root directory is on Python path for db_service import
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+import db_service
+
+# Import route modules
+from api.routes.auth import router as auth_router
+from api.routes.dashboard import router as dashboard_router
+from api.routes.trials import router as trials_router
+from api.routes.patients import router as patients_router
+from api.routes.doctors import router as doctors_router
+from api.routes.pharmacovigilance import router as pv_router
+from api.routes.compliance import router as compliance_router
+from api.routes.interop import router as interop_router
+from api.routes.reports import router as reports_router
+from api.routes.audit import router as audit_router
+from api.routes.documents import router as documents_router
+from api.routes.ctri import router as ctri_router
+from api.routes.search import router as search_router
+from api.routes.legacy import router as legacy_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application startup and shutdown lifecycle."""
+    # Startup: initialize database indexes
+    db_service.init_indexes()
+    print("✓ AYURCTMS FastAPI server started — database indexes initialized")
+    yield
+    # Shutdown
+    print("✓ AYURCTMS FastAPI server shutting down")
+
+
+app = FastAPI(
+    title="AYURCTMS — AIIA Clinical Trial Management System",
+    description=(
+        "Production-grade REST API for the All India Institute of Ayurveda "
+        "Clinical Trial Management System. Provides patient trial matching, "
+        "multi-site operations, pharmacovigilance, GCP compliance, FHIR/CDISC "
+        "interoperability, and comprehensive audit trails."
+    ),
+    version="2.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    lifespan=lifespan,
+    contact={
+        "name": "AIIA — Ministry of Ayush, Government of India",
+        "url": "https://aiia.gov.in",
+    },
+    license_info={
+        "name": "Government of India — Ministry of Ayush",
+    },
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Register API route modules
+app.include_router(auth_router, prefix="/api", tags=["Authentication & RBAC"])
+app.include_router(dashboard_router, prefix="/api", tags=["Dashboard & Analytics"])
+app.include_router(trials_router, prefix="/api", tags=["Trial Management"])
+app.include_router(patients_router, prefix="/api", tags=["Patient Management"])
+app.include_router(doctors_router, prefix="/api", tags=["Doctor Directory"])
+app.include_router(pv_router, prefix="/api", tags=["Pharmacovigilance & Safety"])
+app.include_router(compliance_router, prefix="/api", tags=["Compliance & GCP"])
+app.include_router(interop_router, prefix="/api", tags=["Interoperability (FHIR/CDISC)"])
+app.include_router(reports_router, prefix="/api", tags=["Reports & Export"])
+app.include_router(audit_router, prefix="/api", tags=["Audit Trail"])
+app.include_router(documents_router, prefix="/api", tags=["Document Repository"])
+app.include_router(ctri_router, prefix="/api", tags=["CTRI Registry"])
+app.include_router(search_router, prefix="/api", tags=["Search & Notifications"])
+app.include_router(legacy_router, prefix="/api", tags=["Legacy Endpoints"])
+
+# Serve React frontend from dist/ directory
+dist_dir = os.path.join(ROOT_DIR, "dist")
+if os.path.isdir(dist_dir):
+    # Mount assets directory for static files (JS, CSS, images)
+    assets_dir = os.path.join(dist_dir, "assets")
+    if os.path.isdir(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+
+@app.get("/", include_in_schema=False)
+async def serve_index():
+    """Serve the React SPA index page."""
+    dist_index = os.path.join(dist_dir, "index.html")
+    if os.path.isfile(dist_index):
+        return FileResponse(dist_index)
+    legacy_index = os.path.join(ROOT_DIR, "index.html")
+    if os.path.isfile(legacy_index):
+        return FileResponse(legacy_index)
+    from fastapi.responses import JSONResponse
+    return JSONResponse({"error": "Frontend not built. Run: cd frontend && npm run build"}, status_code=503)
+
+
+# Custom 404 handler: serve SPA for non-API routes, JSON error for API routes
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.responses import JSONResponse
+
+@app.exception_handler(StarletteHTTPException)
+async def spa_exception_handler(request, exc):
+    """For 404s on non-API paths, serve the SPA index.html (client-side routing)."""
+    if exc.status_code == 404:
+        path = request.url.path
+        # API routes should return proper JSON 404
+        if path.startswith("/api/"):
+            return JSONResponse({"error": "Endpoint not found", "code": 404}, status_code=404)
+        # Non-API 404s serve the SPA
+        dist_index = os.path.join(dist_dir, "index.html")
+        if os.path.isfile(dist_index):
+            return FileResponse(dist_index)
+    # All other HTTP exceptions
+    return JSONResponse({"error": str(exc.detail), "code": exc.status_code}, status_code=exc.status_code)
+
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    host = os.environ.get("HOST", "0.0.0.0")
+    uvicorn.run("app_fastapi:app", host=host, port=port, reload=True)

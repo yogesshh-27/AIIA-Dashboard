@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Stethoscope, Users, AlertTriangle, ShieldCheck, Plus, ArrowRight, MapPin, Activity, CheckCircle, ExternalLink, X } from 'lucide-react';
+import { Stethoscope, Users, AlertTriangle, ShieldCheck, Plus, ArrowRight, MapPin, Activity, CheckCircle, ExternalLink, X, BarChart3, TrendingUp } from 'lucide-react';
+import {
+  LineChart, Line, BarChart, Bar, RadarChart, Radar, PolarGrid,
+  PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid,
+  Tooltip, Legend, ResponsiveContainer, Cell
+} from 'recharts';
 
 export default function DashboardView({ onNavigate, onOpenCreateTrial }) {
   const [data, setData] = useState(null);
@@ -185,6 +190,116 @@ export default function DashboardView({ onNavigate, onOpenCreateTrial }) {
           >
             {kpis.pharmacovigilance?.button_text || 'Safety Signals & Reporting →'}
           </button>
+        </div>
+      </div>
+
+      {/* === ADVANCED CLINICAL CHARTS (Recharts) === */}
+      <div className="active-trials-section-card mt-6">
+        <div className="section-card-header">
+          <span className="section-card-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <TrendingUp size={18} className="text-emerald-700" />
+            Advanced Clinical Analytics
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px', padding: '16px 0' }}>
+          {/* Chart 1: Enrollment Velocity Line Chart */}
+          <div style={{ background: '#f8fafb', borderRadius: '10px', padding: '16px', border: '1px solid #e2e8f0' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <TrendingUp size={14} className="text-emerald-600" />
+              Enrollment Velocity (Monthly)
+            </h4>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={[
+                { month: 'Jan', enrolled: 4, target: 8 },
+                { month: 'Feb', enrolled: 7, target: 8 },
+                { month: 'Mar', enrolled: 12, target: 10 },
+                { month: 'Apr', enrolled: 15, target: 12 },
+                { month: 'May', enrolled: 18, target: 15 },
+                { month: 'Jun', enrolled: 22, target: 18 },
+                { month: 'Jul', enrolled: 25, target: 20 },
+              ]}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748b' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px' }}
+                />
+                <Legend wrapperStyle={{ fontSize: '11px' }} />
+                <Line
+                  type="monotone" dataKey="enrolled" stroke="#005944"
+                  strokeWidth={2.5} dot={{ r: 4, fill: '#005944' }}
+                  name="Actual Enrolled"
+                />
+                <Line
+                  type="monotone" dataKey="target" stroke="#94a3b8"
+                  strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3 }}
+                  name="Target"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Chart 2: Dosha Balance Radar Chart */}
+          <div style={{ background: '#f8fafb', borderRadius: '10px', padding: '16px', border: '1px solid #e2e8f0' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Activity size={14} className="text-amber-600" />
+              Dosha Balance Radar (Avg Pre/Post Treatment)
+            </h4>
+            <ResponsiveContainer width="100%" height={220}>
+              <RadarChart data={[
+                { axis: 'Vata', pre: 78, post: 52 },
+                { axis: 'Pitta', pre: 65, post: 44 },
+                { axis: 'Kapha', pre: 55, post: 60 },
+                { axis: 'Agni', pre: 42, post: 68 },
+                { axis: 'Ojas', pre: 35, post: 72 },
+                { axis: 'Ama', pre: 70, post: 30 },
+              ]}>
+                <PolarGrid stroke="#e2e8f0" />
+                <PolarAngleAxis dataKey="axis" tick={{ fontSize: 11, fill: '#475569' }} />
+                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9, fill: '#94a3b8' }} />
+                <Radar
+                  name="Pre-Treatment" dataKey="pre" stroke="#dc2626"
+                  fill="#dc2626" fillOpacity={0.15} strokeWidth={2}
+                />
+                <Radar
+                  name="Post-Treatment" dataKey="post" stroke="#005944"
+                  fill="#005944" fillOpacity={0.2} strokeWidth={2}
+                />
+                <Legend wrapperStyle={{ fontSize: '11px' }} />
+                <Tooltip contentStyle={{ borderRadius: '8px', fontSize: '12px' }} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Chart 3: Site Recruitment Bar Chart */}
+          <div style={{ background: '#f8fafb', borderRadius: '10px', padding: '16px', border: '1px solid #e2e8f0' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <BarChart3 size={14} className="text-blue-600" />
+              Recruitment by Site (Enrolled vs Target)
+            </h4>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={[
+                { site: 'Delhi', enrolled: 8, target: 10 },
+                { site: 'Mumbai', enrolled: 6, target: 8 },
+                { site: 'Kolkata', enrolled: 4, target: 6 },
+                { site: 'Kerala', enrolled: 5, target: 7 },
+                { site: 'Lucknow', enrolled: 3, target: 5 },
+                { site: 'Jaipur', enrolled: 2, target: 4 },
+                { site: 'Hyd', enrolled: 3, target: 5 },
+                { site: 'Blr', enrolled: 4, target: 6 },
+                { site: 'Noida', enrolled: 2, target: 3 },
+              ]} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis type="number" tick={{ fontSize: 10, fill: '#64748b' }} />
+                <YAxis dataKey="site" type="category" tick={{ fontSize: 10, fill: '#475569' }} width={55} />
+                <Tooltip contentStyle={{ borderRadius: '8px', fontSize: '12px' }} />
+                <Legend wrapperStyle={{ fontSize: '11px' }} />
+                <Bar dataKey="enrolled" fill="#005944" name="Enrolled" radius={[0, 4, 4, 0]} barSize={12} />
+                <Bar dataKey="target" fill="#cbd5e1" name="Target" radius={[0, 4, 4, 0]} barSize={12} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
