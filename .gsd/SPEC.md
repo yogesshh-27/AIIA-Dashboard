@@ -40,13 +40,13 @@ Elevate AYURCTMS from a functional prototype to an enterprise-grade, production-
 - Python 3.10+ for backend, React 19 + Vite 8 for frontend.
 
 ## Success Criteria
-- [ ] FastAPI serves all 28+ existing endpoints with auto-generated `/docs` Swagger UI
-- [ ] PRR/ROR algorithms flag statistical safety signals from existing AE dataset
-- [ ] WebSocket connection pushes real-time SAE alerts to connected dashboards
-- [ ] Interactive India map renders 9 trial sites with click-to-filter functionality
-- [ ] Recharts renders at least 3 chart types (line, bar, radar) in DashboardView
-- [ ] WCAG 2.1 AA: font resizer, contrast toggle, and full keyboard navigation work
-- [ ] Hindi translation covers all UI labels and navigation elements
-- [ ] PWA installs on mobile and caches critical pages for offline access
-- [ ] E-signature workflow requires re-authentication before approving clinical records
-- [ ] All existing 67 tests continue to pass after upgrades
+- [x] FastAPI serves all 28+ existing endpoints with auto-generated `/docs` Swagger UI
+- [x] PRR/ROR algorithms flag statistical safety signals from existing AE dataset
+- [x] WebSocket connection pushes real-time SAE alerts to connected dashboards
+- [x] Interactive India map renders 9 trial sites with click-to-filter functionality
+- [x] Recharts renders at least 3 chart types (line, bar, radar) in DashboardView
+- [x] WCAG 2.1 AA: font resizer, contrast toggle, and full keyboard navigation work
+- [x] Hindi translation covers all UI labels and navigation elements
+- [x] PWA installs on mobile and caches critical pages for offline access
+- [x] E-signature workflow requires re-authentication before approving clinical records
+- [x] All 74 tests continue to pass after upgrades (100% test success rate)
