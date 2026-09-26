@@ -6,6 +6,7 @@ import {
   PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, Cell
 } from 'recharts';
+import IndiaTrialMap from './IndiaTrialMap';
 
 export default function DashboardView({ onNavigate, onOpenCreateTrial }) {
   const [data, setData] = useState(null);
@@ -358,6 +359,9 @@ export default function DashboardView({ onNavigate, onOpenCreateTrial }) {
           ))}
         </div>
       </div>
+
+      {/* === INTERACTIVE INDIA CLINICAL TRIAL MAP (Leaflet.js) === */}
+      <IndiaTrialMap onSelectCity={handleOpenSite} />
 
       {/* 9 National Regional Centers Quick Matrix */}
       <div className="active-trials-section-card mt-6">
