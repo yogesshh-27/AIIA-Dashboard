@@ -1,24 +1,40 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
+function getWebSocketUrl() {
+  const apiUrl = import.meta.env.VITE_API_URL || localStorage.getItem('ayurctms_active_api_url') || '';
+  if (apiUrl && !apiUrl.includes('workers.dev')) {
+    const wsProto = apiUrl.startsWith('https') ? 'wss:' : 'ws:';
+    const cleanHost = apiUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+    return `${wsProto}//${cleanHost}/ws/alerts`;
+  }
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'ws://127.0.0.1:8000/ws/alerts';
+  }
+  return 'wss://aiia-dashboard.onrender.com/ws/alerts';
+}
+
 export function useWebSocketAlerts() {
   const [alerts, setAlerts] = useState([]);
   const [latestAlert, setLatestAlert] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
+  const retryCountRef = useRef(0);
 
   const connect = useCallback(() => {
     try {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const host = window.location.host || 'localhost:8000';
-      const wsUrl = `${protocol}//${host}/ws/alerts`;
-
+      const wsUrl = getWebSocketUrl();
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
-      setConnectionStatus('connecting');
+
+      if (retryCountRef.current < 2) {
+        setConnectionStatus('connecting');
+      }
 
       ws.onopen = () => {
+        retryCountRef.current = 0;
         setConnectionStatus('connected');
+        
         // Heartbeat ping every 25 seconds
         const pingInterval = setInterval(() => {
           if (ws.readyState === WebSocket.OPEN) {
@@ -41,25 +57,35 @@ export function useWebSocketAlerts() {
             setAlerts((prev) => [newAlert, ...prev.slice(0, 19)]);
             setLatestAlert(newAlert);
           }
-        } catch (e) {
-          // Non-JSON message (e.g. pong)
+        } catch {
+          // Ignore ping/pong
         }
       };
 
       ws.onclose = () => {
-        setConnectionStatus('disconnected');
-        // Auto-reconnect after 4s
+        retryCountRef.current += 1;
+        if (retryCountRef.current >= 2) {
+          // Switch gracefully to local standby mode
+          setConnectionStatus('standby');
+        } else {
+          setConnectionStatus('connecting');
+        }
+
+        // Try reconnecting with exponential backoff (max 30s)
+        const delay = Math.min(30000, 4000 * Math.pow(1.5, retryCountRef.current));
         reconnectTimeoutRef.current = setTimeout(() => {
           connect();
-        }, 4000);
+        }, delay);
       };
 
       ws.onerror = () => {
-        setConnectionStatus('disconnected');
+        if (retryCountRef.current >= 2) {
+          setConnectionStatus('standby');
+        }
         ws.close();
       };
-    } catch (err) {
-      setConnectionStatus('disconnected');
+    } catch {
+      setConnectionStatus('standby');
     }
   }, []);
 

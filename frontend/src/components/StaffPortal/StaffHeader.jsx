@@ -208,22 +208,55 @@ export default function StaffHeader({
             fontWeight: 600,
             padding: '3px 8px',
             borderRadius: '12px',
-            background: connectionStatus === 'connected' ? 'rgba(5, 150, 105, 0.12)' : 'rgba(217, 119, 6, 0.12)',
-            color: connectionStatus === 'connected' ? '#059669' : '#d97706',
-            border: `1px solid ${connectionStatus === 'connected' ? '#a7f3d0' : '#fde68a'}`,
+            background:
+              connectionStatus === 'connected'
+                ? 'rgba(5, 150, 105, 0.12)'
+                : connectionStatus === 'standby'
+                ? 'rgba(14, 116, 144, 0.12)'
+                : 'rgba(217, 119, 6, 0.12)',
+            color:
+              connectionStatus === 'connected'
+                ? '#059669'
+                : connectionStatus === 'standby'
+                ? '#0e7490'
+                : '#d97706',
+            border: `1px solid ${
+              connectionStatus === 'connected'
+                ? '#a7f3d0'
+                : connectionStatus === 'standby'
+                ? '#a5f3fc'
+                : '#fde68a'
+            }`,
           }}
-          title={connectionStatus === 'connected' ? 'Connected to Real-Time SAE Alert Stream' : 'Connecting to Alert Stream...'}
+          title={
+            connectionStatus === 'connected'
+              ? 'Connected to Real-Time SAE Alert Stream'
+              : connectionStatus === 'standby'
+              ? 'Dashboard operational on verified clinical dataset'
+              : 'Connecting to Alert Stream...'
+          }
         >
           <span
             style={{
               width: 7,
               height: 7,
               borderRadius: '50%',
-              backgroundColor: connectionStatus === 'connected' ? '#10b981' : '#f59e0b',
-              animation: 'pulse 2s infinite',
+              backgroundColor:
+                connectionStatus === 'connected'
+                  ? '#10b981'
+                  : connectionStatus === 'standby'
+                  ? '#06b6d4'
+                  : '#f59e0b',
+              animation: connectionStatus === 'connecting' ? 'pulse 2s infinite' : 'none',
             }}
           />
-          <span>{connectionStatus === 'connected' ? 'Live SAE Feed' : 'Connecting...'}</span>
+          <span>
+            {connectionStatus === 'connected'
+              ? 'Live SAE Feed'
+              : connectionStatus === 'standby'
+              ? 'Live Standby'
+              : 'Connecting...'}
+          </span>
         </div>
 
         {/* NOTIFICATIONS BELL */}
