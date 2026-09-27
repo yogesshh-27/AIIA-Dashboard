@@ -187,16 +187,30 @@ export default function StaffHeader({
             <div className="global-search-dropdown" style={{ display: 'block' }}>
               {searchResults.patients?.length > 0 && (
                 <div className="search-group">
-                  <div className="search-group-title">Patients</div>
+                  <div className="search-group-title">
+                    <span className="search-group-badge">Patients</span>
+                    <span className="search-group-count">{searchResults.patients.length} found</span>
+                  </div>
                   {searchResults.patients.map((p) => (
                     <div
                       key={p.patient_id}
                       className="search-item"
                       onClick={() => handleResultClick('patient', p)}
                     >
-                      <User size={13} className="text-emerald-700 mr-2 inline" />
-                      <strong>{p.full_name}</strong>
-                      <span className="text-xs text-slate-500 ml-2">({p.patient_id} • {p.condition})</span>
+                      <div className="search-item-icon patient">
+                        <User size={15} />
+                      </div>
+                      <div className="search-item-body">
+                        <div className="search-item-main">
+                          <span className="search-item-title">{p.full_name}</span>
+                          <span className="search-item-badge id">{p.patient_id}</span>
+                        </div>
+                        <div className="search-item-sub">
+                          <span className="search-tag condition">{p.condition}</span>
+                          {p.area_city && <span className="search-tag location">• {p.area_city}</span>}
+                        </div>
+                      </div>
+                      <span className="search-item-arrow">→</span>
                     </div>
                   ))}
                 </div>
@@ -204,16 +218,31 @@ export default function StaffHeader({
 
               {searchResults.trials?.length > 0 && (
                 <div className="search-group">
-                  <div className="search-group-title">Trials</div>
+                  <div className="search-group-title">
+                    <span className="search-group-badge">Clinical Trials</span>
+                    <span className="search-group-count">{searchResults.trials.length} found</span>
+                  </div>
                   {searchResults.trials.map((t) => (
                     <div
                       key={t.trial_id}
                       className="search-item"
                       onClick={() => handleResultClick('trial', t)}
                     >
-                      <Shield size={13} className="text-emerald-700 mr-2 inline" />
-                      <strong>{t.trial_name}</strong>
-                      <span className="text-xs text-slate-500 ml-2">({t.trial_id} • {t.condition})</span>
+                      <div className="search-item-icon trial">
+                        <Shield size={15} />
+                      </div>
+                      <div className="search-item-body">
+                        <div className="search-item-main">
+                          <span className="search-item-title">{t.trial_name}</span>
+                          <span className="search-item-badge trial-id">{t.trial_id}</span>
+                        </div>
+                        <div className="search-item-sub">
+                          <span className="search-tag condition">{t.condition}</span>
+                          {t.city && <span className="search-tag location">• {t.city}</span>}
+                          <span className="search-tag status">{t.trial_status || 'Recruiting'}</span>
+                        </div>
+                      </div>
+                      <span className="search-item-arrow">→</span>
                     </div>
                   ))}
                 </div>
@@ -221,16 +250,30 @@ export default function StaffHeader({
 
               {searchResults.doctors?.length > 0 && (
                 <div className="search-group">
-                  <div className="search-group-title">Doctors</div>
+                  <div className="search-group-title">
+                    <span className="search-group-badge">Doctors & Specialists</span>
+                    <span className="search-group-count">{searchResults.doctors.length} found</span>
+                  </div>
                   {searchResults.doctors.map((d) => (
                     <div
                       key={d.doctor_id}
                       className="search-item"
                       onClick={() => handleResultClick('doctor', d)}
                     >
-                      <Stethoscope size={13} className="text-emerald-700 mr-2 inline" />
-                      <strong>{d.name}</strong>
-                      <span className="text-xs text-slate-500 ml-2">({d.specialization})</span>
+                      <div className="search-item-icon doctor">
+                        <Stethoscope size={15} />
+                      </div>
+                      <div className="search-item-body">
+                        <div className="search-item-main">
+                          <span className="search-item-title">{d.name}</span>
+                          <span className="search-item-badge doc-id">{d.doctor_id}</span>
+                        </div>
+                        <div className="search-item-sub">
+                          <span className="search-tag spec">{d.specialization}</span>
+                          {d.current_site && <span className="search-tag location">• {d.current_site}</span>}
+                        </div>
+                      </div>
+                      <span className="search-item-arrow">→</span>
                     </div>
                   ))}
                 </div>
@@ -238,26 +281,48 @@ export default function StaffHeader({
 
               {searchResults.sites?.length > 0 && (
                 <div className="search-group">
-                  <div className="search-group-title">Sites</div>
+                  <div className="search-group-title">
+                    <span className="search-group-badge">Clinical Sites</span>
+                    <span className="search-group-count">{searchResults.sites.length} found</span>
+                  </div>
                   {searchResults.sites.map((s) => (
                     <div
                       key={s.site_id || s.city}
                       className="search-item"
                       onClick={() => handleResultClick('site', s)}
                     >
-                      <Hospital size={13} className="text-emerald-700 mr-2 inline" />
-                      <strong>{s.hospital_name || s.city}</strong>
-                      <span className="text-xs text-slate-500 ml-2">({s.city})</span>
+                      <div className="search-item-icon site">
+                        <Hospital size={15} />
+                      </div>
+                      <div className="search-item-body">
+                        <div className="search-item-main">
+                          <span className="search-item-title">{s.hospital_name || s.city}</span>
+                          <span className="search-item-badge site-id">{s.city}</span>
+                        </div>
+                        <div className="search-item-sub">
+                          <span className="search-tag location">{s.city}</span>
+                          {s.status && <span className="search-tag status">• {s.status}</span>}
+                        </div>
+                      </div>
+                      <span className="search-item-arrow">→</span>
                     </div>
                   ))}
                 </div>
               )}
 
               {(!searchResults.patients?.length && !searchResults.trials?.length && !searchResults.doctors?.length && !searchResults.sites?.length) && (
-                <div className="p-3 text-center text-xs text-slate-500">
-                  {searchLoading ? 'Searching directory...' : `No matching records found for "${searchQuery}"`}
+                <div className="search-empty-state">
+                  <Search size={22} className="search-empty-icon" />
+                  <p>{searchLoading ? 'Searching AYURCTMS registry...' : `No matching records found for "${searchQuery}"`}</p>
+                  <span className="search-empty-hint">Try searching by condition, title, name, or city</span>
                 </div>
               )}
+
+              <div className="search-dropdown-footer">
+                <span>Use <strong>↑</strong> <strong>↓</strong> to navigate</span>
+                <span>Press <strong>↵ Enter</strong> to select</span>
+                <span><strong>ESC</strong> to close</span>
+              </div>
             </div>
           )}
         </div>
