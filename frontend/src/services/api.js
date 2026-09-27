@@ -12,6 +12,190 @@ const CANDIDATES = [
   ''
 ].filter((val, idx, arr) => val !== undefined && val !== null && arr.indexOf(val) === idx);
 
+export function generateReportFallback(reportType = 'trial_progress') {
+  const today = new Date().toISOString().split('T')[0];
+  const institution = 'All India Institute of Ayurveda (AIIA), New Delhi';
+
+  if (reportType === 'patient_enrollment' || reportType === 'patient-enrollment') {
+    const patients = (FALLBACK_DATA['/api/ayur/patients']?.patients || []).slice(0, 15);
+    const rows = patients.map(p => ({
+      'Patient ID': p.patient_id,
+      'Full Name': p.full_name,
+      'Age': p.age,
+      'Gender': p.gender,
+      'Condition': p.condition,
+      'Location': p.area_city,
+      'Assigned Trial': p.assigned_trial_id,
+      'Treatment Status': p.treatment_status,
+      'Registration Date': p.registration_date
+    }));
+    return {
+      status: 'ok',
+      success: true,
+      report_title: 'Patient Enrollment & Cohort Allocation Report',
+      generated_at: today,
+      institution,
+      columns: ['Patient ID', 'Full Name', 'Age', 'Gender', 'Condition', 'Location', 'Assigned Trial', 'Treatment Status', 'Registration Date'],
+      rows,
+      records: rows,
+      data: rows
+    };
+  }
+
+  if (reportType === 'site_performance' || reportType === 'site-performance') {
+    const sites = (FALLBACK_DATA['/api/ayur/sites']?.sites || []).slice(0, 15);
+    const rows = sites.map(s => ({
+      'Site ID': s.site_id,
+      'City': s.city,
+      'Hospital Name': s.hospital_name,
+      'Condition': s.condition,
+      'Lead PI': s.pi_name,
+      'Enrolled': s.participants_enrolled,
+      'Target': s.participants_target,
+      'Progress %': `${s.progress_pct}%`,
+      'Status': s.status
+    }));
+    return {
+      status: 'ok',
+      success: true,
+      report_title: 'Clinical Site Operations & Performance Report',
+      generated_at: today,
+      institution,
+      columns: ['Site ID', 'City', 'Hospital Name', 'Condition', 'Lead PI', 'Enrolled', 'Target', 'Progress %', 'Status'],
+      rows,
+      records: rows,
+      data: rows
+    };
+  }
+
+  if (reportType === 'doctor_participation' || reportType === 'doctor-participation') {
+    const doctors = (FALLBACK_DATA['/api/ayur/doctors']?.doctors || []).slice(0, 15);
+    const rows = doctors.map(d => ({
+      'Doctor ID': d.doctor_id,
+      'Name': d.name,
+      'Qualification': d.qualification,
+      'Specialization': d.specialization,
+      'Experience (Yrs)': d.experience_years,
+      'Current Site': d.current_site,
+      'Assigned Trial': d.trial_id,
+      'Role': d.role,
+      'Status': d.status
+    }));
+    return {
+      status: 'ok',
+      success: true,
+      report_title: 'Investigator & Doctor Participation Directory Report',
+      generated_at: today,
+      institution,
+      columns: ['Doctor ID', 'Name', 'Qualification', 'Specialization', 'Experience (Yrs)', 'Current Site', 'Assigned Trial', 'Role', 'Status'],
+      rows,
+      records: rows,
+      data: rows
+    };
+  }
+
+  if (reportType === 'adverse_event' || reportType === 'adverse_events' || reportType === 'adverse-events') {
+    const events = (FALLBACK_DATA['/api/ayur/pv/events']?.events || []).slice(0, 15);
+    const rows = events.map(e => ({
+      'Event ID': e.event_id,
+      'Patient ID': e.patient_id,
+      'Patient Name': e.patient_name,
+      'Trial ID': e.trial_id,
+      'Condition': e.condition,
+      'Location': e.location,
+      'Adverse Event': e.adverse_event,
+      'Severity': e.severity,
+      'Serious': e.serious,
+      'Status': e.status,
+      'Reported Date': e.date_reported
+    }));
+    return {
+      status: 'ok',
+      success: true,
+      report_title: 'Pharmacovigilance & Adverse Event Safety Report',
+      generated_at: today,
+      institution,
+      columns: ['Event ID', 'Patient ID', 'Patient Name', 'Trial ID', 'Condition', 'Location', 'Adverse Event', 'Severity', 'Serious', 'Status', 'Reported Date'],
+      rows,
+      records: rows,
+      data: rows
+    };
+  }
+
+  if (reportType === 'pending_approval' || reportType === 'pending_approvals' || reportType === 'pending-approvals') {
+    const approvals = (FALLBACK_DATA['/api/ayur/approvals']?.approvals || []).slice(0, 15);
+    const rows = approvals.map(a => ({
+      'Approval ID': a.approval_id,
+      'Trial ID': a.trial_id,
+      'City': a.city,
+      'Hospital': a.hospital_name,
+      'Type': a.approval_type,
+      'Status': a.status,
+      'Submitted': a.submission_date,
+      'Action Required': a.action_required
+    }));
+    return {
+      status: 'ok',
+      success: true,
+      report_title: 'Ethics Committee & Regulatory Approvals Status Report',
+      generated_at: today,
+      institution,
+      columns: ['Approval ID', 'Trial ID', 'City', 'Hospital', 'Type', 'Status', 'Submitted', 'Action Required'],
+      rows,
+      records: rows,
+      data: rows
+    };
+  }
+
+  if (reportType === 'gcp_compliance' || reportType === 'gcp-compliance') {
+    const items = (FALLBACK_DATA['/api/ayur/gcp']?.items || []).slice(0, 15);
+    const rows = items.map(g => ({
+      'Item ID': g.item_id,
+      'GCP Requirement': g.title,
+      'Category': g.category,
+      'Status': g.is_completed ? 'Completed' : 'Pending',
+      'Last Reviewed': g.last_reviewed,
+      'Reviewed By': g.reviewed_by
+    }));
+    return {
+      status: 'ok',
+      success: true,
+      report_title: 'Good Clinical Practice (GCP & NDCT 2019) Compliance Audit Report',
+      generated_at: today,
+      institution,
+      columns: ['Item ID', 'GCP Requirement', 'Category', 'Status', 'Last Reviewed', 'Reviewed By'],
+      rows,
+      records: rows,
+      data: rows
+    };
+  }
+
+  // Default: trial_progress
+  const trials = (FALLBACK_DATA['/api/ayur/trials']?.trials || []).slice(0, 15);
+  const rows = trials.map(t => ({
+    'Trial ID': t.trial_id,
+    'Trial Name': t.trial_name,
+    'Condition': t.condition || 'General',
+    'Location': t.city || 'New Delhi',
+    'Principal Investigator': t.pi_name || 'Dr. AIIA Research Team',
+    'Enrolled': t.enrolled_participants,
+    'Target': t.target_participants,
+    'Progress': `${t.progress_pct}%`,
+    'Status': t.trial_status
+  }));
+  return {
+    status: 'ok',
+    success: true,
+    report_title: 'Clinical Trial Progress & Governance Summary Report',
+    generated_at: today,
+    institution,
+    columns: ['Trial ID', 'Trial Name', 'Condition', 'Location', 'Principal Investigator', 'Enrolled', 'Target', 'Progress', 'Status'],
+    rows,
+    records: rows,
+    data: rows
+  };
+}
+
 export function getFallbackForEndpoint(url) {
   const [path, queryString] = url.split('?');
   
@@ -87,29 +271,9 @@ export function getFallbackForEndpoint(url) {
   }
 
   if (path.includes('/reports')) {
-    const trials = (FALLBACK_DATA['/api/ayur/trials']?.trials || []).slice(0, 10);
-    const rows = trials.map(t => ({
-      'Trial ID': t.trial_id,
-      'Trial Name': t.trial_name,
-      'Condition': t.condition || 'General',
-      'Location': t.city || 'New Delhi',
-      'Principal Investigator': t.pi_name || 'Dr. AIIA Research Team',
-      'Enrolled': t.enrolled_participants,
-      'Target': t.target_participants,
-      'Progress': `${t.progress_pct}%`,
-      'Status': t.trial_status
-    }));
-    return {
-      status: 'ok',
-      success: true,
-      report_title: 'Clinical Trial Progress & Governance Summary',
-      generated_at: new Date().toISOString().split('T')[0],
-      institution: 'All India Institute of Ayurveda (AIIA), New Delhi',
-      columns: ['Trial ID', 'Trial Name', 'Condition', 'Location', 'Principal Investigator', 'Enrolled', 'Target', 'Progress', 'Status'],
-      rows: rows,
-      records: rows,
-      data: rows
-    };
+    const params = new URLSearchParams(queryString || '');
+    const reportType = params.get('type') || 'trial_progress';
+    return generateReportFallback(reportType);
   }
 
   if (path.includes('/interop')) {
