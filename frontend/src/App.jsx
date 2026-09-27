@@ -67,6 +67,7 @@ export default function App() {
           <PatientPortal
             onBackToGate={() => setCurrentView('gate')}
             onOpenStaffLogin={handleOpenStaffLogin}
+            onStaffLoginClick={handleOpenStaffLogin}
           />
         )}
 

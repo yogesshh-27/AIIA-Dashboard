@@ -46,7 +46,7 @@ export default function StaffSidebar({ activeTab, onSelectTab, stats, isOpen }) 
   ];
 
   return (
-    <aside className={`staff-sidebar ${isOpen ? 'open' : ''}`} id="staff-sidebar">
+    <aside className={`staff-sidebar ${isOpen ? 'open mobile-open' : 'collapsed'}`} id="staff-sidebar">
       <nav className="sidebar-nav">
         {navItems.map((sec, idx) => (
           <div key={idx} className="sidebar-section">
@@ -60,6 +60,7 @@ export default function StaffSidebar({ activeTab, onSelectTab, stats, isOpen }) 
                   type="button"
                   className={`sidebar-nav-item ${isActive ? 'active' : ''}`}
                   onClick={() => onSelectTab(item.id)}
+                  title={item.label}
                   style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
                 >
                   <span className="nav-icon" style={{ display: 'inline-flex', alignItems: 'center' }}>

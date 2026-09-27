@@ -74,8 +74,12 @@ export default function StaffHeader({
       setSearchLoading(true);
       try {
         const data = await api.globalSearch(searchQuery);
-        if (data.success) {
-          setSearchResults(data.results);
+        const results = data?.results || (data?.patients || data?.trials || data?.doctors || data?.sites ? data : null);
+        if (results) {
+          setSearchResults(results);
+          setShowSearchDropdown(true);
+        } else if (data?.success) {
+          setSearchResults(data.results || { patients: [], trials: [], doctors: [], sites: [] });
           setShowSearchDropdown(true);
         }
       } catch (err) {
@@ -83,7 +87,7 @@ export default function StaffHeader({
       } finally {
         setSearchLoading(false);
       }
-    }, 250);
+    }, 200);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -123,7 +127,7 @@ export default function StaffHeader({
 
       {/* GLOBAL SEARCH BAR */}
       <div className="header-center" ref={searchRef}>
-        <div className="global-search-container">
+        <div className="global-search-container" style={{ position: 'relative' }}>
           <Search size={15} className="search-icon" />
           <input
             type="text"
@@ -132,7 +136,52 @@ export default function StaffHeader({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => searchQuery.trim() && setShowSearchDropdown(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                setShowSearchDropdown(false);
+              } else if (e.key === 'Enter') {
+                if (searchResults) {
+                  if (searchResults.patients?.length > 0) {
+                    handleResultClick('patient', searchResults.patients[0]);
+                  } else if (searchResults.trials?.length > 0) {
+                    handleResultClick('trial', searchResults.trials[0]);
+                  } else if (searchResults.doctors?.length > 0) {
+                    handleResultClick('doctor', searchResults.doctors[0]);
+                  } else if (searchResults.sites?.length > 0) {
+                    handleResultClick('site', searchResults.sites[0]);
+                  }
+                }
+              }
+            }}
           />
+
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setSearchResults(null);
+                setShowSearchDropdown(false);
+              }}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#94a3b8',
+                padding: '2px',
+                display: 'flex',
+                alignItems: 'center',
+                zIndex: 2
+              }}
+              title="Clear search"
+            >
+              <X size={14} />
+            </button>
+          )}
 
           {showSearchDropdown && searchResults && (
             <div className="global-search-dropdown" style={{ display: 'block' }}>
@@ -187,9 +236,26 @@ export default function StaffHeader({
                 </div>
               )}
 
-              {(!searchResults.patients?.length && !searchResults.trials?.length && !searchResults.doctors?.length) && (
+              {searchResults.sites?.length > 0 && (
+                <div className="search-group">
+                  <div className="search-group-title">Sites</div>
+                  {searchResults.sites.map((s) => (
+                    <div
+                      key={s.site_id || s.city}
+                      className="search-item"
+                      onClick={() => handleResultClick('site', s)}
+                    >
+                      <Hospital size={13} className="text-emerald-700 mr-2 inline" />
+                      <strong>{s.hospital_name || s.city}</strong>
+                      <span className="text-xs text-slate-500 ml-2">({s.city})</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {(!searchResults.patients?.length && !searchResults.trials?.length && !searchResults.doctors?.length && !searchResults.sites?.length) && (
                 <div className="p-3 text-center text-xs text-slate-500">
-                  No matching records found for "{searchQuery}"
+                  {searchLoading ? 'Searching directory...' : `No matching records found for "${searchQuery}"`}
                 </div>
               )}
             </div>

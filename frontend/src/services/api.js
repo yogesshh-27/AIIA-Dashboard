@@ -63,15 +63,27 @@ export function getFallbackForEndpoint(url) {
     const params = new URLSearchParams(queryString || '');
     const q = (params.get('q') || '').toLowerCase();
     const trials = (FALLBACK_DATA['/api/ayur/trials']?.trials || []).filter(
-      t => t.trial_name?.toLowerCase().includes(q) || t.condition?.toLowerCase().includes(q)
+      t => (t.trial_name || '').toLowerCase().includes(q) || (t.condition || '').toLowerCase().includes(q) || (t.trial_id || '').toLowerCase().includes(q)
     );
     const patients = (FALLBACK_DATA['/api/ayur/patients']?.patients || []).filter(
-      p => p.full_name?.toLowerCase().includes(q) || p.condition?.toLowerCase().includes(q)
+      p => (p.full_name || '').toLowerCase().includes(q) || (p.condition || '').toLowerCase().includes(q) || (p.patient_id || '').toLowerCase().includes(q)
     );
     const doctors = (FALLBACK_DATA['/api/ayur/doctors']?.doctors || []).filter(
-      d => d.name?.toLowerCase().includes(q) || d.department?.toLowerCase().includes(q)
+      d => (d.name || '').toLowerCase().includes(q) || (d.department || '').toLowerCase().includes(q) || (d.specialization || '').toLowerCase().includes(q)
     );
-    return { trials: trials.slice(0, 5), patients: patients.slice(0, 5), doctors: doctors.slice(0, 5) };
+    const sites = (FALLBACK_DATA['/api/ayur/sites']?.sites || []).filter(
+      s => (s.city || '').toLowerCase().includes(q) || (s.hospital_name || '').toLowerCase().includes(q)
+    );
+    return {
+      success: true,
+      query: q,
+      results: {
+        trials: trials.slice(0, 5),
+        patients: patients.slice(0, 5),
+        doctors: doctors.slice(0, 5),
+        sites: sites.slice(0, 5)
+      }
+    };
   }
 
   if (path.includes('/reports')) {
@@ -177,6 +189,34 @@ async function fetchJSON(url, options = {}) {
           message: 'Invalid Staff ID or Password. Demo credentials: Staff ID: AIIA001, Password: AIIA@123',
         };
       }
+    }
+
+    // Patient trial matching resolver for demo and offline resilience
+    if (url.includes('/patient/match')) {
+      const condition = (payload.condition || '').toLowerCase();
+      const cities = (payload.accessible_locations || []).map(c => c.toLowerCase());
+      const allTrials = (FALLBACK_DATA['/api/ayur/trials']?.trials || []);
+      const matched = allTrials.filter(t => {
+        const condMatch = !condition || (t.condition || '').toLowerCase().includes(condition) || condition.includes((t.condition || '').toLowerCase());
+        const cityMatch = cities.length === 0 || cities.includes((t.city || '').toLowerCase());
+        return condMatch && cityMatch;
+      });
+      const finalTrials = matched.length > 0 ? matched : allTrials.slice(0, 3);
+      return {
+        success: true,
+        count: finalTrials.length,
+        results: finalTrials.map(t => ({
+          trial_id: t.trial_id,
+          trial_name: t.trial_name,
+          condition: t.condition,
+          city: t.city,
+          location: t.city,
+          hospital_name: t.hospital_name || `${t.city} Clinical Research Site`,
+          doctor_name: t.principal_investigator || 'Dr. AIIA Investigator',
+          duration_weeks: t.duration_weeks || 12,
+          recruitment_status: t.trial_status || 'Recruiting'
+        }))
+      };
     }
 
     return {

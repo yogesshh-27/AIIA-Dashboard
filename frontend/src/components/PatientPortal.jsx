@@ -12,7 +12,8 @@ const CONDITIONS = [
   'Cognitive deficit disorders', 'Obesity', 'Skin disorders', 'Digestive disorders'
 ];
 
-export default function PatientPortal({ onBackToGate, onStaffLoginClick }) {
+export default function PatientPortal({ onBackToGate, onStaffLoginClick, onOpenStaffLogin }) {
+  const handleStaffLogin = onOpenStaffLogin || onStaffLoginClick;
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     fullname: '',
@@ -156,7 +157,7 @@ export default function PatientPortal({ onBackToGate, onStaffLoginClick }) {
           </div>
         </div>
         <div className="patient-header-right">
-          <button className="btn btn-outline btn-sm" onClick={onStaffLoginClick}>
+          <button className="btn btn-outline btn-sm" onClick={handleStaffLogin}>
             AIIA Staff Login
           </button>
         </div>

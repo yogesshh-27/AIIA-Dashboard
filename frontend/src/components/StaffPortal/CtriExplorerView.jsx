@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { FALLBACK_DATA } from '../../services/fallbackData';
-import { Database, Search, Filter, ExternalLink, RefreshCw, FileText, Download } from 'lucide-react';
+import { Database, Search, Filter, ExternalLink, RefreshCw, FileText, Download, X } from 'lucide-react';
 
 const INITIAL_TRIALS = FALLBACK_DATA['/api/ctri-extractor/trials?limit=100']?.trials || [];
 
@@ -48,14 +48,19 @@ export default function CtriExplorerView() {
   }, []);
 
   const filtered = trials.filter((t) => {
-    const s = search.toLowerCase();
+    const s = search.trim().toLowerCase();
     const matchesSearch =
-      !search ||
-      t.public_title?.toLowerCase().includes(s) ||
-      t.condition?.toLowerCase().includes(s) ||
-      t.principal_investigator?.toLowerCase().includes(s) ||
-      t.ctri_number?.toLowerCase().includes(s) ||
-      t.intervention_name?.toLowerCase().includes(s);
+      !s ||
+      (t.public_title && t.public_title.toLowerCase().includes(s)) ||
+      (t.scientific_title && t.scientific_title.toLowerCase().includes(s)) ||
+      (t.condition && t.condition.toLowerCase().includes(s)) ||
+      (t.health_condition && t.health_condition.toLowerCase().includes(s)) ||
+      (t.principal_investigator && t.principal_investigator.toLowerCase().includes(s)) ||
+      (t.ctri_number && t.ctri_number.toLowerCase().includes(s)) ||
+      (t.intervention_name && t.intervention_name.toLowerCase().includes(s)) ||
+      (t.site_name && t.site_name.toLowerCase().includes(s)) ||
+      (t.city && t.city.toLowerCase().includes(s)) ||
+      (t.trial_id && String(t.trial_id).toLowerCase().includes(s));
 
     const matchesCat =
       !categoryFilter ||
@@ -66,7 +71,7 @@ export default function CtriExplorerView() {
       !statusFilter ||
       (statusFilter === 'RECRUITING' && t.recruitment_status?.toUpperCase().includes('RECRUIT')) ||
       (statusFilter === 'COMPLETED' && t.recruitment_status?.toUpperCase().includes('COMPLET')) ||
-      (statusFilter === 'NOT_YET_RECRUITING' && t.recruitment_status?.toUpperCase().includes('NOT'));
+      (statusFilter === 'NOT_YET_RECRUITING' && (t.recruitment_status?.toUpperCase().includes('NOT') || t.recruitment_status?.toUpperCase().includes('UPCOMING')));
 
     return matchesSearch && matchesCat && matchesStatus;
   });
@@ -143,20 +148,33 @@ export default function CtriExplorerView() {
       </div>
 
       {/* Filters and Search Bar */}
-      <div className="patient-card p-4 mb-4">
-        <div className="flex gap-3 flex-wrap items-center justify-between">
-          <div className="flex-1 min-w-[280px]">
+      <div style={{ background: '#ffffff', borderRadius: '8px', padding: '14px 16px', border: '1px solid #e2e8f0', marginBottom: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 320px', minWidth: '240px', position: 'relative' }}>
+            <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
             <input
               type="text"
-              className="form-input text-xs w-full"
-              placeholder="🔍 Search extracted trials by title, condition, PI, or CTRI number..."
+              className="form-input"
+              style={{ width: '100%', paddingLeft: '36px', paddingRight: search ? '36px' : '12px', fontSize: '13px', height: '38px', borderRadius: '6px' }}
+              placeholder="Search extracted trials by title, condition, PI, or CTRI number..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: '4px', display: 'flex', alignItems: 'center' }}
+                title="Clear search"
+              >
+                <X size={15} />
+              </button>
+            )}
           </div>
-          <div className="flex gap-2">
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
             <select
-              className="form-select text-xs w-44"
+              className="form-select"
+              style={{ width: '170px', fontSize: '12.5px', height: '38px', borderRadius: '6px' }}
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
@@ -165,7 +183,8 @@ export default function CtriExplorerView() {
               <option value="INTEGRATIVE">Integrative Care</option>
             </select>
             <select
-              className="form-select text-xs w-44"
+              className="form-select"
+              style={{ width: '170px', fontSize: '12.5px', height: '38px', borderRadius: '6px' }}
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
@@ -174,6 +193,16 @@ export default function CtriExplorerView() {
               <option value="COMPLETED">Completed</option>
               <option value="NOT_YET_RECRUITING">Upcoming</option>
             </select>
+            {(search || categoryFilter || statusFilter) && (
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => { setSearch(''); setCategoryFilter(''); setStatusFilter(''); }}
+                style={{ height: '38px', fontSize: '12px', padding: '0 12px' }}
+              >
+                Reset
+              </button>
+            )}
           </div>
         </div>
       </div>
