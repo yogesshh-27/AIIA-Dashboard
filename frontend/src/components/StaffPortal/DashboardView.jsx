@@ -440,15 +440,20 @@ export default function DashboardView({ onNavigate, onOpenCreateTrial }) {
               <Activity size={14} className="text-amber-600" />
               Dosha Balance Radar (Avg Pre/Post Treatment)
             </h4>
-            <ResponsiveContainer width="100%" height={220}>
-              <RadarChart data={[
-                { axis: 'Vata', pre: 78, post: 52 },
-                { axis: 'Pitta', pre: 65, post: 44 },
-                { axis: 'Kapha', pre: 55, post: 60 },
-                { axis: 'Agni', pre: 42, post: 68 },
-                { axis: 'Ojas', pre: 35, post: 72 },
-                { axis: 'Ama', pre: 70, post: 30 },
-              ]}>
+            <ResponsiveContainer width="100%" height={240}>
+              <RadarChart
+                cx="50%"
+                cy="42%"
+                outerRadius="58%"
+                data={[
+                  { axis: 'Vata', pre: 78, post: 52 },
+                  { axis: 'Pitta', pre: 65, post: 44 },
+                  { axis: 'Kapha', pre: 55, post: 60 },
+                  { axis: 'Agni', pre: 42, post: 68 },
+                  { axis: 'Ojas', pre: 35, post: 72 },
+                  { axis: 'Ama', pre: 70, post: 30 },
+                ]}
+              >
                 <PolarGrid stroke="#e2e8f0" />
                 <PolarAngleAxis dataKey="axis" tick={{ fontSize: 11, fill: '#475569' }} />
                 <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9, fill: '#94a3b8' }} />
@@ -460,7 +465,10 @@ export default function DashboardView({ onNavigate, onOpenCreateTrial }) {
                   name="Post-Treatment" dataKey="post" stroke="#005944"
                   fill="#005944" fillOpacity={0.2} strokeWidth={2}
                 />
-                <Legend wrapperStyle={{ fontSize: '11px' }} />
+                <Legend
+                  verticalAlign="bottom"
+                  wrapperStyle={{ fontSize: '11px', paddingTop: '12px' }}
+                />
                 <Tooltip contentStyle={{ borderRadius: '8px', fontSize: '12px' }} />
               </RadarChart>
             </ResponsiveContainer>
