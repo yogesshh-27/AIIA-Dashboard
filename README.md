@@ -1,6 +1,7 @@
 # AIIA Clinical Trial Management System (AYURCTMS)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](https://opensource.org/licenses/MIT)
+[![Security: Trivy](https://img.shields.io/badge/Security-Trivy%20Scanned-blue.svg)](https://github.com/aquasecurity/trivy)
 [![Frontend: React 18 + Vite](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite-blue.svg)](https://vitejs.dev/)
 [![Backend: FastAPI + Python](https://img.shields.io/badge/Backend-FastAPI%20%7C%20Python%203.10%2B-amber.svg)](https://fastapi.tiangolo.com/)
 [![Database: SQLite WAL](https://img.shields.io/badge/Database-SQLite%203%20(WAL)-green.svg)](https://www.sqlite.org/)
@@ -99,6 +100,7 @@ sequenceDiagram
 | **Icons** | **Lucide React** | Latest | Consistent, medical-grade SVG iconography |
 | **Internationalization** | **react-i18next** | `v13+` | Dual-language interface supporting English and Hindi (हिन्दी) |
 | **Regulatory Standards** | **FHIR / CDISC** | R4 / ODM | Standardized clinical trial export protocols for CTRI & ICMR interoperability |
+| **Security & Auditing** | **Aqua Trivy** | CI/CD Action | Automated vulnerability scanning, CVE monitoring & secret leak prevention |
 
 ---
 
@@ -218,6 +220,7 @@ AIIA-Dashboard/
 
 ## 🔒 Security & Regulatory Compliance
 
+- **Automated Security Scanning (Aqua Trivy):** Continuous integration pipeline (`.github/workflows/trivy.yml`) automatically scans all Python and Node.js dependencies for known CVEs, detects misconfigurations, and blocks secret/credential leaks. Generates SARIF audits uploaded directly to GitHub Security.
 - **21 CFR Part 11:** Immutable audit logging on adverse event disclosures and patient record edits.
 - **Data Protection:** Parameterized SQL queries preventing SQL injection; strict CORS origin checks.
 - **Standardized Export:** Pre-configured FHIR R4 and CDISC ODM converters for external registry auditing.
