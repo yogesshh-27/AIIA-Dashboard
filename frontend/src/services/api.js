@@ -102,13 +102,36 @@ export function getFallbackForEndpoint(url) {
   }
 
   if (path.includes('/interop')) {
+    const defaultStudy = {
+      resourceType: 'ResearchStudy',
+      id: 'AIIA-RS-2026-004',
+      identifier: [
+        { system: 'https://ctri.nic.in', value: 'CTRI/2026/03/084920' },
+        { system: 'https://aiia.gov.in/trials', value: 'AIIA-CLIN-2026-04' }
+      ],
+      title: 'Clinical Evaluation of Nishamalaki and Gudmar in Type-2 Diabetes Mellitus (Madhumeha)',
+      status: 'active',
+      phase: { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/research-study-phase', code: 'phase-2', display: 'Phase II' }] },
+      category: [{ coding: [{ code: 'ayurveda-clinical', display: 'Ayurvedic Clinical Evaluation' }] }],
+      focus: [{ text: 'Madhumeha (Type 2 Diabetes Mellitus) Glycemic Control' }],
+      sponsor: { display: 'All India Institute of Ayurveda (AIIA), Ministry of Ayush' }
+    };
+    const defaultSdtm = [
+      { STUDYID: 'AIIA-AYU-004', DOMAIN: 'TS', TSSEQ: 1, TSPARMCD: 'TRT', TSPARM: 'Trial Drug', TSVAL: 'Nishamalaki Vati (500mg) + Gudmar' },
+      { STUDYID: 'AIIA-AYU-004', DOMAIN: 'DM', USUBJID: 'AIIA-AYU-004-001', SUBJID: '001', RFSTDTC: '2026-06-10', AGE: 52, SEX: 'M', RACE: 'ASIAN', ARMCD: 'NISH_GUD', COUNTRY: 'IND' },
+      { STUDYID: 'AIIA-AYU-004', DOMAIN: 'LB', USUBJID: 'AIIA-AYU-004-001', LBSEQ: 1, LBTESTCD: 'HBA1C', LBTEST: 'Hemoglobin A1c', LBORRES: '7.6', LBORRESU: '%', LBSTRESC: '7.6', LBSTRESN: 7.6, LBDTC: '2026-08-15' }
+    ];
     return {
       status: 'ok',
+      success: true,
+      fhir_preview: defaultStudy,
+      cdisc_preview: defaultSdtm,
+      cdisc_sdtm: defaultSdtm,
       fhir_bundle: {
         resourceType: 'Bundle',
         type: 'collection',
         entry: [
-          { resource: { resourceType: 'ResearchStudy', id: 'AIIA-RS-001', title: 'Shallaki Clinical Trial' } }
+          { resource: defaultStudy }
         ]
       }
     };

@@ -4716,8 +4716,24 @@ def get_ayur_interop_demo():
         ],
         "fhir_patient": fhir_patient_sample,
         "fhir_observation": fhir_observation_sample,
+        "fhir_preview": {
+            "resourceType": "ResearchStudy",
+            "id": "AIIA-RS-2026-002",
+            "meta": {
+                "profile": ["http://hl7.org/fhir/uv/clinicaltrials/StructureDefinition/ResearchStudy"]
+            },
+            "identifier": [
+                {"system": "https://ctri.nic.in", "value": "CTRI/2026/05/019283"},
+                {"system": "https://aiia.gov.in/trials", "value": "AYU-TRIAL-002"}
+            ],
+            "title": "AIIA Clinical Trial of Nishamalaki and Gudmar in Madhumeha",
+            "status": "active",
+            "sponsor": {"display": "All India Institute of Ayurveda, New Delhi"},
+            "condition": [{"coding": [{"system": "http://snomed.info/sct", "code": "73211009", "display": "Diabetes mellitus"}]}]
+        },
         "mapping_rules": mapping_rules,
         "cdisc_sdtm": cdisc_sdtm_sample,
+        "cdisc_preview": cdisc_sdtm_sample,
         "disclaimer": "Prototype interoperability demonstration. Designed for CDISC/FHIR harmonization in Ayurvedic research."
     }
 
