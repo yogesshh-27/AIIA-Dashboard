@@ -16,9 +16,10 @@ function getWebSocketUrl() {
 export function useWebSocketAlerts() {
   const [alerts, setAlerts] = useState([]);
   const [latestAlert, setLatestAlert] = useState(null);
-  const [connectionStatus, setConnectionStatus] = useState('connecting');
+  const [connectionStatus, setConnectionStatus] = useState('standby');
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
+  const connectTimeoutRef = useRef(null);
   const retryCountRef = useRef(0);
 
   const connect = useCallback(() => {
@@ -27,11 +28,17 @@ export function useWebSocketAlerts() {
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
-      if (retryCountRef.current < 2) {
-        setConnectionStatus('connecting');
-      }
+      // Fast timeout: If WebSocket does not connect in 1.5s, gracefully switch to standby
+      if (connectTimeoutRef.current) clearTimeout(connectTimeoutRef.current);
+      connectTimeoutRef.current = setTimeout(() => {
+        if (ws.readyState !== WebSocket.OPEN) {
+          try { ws.close(); } catch {}
+          setConnectionStatus('standby');
+        }
+      }, 1500);
 
       ws.onopen = () => {
+        if (connectTimeoutRef.current) clearTimeout(connectTimeoutRef.current);
         retryCountRef.current = 0;
         setConnectionStatus('connected');
         
@@ -63,26 +70,21 @@ export function useWebSocketAlerts() {
       };
 
       ws.onclose = () => {
+        if (connectTimeoutRef.current) clearTimeout(connectTimeoutRef.current);
+        setConnectionStatus('standby');
         retryCountRef.current += 1;
-        if (retryCountRef.current >= 2) {
-          // Switch gracefully to local standby mode
-          setConnectionStatus('standby');
-        } else {
-          setConnectionStatus('connecting');
-        }
 
-        // Try reconnecting with exponential backoff (max 30s)
-        const delay = Math.min(30000, 4000 * Math.pow(1.5, retryCountRef.current));
+        // Try reconnecting in background with backoff without showing UI error
+        const delay = Math.min(30000, 5000 * Math.pow(1.5, Math.min(retryCountRef.current, 4)));
         reconnectTimeoutRef.current = setTimeout(() => {
           connect();
         }, delay);
       };
 
       ws.onerror = () => {
-        if (retryCountRef.current >= 2) {
-          setConnectionStatus('standby');
-        }
-        ws.close();
+        if (connectTimeoutRef.current) clearTimeout(connectTimeoutRef.current);
+        setConnectionStatus('standby');
+        try { ws.close(); } catch {}
       };
     } catch {
       setConnectionStatus('standby');

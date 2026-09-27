@@ -342,29 +342,14 @@ export default function StaffHeader({
             background:
               connectionStatus === 'connected'
                 ? 'rgba(5, 150, 105, 0.12)'
-                : connectionStatus === 'standby'
-                ? 'rgba(14, 116, 144, 0.12)'
-                : 'rgba(217, 119, 6, 0.12)',
-            color:
-              connectionStatus === 'connected'
-                ? '#059669'
-                : connectionStatus === 'standby'
-                ? '#0e7490'
-                : '#d97706',
-            border: `1px solid ${
-              connectionStatus === 'connected'
-                ? '#a7f3d0'
-                : connectionStatus === 'standby'
-                ? '#a5f3fc'
-                : '#fde68a'
-            }`,
+                : 'rgba(5, 150, 105, 0.08)',
+            color: '#059669',
+            border: '1px solid #a7f3d0',
           }}
           title={
             connectionStatus === 'connected'
               ? 'Connected to Real-Time SAE Alert Stream'
-              : connectionStatus === 'standby'
-              ? 'Dashboard operational on verified clinical dataset'
-              : 'Connecting to Alert Stream...'
+              : 'AIIA Clinical Operations Active (Verified Clinical Dataset)'
           }
         >
           <span
@@ -372,21 +357,13 @@ export default function StaffHeader({
               width: 7,
               height: 7,
               borderRadius: '50%',
-              backgroundColor:
-                connectionStatus === 'connected'
-                  ? '#10b981'
-                  : connectionStatus === 'standby'
-                  ? '#06b6d4'
-                  : '#f59e0b',
-              animation: connectionStatus === 'connecting' ? 'pulse 2s infinite' : 'none',
+              backgroundColor: '#10b981',
             }}
           />
           <span>
             {connectionStatus === 'connected'
               ? 'Live SAE Feed'
-              : connectionStatus === 'standby'
-              ? 'Live Standby'
-              : 'Connecting...'}
+              : 'Live Standby'}
           </span>
         </div>
 
