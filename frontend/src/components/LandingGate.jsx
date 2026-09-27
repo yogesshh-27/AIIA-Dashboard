@@ -1,9 +1,10 @@
 import React from 'react';
-import { User, ShieldCheck, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ShieldCheck, User } from 'lucide-react';
 
 export default function LandingGate({ onSelectPatient, onSelectStaff }) {
   return (
     <div id="landing-gate" className="landing-gate-view">
+      {/* Top Institutional Header */}
       <div className="landing-header">
         <div className="landing-brand">
           <img
@@ -31,126 +32,140 @@ export default function LandingGate({ onSelectPatient, onSelectStaff }) {
         </div>
       </div>
 
-      <div className="landing-hero-content">
-        <div className="landing-title-block">
-          <h2>AIIA Clinical Trial Management & Research Portal</h2>
-          <p>
-            A real-time, cloud-based, GCP-compliant Clinical Trial Management System (CTMS) for Ayurveda research, 
-            with CDISC/FHIR-interoperable data, role-based KPIs, and integrated ethics, regulatory and pharmacovigilance tracking.
-          </p>
-        </div>
+      {/* Main Horizontal Layout: Image on Left, Logins on Right (divided up & down) */}
+      <div className="landing-horizontal-layout">
+        
+        {/* LEFT COLUMN: HERO IMAGE & CLINICAL RESEARCH SHOWCASE */}
+        <div className="landing-left-visual">
+          <div className="landing-visual-card">
+            <img
+              src="/images/aiia_hero_research.jpg"
+              alt="AIIA High-Tech Ayurvedic Clinical Science Laboratory"
+              className="landing-visual-img"
+            />
+            <div className="landing-visual-overlay">
+              <div className="landing-visual-top-badge">
+                <span>🔬 AYURCTMS Evidence Platform</span>
+              </div>
 
-        {/* HIGH-RES AYURVEDIC CLINICAL SCIENCE HERO GRAPHIC */}
-        <div className="landing-hero-banner" style={{
-          position: 'relative',
-          borderRadius: '16px',
-          overflow: 'hidden',
-          marginBottom: '32px',
-          boxShadow: '0 20px 40px -10px rgba(11, 79, 73, 0.22), 0 8px 16px -4px rgba(0, 0, 0, 0.08)',
-          border: '1px solid rgba(0, 89, 68, 0.15)',
-          maxHeight: '340px'
-        }}>
-          <img
-            src="/images/aiia_hero_research.jpg"
-            alt="AIIA High-Tech Ayurvedic Clinical Science Laboratory"
-            style={{ width: '100%', height: '340px', objectFit: 'cover', display: 'block' }}
-          />
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(180deg, rgba(6, 44, 34, 0.2) 0%, rgba(6, 44, 34, 0.85) 100%)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-            padding: '24px 32px'
-          }}>
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '8px' }}>
-              <span style={{ background: 'rgba(255, 255, 255, 0.92)', color: '#005944', padding: '4px 12px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px', backdropFilter: 'blur(4px)' }}>
-                🌿 75+ Standardized Ayurveda Protocols
-              </span>
-              <span style={{ background: 'rgba(255, 255, 255, 0.92)', color: '#0369a1', padding: '4px 12px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px', backdropFilter: 'blur(4px)' }}>
-                🏛️ 9 Verified AIIA Clinical Research Sites
-              </span>
-              <span style={{ background: 'rgba(255, 255, 255, 0.92)', color: '#b45309', padding: '4px 12px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px', backdropFilter: 'blur(4px)' }}>
-                📜 100% GCP & Rule 2 CTRI Compliant
-              </span>
-            </div>
-            <div style={{ color: '#ffffff', fontSize: '13.5px', fontWeight: 500, textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
-              Advancing evidence-based Ayurvedic medicine through modern CDISC/FHIR informatics & nation-wide multicentric clinical research.
+              <div className="landing-visual-badges">
+                <span className="visual-badge badge-protocols">
+                  🌿 75+ Standardized Ayurveda Protocols
+                </span>
+                <span className="visual-badge badge-sites">
+                  🏛️ 9 Verified AIIA Clinical Research Sites
+                </span>
+                <span className="visual-badge badge-gcp">
+                  📜 100% GCP & Rule 2 CTRI Compliant
+                </span>
+              </div>
+
+              <p className="landing-visual-tagline">
+                Advancing evidence-based Ayurvedic medicine through modern CDISC/FHIR informatics &amp; nation-wide multicentric clinical research.
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="gate-selection-container">
-          <h3 className="gate-prompt">Who are you?</h3>
-          <p className="gate-subprompt">Select your portal to continue</p>
+        {/* RIGHT COLUMN: PORTAL SELECTION (LOGINS DIVIDED UP AND DOWN) */}
+        <div className="landing-right-portals">
+          <div className="landing-title-block">
+            <div className="portal-kicker">Ministry of Ayush • AYURCTMS</div>
+            <h2>AIIA Clinical Trial Management &amp; Research Portal</h2>
+            <p>
+              A real-time, cloud-based, GCP-compliant Clinical Trial Management System (CTMS) for Ayurveda research,
+              with CDISC/FHIR-interoperable data, role-based KPIs, and integrated ethics, regulatory and pharmacovigilance tracking.
+            </p>
+          </div>
 
-          <div className="gate-cards-grid">
-            {/* CARD 1: PATIENT */}
-            <div
-              className="gate-card gate-card-patient"
-              onClick={onSelectPatient}
-              tabIndex={0}
-              role="button"
-              aria-label="Patient Portal"
-              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelectPatient()}
-            >
-              <div className="gate-card-icon-wrapper">
-                <span className="gate-icon">👤</span>
-              </div>
-              <div className="gate-card-body">
-                <span className="gate-badge">Public Access</span>
-                <h4 className="gate-card-title">I'm a Patient</h4>
-                <p className="gate-card-desc">
-                  Find suitable clinical trials and participating locations accessible to you across India.
-                </p>
-                <ul className="gate-card-features">
-                  <li><CheckCircle2 size={14} className="text-emerald-600 inline mr-1" /> Multi-location accessibility search</li>
-                  <li><CheckCircle2 size={14} className="text-emerald-600 inline mr-1" /> Verified Ayurvedic trial sites</li>
-                  <li><CheckCircle2 size={14} className="text-emerald-600 inline mr-1" /> Direct trial coordinator contacts</li>
-                </ul>
-              </div>
-              <div className="gate-card-action">
-                <span>Find Suitable Trials</span>
-                <ArrowRight size={16} className="arrow-icon ml-1" />
-              </div>
+          <div className="gate-selection-container">
+            <div className="gate-selection-header">
+              <h3 className="gate-prompt">Who are you?</h3>
+              <p className="gate-subprompt">Select your portal to continue</p>
             </div>
 
-            {/* CARD 2: STAFF */}
-            <div
-              className="gate-card gate-card-staff"
-              onClick={onSelectStaff}
-              tabIndex={0}
-              role="button"
-              aria-label="AIIA Authorized Staff Portal"
-              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelectStaff()}
-            >
-              <div className="gate-card-icon-wrapper staff-icon-wrapper">
-                <span className="gate-icon">🔒</span>
+            {/* STACKED LOGINS (DIVIDED UP AND DOWN) */}
+            <div className="gate-cards-stack">
+              
+              {/* TOP CARD: PATIENT */}
+              <div
+                className="gate-card gate-card-horizontal gate-card-patient"
+                onClick={onSelectPatient}
+                tabIndex={0}
+                role="button"
+                aria-label="Patient Portal"
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelectPatient()}
+              >
+                <div className="gate-card-icon-wrapper">
+                  <span className="gate-icon">👤</span>
+                </div>
+                <div className="gate-card-body">
+                  <div className="gate-card-header-row">
+                    <span className="gate-badge">Public Access</span>
+                    <span className="gate-direct-indicator">No Login Required</span>
+                  </div>
+                  <h4 className="gate-card-title">I'm a Patient</h4>
+                  <p className="gate-card-desc">
+                    Find suitable clinical trials and participating locations accessible to you across India.
+                  </p>
+                  <ul className="gate-card-features-inline">
+                    <li><CheckCircle2 size={13} className="text-emerald-600 inline mr-1 flex-shrink-0" /> Multi-location search</li>
+                    <li><CheckCircle2 size={13} className="text-emerald-600 inline mr-1 flex-shrink-0" /> Verified trial sites</li>
+                    <li><CheckCircle2 size={13} className="text-emerald-600 inline mr-1 flex-shrink-0" /> Direct coordinator contacts</li>
+                  </ul>
+                </div>
+                <div className="gate-card-action-side">
+                  <div className="action-btn-pill">
+                    <span>Find Suitable Trials</span>
+                    <ArrowRight size={16} className="arrow-icon ml-1.5" />
+                  </div>
+                </div>
               </div>
-              <div className="gate-card-body">
-                <span className="gate-badge staff-badge">Staff Login Required</span>
-                <h4 className="gate-card-title">I'm AIIA Authorized Staff</h4>
-                <p className="gate-card-desc">
-                  Access CTMS operations: Trial management, doctor directories, patient tracking, pharmacovigilance, and ethics compliance.
-                </p>
-                <ul className="gate-card-features">
-                  <li><CheckCircle2 size={14} className="text-emerald-600 inline mr-1" /> Role-based KPI analytics & GCP oversight</li>
-                  <li><CheckCircle2 size={14} className="text-emerald-600 inline mr-1" /> Automated safety signal detection</li>
-                  <li><CheckCircle2 size={14} className="text-emerald-600 inline mr-1" /> CDISC / FHIR data interoperability</li>
-                </ul>
+
+              {/* BOTTOM CARD: STAFF */}
+              <div
+                className="gate-card gate-card-horizontal gate-card-staff"
+                onClick={onSelectStaff}
+                tabIndex={0}
+                role="button"
+                aria-label="AIIA Authorized Staff Portal"
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelectStaff()}
+              >
+                <div className="gate-card-icon-wrapper staff-icon-wrapper">
+                  <span className="gate-icon">🔒</span>
+                </div>
+                <div className="gate-card-body">
+                  <div className="gate-card-header-row">
+                    <span className="gate-badge staff-badge">Staff Login Required</span>
+                    <span className="gate-direct-indicator staff-indicator">AIIA Credentials</span>
+                  </div>
+                  <h4 className="gate-card-title">I'm AIIA Authorized Staff</h4>
+                  <p className="gate-card-desc">
+                    Access CTMS operations: Trial management, doctor directories, patient tracking, pharmacovigilance, and ethics compliance.
+                  </p>
+                  <ul className="gate-card-features-inline">
+                    <li><CheckCircle2 size={13} className="text-emerald-600 inline mr-1 flex-shrink-0" /> Role-based KPI analytics</li>
+                    <li><CheckCircle2 size={13} className="text-emerald-600 inline mr-1 flex-shrink-0" /> Automated safety alerts</li>
+                    <li><CheckCircle2 size={13} className="text-emerald-600 inline mr-1 flex-shrink-0" /> CDISC / FHIR data export</li>
+                  </ul>
+                </div>
+                <div className="gate-card-action-side">
+                  <div className="action-btn-pill staff-btn-pill">
+                    <span>Staff Portal Login</span>
+                    <ArrowRight size={16} className="arrow-icon ml-1.5" />
+                  </div>
+                </div>
               </div>
-              <div className="gate-card-action staff-action">
-                <span>Staff Portal Login</span>
-                <ArrowRight size={16} className="arrow-icon ml-1" />
-              </div>
+
             </div>
           </div>
         </div>
+
       </div>
 
+      {/* Footer */}
       <div className="landing-footer">
-        <span>GCP & NDCT Rules 2019 Compliant Architecture</span>
+        <span>GCP &amp; NDCT Rules 2019 Compliant Architecture</span>
         <span>•</span>
         <span>CDISC SDTM / HL7 FHIR R4 Interoperable</span>
         <span>•</span>
