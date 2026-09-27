@@ -235,7 +235,7 @@ export function getFallbackForEndpoint(url) {
     const doctor = FALLBACK_DATA['/api/ayur/doctors']?.doctors?.find(
       d => String(d.id) === docId || d.doctor_id === docId
     );
-    if (doctor) return { doctor };
+    if (doctor) return { success: true, doctor };
   }
 
   if (path.startsWith('/api/ayur/patients/')) {

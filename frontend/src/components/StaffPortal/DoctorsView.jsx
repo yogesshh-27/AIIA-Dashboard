@@ -4,6 +4,7 @@ import { FALLBACK_DATA } from '../../services/fallbackData';
 import { Stethoscope, Mail, Phone, MapPin, Award, X, User } from 'lucide-react';
 
 const INITIAL_DOCTORS = FALLBACK_DATA['/api/ayur/doctors']?.doctors || [];
+const ALL_PATIENTS = FALLBACK_DATA['/api/ayur/patients']?.patients || [];
 
 export default function DoctorsView() {
   const [doctors, setDoctors] = useState(INITIAL_DOCTORS);
@@ -28,16 +29,26 @@ export default function DoctorsView() {
     loadDoctors();
   }, []);
 
-  const handleOpenDoctor = async (doctorId) => {
+  const handleOpenDoctor = async (doctor) => {
+    // Open immediately with existing card data (0ms latency)
+    setSelectedDoctor(doctor);
     try {
-      const data = await api.getDoctorDetail(doctorId);
-      if (data.success && data.doctor) {
-        setSelectedDoctor(data.doctor);
+      const data = await api.getDoctorDetail(doctor.doctor_id || doctor.id);
+      const detail = data?.doctor || data;
+      if (detail && (detail.name || detail.doctor_id)) {
+        setSelectedDoctor((prev) => ({ ...(prev || doctor), ...detail }));
       }
     } catch (err) {
-      console.error(err);
+      console.error('Failed to load extra doctor details:', err);
     }
   };
+
+  // Find assigned patients for selected doctor
+  const assignedPatients = selectedDoctor
+    ? (selectedDoctor.assigned_patients && selectedDoctor.assigned_patients.length > 0
+        ? selectedDoctor.assigned_patients
+        : ALL_PATIENTS.filter((p) => p.assigned_trial_id === selectedDoctor.trial_id).slice(0, 5))
+    : [];
 
   return (
     <div className="doctors-view">
@@ -49,26 +60,36 @@ export default function DoctorsView() {
       </div>
 
       {loading ? (
-        <div className="p-8 text-center text-slate-500">
-          <div className="badge badge-info animate-pulse p-3 inline-block">
+        <div className="p-8 text-center text-slate-500" style={{ padding: '32px', textAlign: 'center' }}>
+          <div className="badge badge-info animate-pulse" style={{ padding: '8px 16px', fontSize: '13px' }}>
             Loading principal investigators directory...
           </div>
         </div>
       ) : error ? (
-        <div className="badge badge-danger p-3">{error}</div>
+        <div className="badge badge-danger" style={{ padding: '10px 16px', fontSize: '13px' }}>{error}</div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
           {doctors.map((d) => (
             <div
               key={d.doctor_id}
               className="site-card cursor-pointer hover:shadow-md transition"
-              onClick={() => handleOpenDoctor(d.doctor_id)}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
+                borderRadius: '12px',
+                padding: '20px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                cursor: 'pointer'
+              }}
+              onClick={() => handleOpenDoctor(d)}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
                 <div
                   style={{
-                    width: '44px',
-                    height: '44px',
+                    width: '46px',
+                    height: '46px',
                     borderRadius: '50%',
                     background: 'var(--ayur-primary-subtle)',
                     color: 'var(--ayur-primary)',
@@ -77,40 +98,56 @@ export default function DoctorsView() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '15px',
+                    flexShrink: 0
                   }}
                 >
                   {d.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>
+                  <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)', marginBottom: '2px' }}>
                     {d.name}
                   </div>
                   <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{d.qualification}</div>
                 </div>
               </div>
 
-              <div style={{ fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px' }}>
+              <div style={{ fontSize: '12.5px', display: 'flex', flexDirection: 'column', gap: '7px', marginBottom: '16px' }}>
                 <div>
-                  <strong>Specialization:</strong> {d.specialization}
+                  <strong style={{ color: '#475569' }}>Specialization:</strong> {d.specialization}
                 </div>
                 <div>
-                  <strong>Experience:</strong> {d.experience_years} Years
+                  <strong style={{ color: '#475569' }}>Experience:</strong> {d.experience_years} Years
                 </div>
                 <div>
-                  <strong>Current Site:</strong> 📍 {d.current_site}
+                  <strong style={{ color: '#475569' }}>Current Site:</strong> 📍 {d.current_site}
                 </div>
                 <div>
-                  <strong>Assigned Trial:</strong> <span className="trial-id-badge">{d.trial_id}</span>
+                  <strong style={{ color: '#475569' }}>Assigned Trial:</strong> <span className="trial-id-badge">{d.trial_id}</span>
                 </div>
                 <div>
-                  <strong>Role:</strong> {d.role}
+                  <strong style={{ color: '#475569' }}>Role:</strong> {d.role}
                 </div>
                 <div>
-                  <strong>Status:</strong> <span className="badge badge-success">{d.status}</span>
+                  <strong style={{ color: '#475569' }}>Status:</strong> <span className="badge badge-success">{d.status}</span>
                 </div>
               </div>
 
-              <button className="btn btn-outline btn-sm btn-block" style={{ marginTop: 'auto' }}>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                style={{
+                  marginTop: 'auto',
+                  width: '100%',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  borderColor: '#005944',
+                  color: '#005944'
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenDoctor(d);
+                }}
+              >
                 VIEW FULL PROFILE
               </button>
             </div>
@@ -120,82 +157,130 @@ export default function DoctorsView() {
 
       {/* Doctor Profile Modal */}
       {selectedDoctor && (
-        <div className="modal-overlay" style={{ display: 'flex' }}>
-          <div className="modal-card max-w-xl w-full p-6">
-            <div className="flex justify-between items-center mb-4 border-b pb-3">
+        <div
+          className="modal-overlay"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(3px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '16px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedDoctor(null);
+          }}
+        >
+          <div
+            className="modal-card"
+            style={{
+              background: '#ffffff',
+              borderRadius: '14px',
+              padding: '24px',
+              maxWidth: '600px',
+              width: '100%',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              maxHeight: '90vh',
+              overflowY: 'auto'
+            }}
+          >
+            {/* Modal Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', borderBottom: '1px solid #e2e8f0', paddingBottom: '14px' }}>
               <div>
-                <span className="badge badge-info text-xs">{selectedDoctor.role}</span>
-                <h3 className="text-xl font-bold text-emerald-950 mt-1">{selectedDoctor.name}</h3>
+                <span className="badge badge-info" style={{ fontSize: '11px', marginBottom: '6px' }}>{selectedDoctor.role || 'Principal Investigator'}</span>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#003d2e', margin: 0 }}>
+                  {selectedDoctor.name}
+                </h3>
+                <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                  {selectedDoctor.qualification} • {selectedDoctor.specialization}
+                </div>
               </div>
               <button
-                className="btn btn-ghost btn-xs text-slate-500"
+                type="button"
+                className="btn btn-ghost btn-xs"
+                style={{ cursor: 'pointer', color: '#64748b', padding: '4px', borderRadius: '6px' }}
                 onClick={() => setSelectedDoctor(null)}
               >
-                <X size={18} />
+                <X size={20} />
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs mb-4">
+            {/* Modal Metadata Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '12.5px', marginBottom: '16px' }}>
               <div>
-                <strong>Doctor ID:</strong> {selectedDoctor.doctor_id}
+                <strong style={{ color: '#475569' }}>Doctor ID:</strong> <span className="trial-id-badge">{selectedDoctor.doctor_id}</span>
               </div>
               <div>
-                <strong>Qualification:</strong> {selectedDoctor.qualification}
+                <strong style={{ color: '#475569' }}>Experience:</strong> {selectedDoctor.experience_years} Years
               </div>
               <div>
-                <strong>Specialization:</strong> {selectedDoctor.specialization}
+                <strong style={{ color: '#475569' }}>Current Site:</strong> 📍 {selectedDoctor.current_site}
               </div>
               <div>
-                <strong>Experience:</strong> {selectedDoctor.experience_years} Years
+                <strong style={{ color: '#475569' }}>Assigned Trial:</strong> <span className="trial-id-badge">{selectedDoctor.trial_id}</span>
               </div>
               <div>
-                <strong>Current Site:</strong> {selectedDoctor.current_site}
+                <strong style={{ color: '#475569' }}>Official Email:</strong> {selectedDoctor.email || `${selectedDoctor.doctor_id.toLowerCase()}@aiia.gov.in`}
               </div>
               <div>
-                <strong>Assigned Trial:</strong> {selectedDoctor.trial_id}
-              </div>
-              <div>
-                <strong>Email:</strong> {selectedDoctor.email}
-              </div>
-              <div>
-                <strong>Phone:</strong> {selectedDoctor.phone}
+                <strong style={{ color: '#475569' }}>Hospital Extension:</strong> {selectedDoctor.phone || '+91-11-29948601 (Ext 240)'}
               </div>
             </div>
 
-            <div className="bg-slate-50 p-3 rounded border text-xs mb-4">
-              <strong className="text-slate-800">Clinical Biography & Research Focus:</strong>
-              <p className="mt-1 text-slate-600">
-                {selectedDoctor.bio || 'Principal investigator overseeing clinical trials and patient safety.'}
+            {/* Bio Box */}
+            <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px', marginBottom: '16px', lineHeight: 1.5 }}>
+              <strong style={{ color: '#1e293b', display: 'block', marginBottom: '4px' }}>Clinical Biography & Research Focus:</strong>
+              <p style={{ color: '#475569', margin: 0 }}>
+                {selectedDoctor.bio || 'Principal investigator and senior clinical specialist at AIIA overseeing patient enrollment, standard Ayurvedic therapeutic protocols, and GCP-compliant trial execution.'}
               </p>
             </div>
 
-            <div className="mb-4">
-              <strong className="text-xs text-slate-800">
-                Assigned Patients in Active Follow-Up ({selectedDoctor.assigned_patients ? selectedDoctor.assigned_patients.length : 0})
+            {/* Assigned Patients Section */}
+            <div style={{ marginBottom: '20px' }}>
+              <strong style={{ fontSize: '13px', color: '#1e293b', display: 'block', marginBottom: '8px' }}>
+                Assigned Trial Cohort Patients ({assignedPatients.length})
               </strong>
-              <div className="mt-2 max-h-36 overflow-y-auto space-y-1">
-                {selectedDoctor.assigned_patients && selectedDoctor.assigned_patients.length > 0 ? (
-                  selectedDoctor.assigned_patients.map((p) => (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '160px', overflowY: 'auto' }}>
+                {assignedPatients.length > 0 ? (
+                  assignedPatients.map((p) => (
                     <div
                       key={p.patient_id}
-                      className="flex justify-between p-2 bg-slate-50 border rounded text-xs"
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '8px 12px',
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '6px',
+                        fontSize: '12px'
+                      }}
                     >
                       <span>
-                        <strong>{p.full_name}</strong> ({p.patient_id})
+                        <strong style={{ color: '#0f172a' }}>{p.full_name}</strong> ({p.patient_id})
                       </span>
                       <span>
-                        {p.condition} • <span className="badge badge-info">{p.treatment_status}</span>
+                        {p.condition} &nbsp;•&nbsp; <span className="badge badge-info" style={{ fontSize: '10px' }}>{p.treatment_status}</span>
                       </span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-slate-400 text-xs italic">No currently assigned patients.</p>
+                  <p style={{ color: '#94a3b8', fontSize: '12px', fontStyle: 'italic', margin: 0 }}>No currently assigned patients in this cohort.</p>
                 )}
               </div>
             </div>
 
-            <div className="flex justify-end">
-              <button className="btn btn-outline btn-sm" onClick={() => setSelectedDoctor(null)}>
+            {/* Modal Footer */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                style={{ fontWeight: 600, cursor: 'pointer', padding: '6px 18px' }}
+                onClick={() => setSelectedDoctor(null)}
+              >
                 Close
               </button>
             </div>
