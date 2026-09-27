@@ -2,15 +2,18 @@
 import { FALLBACK_DATA } from './fallbackData';
 
 const RAW_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
-let activeBaseUrl = localStorage.getItem('ayurctms_active_api_url') || RAW_URL || 'https://aiia-dashboard.onrender.com';
+let activeBaseUrl = localStorage.getItem('ayurctms_active_api_url') || RAW_URL || '';
 
-// Auto-fallback candidates across standard Render domains
+// Priority candidates: Local/Same-origin first so running sites connect in <5ms
 const CANDIDATES = [
-  activeBaseUrl,
+  '',
   RAW_URL,
-  'https://aiia-dashboard.onrender.com',
-  ''
-].filter((val, idx, arr) => val !== undefined && val !== null && arr.indexOf(val) === idx);
+  activeBaseUrl && activeBaseUrl !== RAW_URL ? activeBaseUrl : null,
+  'https://aiia-dashboard.onrender.com'
+].filter((val, idx, arr) => val !== null && val !== undefined && arr.indexOf(val) === idx);
+
+// Map of unreachable base URLs to avoid repeating 1.2s timeouts on every subsequent call
+const deadBases = new Map();
 
 export function generateReportFallback(reportType = 'trial_progress') {
   const today = new Date().toISOString().split('T')[0];
@@ -318,18 +321,28 @@ export function getFallbackForEndpoint(url) {
 async function fetchJSON(url, options = {}) {
   const method = (options.method || 'GET').toUpperCase();
   const fallback = getFallbackForEndpoint(url);
+  const now = Date.now();
 
-  // Fast timeout (3.5s) to avoid UI freezing
+  // Fast timeout (1.2s for GET, 2.5s for POST) to avoid UI freezing
   for (const base of CANDIDATES) {
+    // Skip candidate if it recently timed out or failed
+    if (base && deadBases.has(base) && deadBases.get(base) > now) {
+      continue;
+    }
+
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 3500);
+      const timeoutMs = method === 'POST' ? 2500 : 1200;
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+      // Support external signal combined with internal timeout
+      const signal = options.signal || controller.signal;
       const res = await fetch(`${base}${url}`, {
         headers: {
           'Content-Type': 'application/json',
           ...(options.headers || {}),
         },
-        signal: controller.signal,
+        signal,
         ...options,
       });
       clearTimeout(timer);
@@ -345,8 +358,14 @@ async function fetchJSON(url, options = {}) {
         }
         return await res.json();
       }
-    } catch {
-      // Continue to next candidate or fallback
+    } catch (err) {
+      if (err.name === 'AbortError' && options.signal?.aborted) {
+        throw err;
+      }
+      // If remote base timed out or failed, mark as dead for 45 seconds
+      if (base) {
+        deadBases.set(base, now + 45000);
+      }
     }
   }
 

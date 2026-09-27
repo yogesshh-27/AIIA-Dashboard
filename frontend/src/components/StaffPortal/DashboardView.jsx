@@ -86,11 +86,20 @@ export default function DashboardView({ onNavigate, onOpenCreateTrial }) {
       }
     }
 
+    // Fast safety timeout: dismiss connecting badge after 1.5s max so UI remains responsive
+    const safetyDismissTimer = setTimeout(() => {
+      if (isMounted) {
+        setIsLiveSyncing(false);
+        setWakeNotice('');
+      }
+    }, 1500);
+
     loadDashboard(1);
 
     return () => {
       isMounted = false;
       if (timer) clearTimeout(timer);
+      clearTimeout(safetyDismissTimer);
     };
   }, []);
 

@@ -7,6 +7,7 @@ export default function ReportsView() {
   const [reportData, setReportData] = useState(() => generateReportFallback('trial_progress'));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const activeReportTypeRef = React.useRef('trial_progress');
 
   const reportButtons = [
     { id: 'trial_progress', label: '1. Trial Progress' },
@@ -18,22 +19,36 @@ export default function ReportsView() {
     { id: 'gcp_compliance', label: '7. GCP Compliance' },
   ];
 
-  const fetchReport = async (type) => {
-    try {
-      setError(null);
-      const res = await api.getReportData(type);
-      if (res && res.rows && res.rows.length > 0) {
-        setReportData(res);
-      }
-    } catch (err) {
-      // Retain the local fallback dataset seamlessly
-    } finally {
-      setLoading(false);
-    }
+  const handleSelectReport = (typeId) => {
+    activeReportTypeRef.current = typeId;
+    setReportType(typeId);
+    setReportData(generateReportFallback(typeId));
+    setLoading(false);
+    setError(null);
   };
 
   useEffect(() => {
-    fetchReport(reportType);
+    let isCurrent = true;
+    const controller = new AbortController();
+
+    async function fetchLiveReport() {
+      try {
+        const res = await api.getReportData(reportType);
+        // CRITICAL GUARD: Drop stale responses from earlier tab requests
+        if (isCurrent && activeReportTypeRef.current === reportType && res && res.rows && res.rows.length > 0) {
+          setReportData(res);
+        }
+      } catch {
+        // Keep local dataset seamlessly
+      }
+    }
+
+    fetchLiveReport();
+
+    return () => {
+      isCurrent = false;
+      controller.abort();
+    };
   }, [reportType]);
 
   const handlePrint = () => {
@@ -109,10 +124,7 @@ export default function ReportsView() {
                 cursor: 'pointer',
                 transition: 'all 0.15s ease'
               }}
-              onClick={() => {
-                setReportType(btn.id);
-                setReportData(generateReportFallback(btn.id));
-              }}
+              onClick={() => handleSelectReport(btn.id)}
             >
               {btn.label}
             </button>
