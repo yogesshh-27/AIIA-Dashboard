@@ -12,6 +12,18 @@ const CONDITIONS = [
   'Cognitive deficit disorders', 'Obesity', 'Skin disorders', 'Digestive disorders'
 ];
 
+const CONDITION_ICONS = {
+  'Arthritis': '🦴',
+  'Diabetes': '🩸',
+  'Hypertension': '🩺',
+  'Psoriasis': '🌿',
+  'Asthma': '🫁',
+  'Cognitive deficit disorders': '🧠',
+  'Obesity': '⚖️',
+  'Skin disorders': '✨',
+  'Digestive disorders': '🧪'
+};
+
 export default function PatientPortal({ onBackToGate, onStaffLoginClick, onOpenStaffLogin }) {
   const handleStaffLogin = onOpenStaffLogin || onStaffLoginClick;
   const { t } = useTranslation();
@@ -171,6 +183,64 @@ export default function PatientPortal({ onBackToGate, onStaffLoginClick, onOpenS
             <p>Tell us a little about yourself so we can identify trial locations that may be accessible to you.</p>
           </div>
 
+          {/* VISUAL 3-STEP MATCHING STEPPER */}
+          <div className="matching-stepper" style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+            marginBottom: '22px',
+            flexWrap: 'wrap'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: '#f0fdf4',
+              border: '1px solid #bbf7d0',
+              padding: '6px 14px',
+              borderRadius: '9999px',
+              color: '#15803d',
+              fontWeight: 700,
+              fontSize: '12px'
+            }}>
+              <span style={{ background: '#15803d', color: '#ffffff', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px' }}>1</span>
+              <span>Patient Profile</span>
+            </div>
+            <span style={{ color: '#94a3b8', fontWeight: 'bold' }}>→</span>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: formData.selectedCities.length > 0 ? '#f0fdf4' : '#f8fafc',
+              border: formData.selectedCities.length > 0 ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
+              padding: '6px 14px',
+              borderRadius: '9999px',
+              color: formData.selectedCities.length > 0 ? '#15803d' : '#64748b',
+              fontWeight: 700,
+              fontSize: '12px'
+            }}>
+              <span style={{ background: formData.selectedCities.length > 0 ? '#15803d' : '#94a3b8', color: '#ffffff', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px' }}>2</span>
+              <span>City Locations ({formData.selectedCities.length})</span>
+            </div>
+            <span style={{ color: '#94a3b8', fontWeight: 'bold' }}>→</span>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: matches ? '#f0fdf4' : '#f8fafc',
+              border: matches ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
+              padding: '6px 14px',
+              borderRadius: '9999px',
+              color: matches ? '#15803d' : '#64748b',
+              fontWeight: 700,
+              fontSize: '12px'
+            }}>
+              <span style={{ background: matches ? '#15803d' : '#94a3b8', color: '#ffffff', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px' }}>3</span>
+              <span>Matching Trials {matches ? `(${matches.length})` : ''}</span>
+            </div>
+          </div>
+
           <div className="patient-card form-card">
             <form onSubmit={handleSearch}>
               <div className="form-row-grid">
@@ -262,6 +332,38 @@ export default function PatientPortal({ onBackToGate, onStaffLoginClick, onOpenS
                     </option>
                   ))}
                 </select>
+
+                {/* AYURVEDIC CONDITION GRAPHIC CHIPS */}
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
+                  {CONDITIONS.map((cond) => {
+                    const isSelected = formData.condition === cond;
+                    return (
+                      <button
+                        key={cond}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, condition: cond }))}
+                        style={{
+                          background: isSelected ? '#005944' : '#f8fafc',
+                          color: isSelected ? '#ffffff' : '#334155',
+                          border: isSelected ? '1px solid #005944' : '1px solid #cbd5e1',
+                          borderRadius: '8px',
+                          padding: '5px 11px',
+                          fontSize: '11.5px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          boxShadow: isSelected ? '0 2px 6px rgba(0, 89, 68, 0.25)' : 'none',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <span style={{ fontSize: '13px' }}>{CONDITION_ICONS[cond] || '🌿'}</span>
+                        <span>{cond}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="form-group">
@@ -365,8 +467,13 @@ export default function PatientPortal({ onBackToGate, onStaffLoginClick, onOpenS
               <div className="trial-cards-grid">
                 {matches.map((trial, idx) => (
                   <div key={idx} className="trial-match-card">
-                    <div className="trial-card-header">
-                      <span className="trial-id-badge">{trial.trial_id || 'TRIAL'}</span>
+                    <div className="trial-card-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span className="trial-id-badge">{trial.trial_id || 'TRIAL'}</span>
+                        <span style={{ fontSize: '10.5px', fontWeight: 700, background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', borderRadius: '4px', padding: '1px 7px', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          🌿 Verified AIIA Protocol
+                        </span>
+                      </div>
                       <span className="badge badge-success">Recruiting</span>
                     </div>
 

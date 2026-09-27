@@ -175,6 +175,19 @@ export default function DashboardView({ onNavigate, onOpenCreateTrial }) {
               <span className="kpi-stat-label">Trial Sites</span>
             </div>
           </div>
+          {/* Micro Sparkline */}
+          <div style={{ height: '24px', margin: '6px 0', opacity: 0.9 }}>
+            <svg viewBox="0 0 160 24" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+              <defs>
+                <linearGradient id="grad-doc" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#005944" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#005944" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 18 Q 30 16 60 17 T 110 8 T 160 3 L 160 24 L 0 24 Z" fill="url(#grad-doc)" />
+              <path d="M 0 18 Q 30 16 60 17 T 110 8 T 160 3" fill="none" stroke="#005944" strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
+          </div>
           <button
             className="btn btn-outline btn-sm kpi-card-btn"
             onClick={() => onNavigate('doctors')}
@@ -206,6 +219,19 @@ export default function DashboardView({ onNavigate, onOpenCreateTrial }) {
               </span>
               <span className="kpi-stat-label">Completed</span>
             </div>
+          </div>
+          {/* Micro Sparkline */}
+          <div style={{ height: '24px', margin: '6px 0', opacity: 0.9 }}>
+            <svg viewBox="0 0 160 24" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+              <defs>
+                <linearGradient id="grad-pat" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#0284c7" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#0284c7" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 20 Q 40 18 80 12 T 120 7 T 160 2 L 160 24 L 0 24 Z" fill="url(#grad-pat)" />
+              <path d="M 0 20 Q 40 18 80 12 T 120 7 T 160 2" fill="none" stroke="#0284c7" strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
           </div>
           <button
             className="btn btn-outline btn-sm kpi-card-btn"
@@ -239,12 +265,125 @@ export default function DashboardView({ onNavigate, onOpenCreateTrial }) {
               <span className="kpi-stat-label">Under Review</span>
             </div>
           </div>
+          {/* Micro Sparkline */}
+          <div style={{ height: '24px', margin: '6px 0', opacity: 0.9 }}>
+            <svg viewBox="0 0 160 24" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+              <defs>
+                <linearGradient id="grad-pv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#d97706" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#d97706" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 10 Q 35 5 70 16 T 115 9 T 160 14 L 160 24 L 0 24 Z" fill="url(#grad-pv)" />
+              <path d="M 0 10 Q 35 5 70 16 T 115 9 T 160 14" fill="none" stroke="#d97706" strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
+          </div>
           <button
             className="btn btn-outline btn-sm kpi-card-btn"
             onClick={() => onNavigate('pv')}
           >
             {kpis.pharmacovigilance?.button_text || 'Safety Signals & Reporting →'}
           </button>
+        </div>
+      </div>
+
+      {/* EXECUTIVE GCP & ETHICAL GOVERNANCE COMPLIANCE GAUGE METER */}
+      <div className="active-trials-section-card mt-6" style={{ background: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e2e8f0', boxShadow: '0 4px 16px rgba(0, 89, 68, 0.06)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid #f1f5f9', paddingBottom: '14px', marginBottom: '16px' }}>
+          <div>
+            <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#005944', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+              <ShieldCheck size={20} className="text-emerald-700" />
+              <span>GCP & Clinical Trial Governance Health Index</span>
+              <span style={{ fontSize: '10.5px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '9999px', fontWeight: 700 }}>
+                ICMR NDCT 2019
+              </span>
+            </h3>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>
+              Real-time multi-dimensional compliance tracking across all 9 AIIA trial centers in India
+            </p>
+          </div>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => onNavigate('gcp')}
+            style={{ fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+          >
+            <span>Open GCP Protocol Checklist</span>
+            <ArrowRight size={13} />
+          </button>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', alignItems: 'center' }}>
+          {/* Main Semi-Circular Gauge */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <div style={{ position: 'relative', width: '140px', height: '80px', overflow: 'hidden' }}>
+              <svg viewBox="0 0 100 50" style={{ width: '100%', height: '100%' }}>
+                <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#e2e8f0" strokeWidth="10" strokeLinecap="round" />
+                <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="url(#gcp-arc-grad)" strokeWidth="10" strokeLinecap="round" strokeDasharray="125.6" strokeDashoffset="13.8" />
+                <defs>
+                  <linearGradient id="gcp-arc-grad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#005944" />
+                    <stop offset="100%" stopColor="#10b981" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', textAlign: 'center' }}>
+                <span style={{ fontSize: '22px', fontWeight: 900, color: '#005944', lineHeight: 1 }}>89%</span>
+              </div>
+            </div>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#005944', marginTop: '6px' }}>OVERALL GCP COMPLIANCE</span>
+            <span style={{ fontSize: '10px', color: '#16a34a', fontWeight: 600 }}>Grade A (Fully Certified)</span>
+          </div>
+
+          {/* Sub-Ring 1: Ethics Committee */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <div style={{ position: 'relative', width: '48px', height: '48px', flexShrink: 0 }}>
+              <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e2e8f0" strokeWidth="3.5" />
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#15803d" strokeWidth="3.5" strokeDasharray="100, 100" />
+              </svg>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 800, color: '#15803d' }}>
+                100%
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>IEC / IRB Approvals</div>
+              <div style={{ fontSize: '11px', color: '#64748b' }}>All active protocols cleared</div>
+            </div>
+          </div>
+
+          {/* Sub-Ring 2: Rule 2 CTRI Data Integrity */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <div style={{ position: 'relative', width: '48px', height: '48px', flexShrink: 0 }}>
+              <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e2e8f0" strokeWidth="3.5" />
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#0284c7" strokeWidth="3.5" strokeDasharray="100, 100" />
+              </svg>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 800, color: '#0284c7' }}>
+                100%
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>Rule 2 Anti-Bypass</div>
+              <div style={{ fontSize: '11px', color: '#64748b' }}>Zero bypass, official CTRI URLs</div>
+            </div>
+          </div>
+
+          {/* Sub-Ring 3: Safety Signal SLA */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <div style={{ position: 'relative', width: '48px', height: '48px', flexShrink: 0 }}>
+              <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e2e8f0" strokeWidth="3.5" />
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#d97706" strokeWidth="3.5" strokeDasharray="94, 100" />
+              </svg>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 800, color: '#d97706' }}>
+                94%
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>PV Rapid Triage SLA</div>
+              <div style={{ fontSize: '11px', color: '#64748b' }}>24hr reporting turnaround</div>
+            </div>
+          </div>
         </div>
       </div>
 

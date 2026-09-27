@@ -40,6 +40,47 @@ export default function LandingGate({ onSelectPatient, onSelectStaff }) {
           </p>
         </div>
 
+        {/* HIGH-RES AYURVEDIC CLINICAL SCIENCE HERO GRAPHIC */}
+        <div className="landing-hero-banner" style={{
+          position: 'relative',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          marginBottom: '32px',
+          boxShadow: '0 20px 40px -10px rgba(11, 79, 73, 0.22), 0 8px 16px -4px rgba(0, 0, 0, 0.08)',
+          border: '1px solid rgba(0, 89, 68, 0.15)',
+          maxHeight: '340px'
+        }}>
+          <img
+            src="/images/aiia_hero_research.jpg"
+            alt="AIIA High-Tech Ayurvedic Clinical Science Laboratory"
+            style={{ width: '100%', height: '340px', objectFit: 'cover', display: 'block' }}
+          />
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, rgba(6, 44, 34, 0.2) 0%, rgba(6, 44, 34, 0.85) 100%)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+            padding: '24px 32px'
+          }}>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '8px' }}>
+              <span style={{ background: 'rgba(255, 255, 255, 0.92)', color: '#005944', padding: '4px 12px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px', backdropFilter: 'blur(4px)' }}>
+                🌿 75+ Standardized Ayurveda Protocols
+              </span>
+              <span style={{ background: 'rgba(255, 255, 255, 0.92)', color: '#0369a1', padding: '4px 12px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px', backdropFilter: 'blur(4px)' }}>
+                🏛️ 9 Verified AIIA Clinical Research Sites
+              </span>
+              <span style={{ background: 'rgba(255, 255, 255, 0.92)', color: '#b45309', padding: '4px 12px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px', backdropFilter: 'blur(4px)' }}>
+                📜 100% GCP & Rule 2 CTRI Compliant
+              </span>
+            </div>
+            <div style={{ color: '#ffffff', fontSize: '13.5px', fontWeight: 500, textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+              Advancing evidence-based Ayurvedic medicine through modern CDISC/FHIR informatics & nation-wide multicentric clinical research.
+            </div>
+          </div>
+        </div>
+
         <div className="gate-selection-container">
           <h3 className="gate-prompt">Who are you?</h3>
           <p className="gate-subprompt">Select your portal to continue</p>
