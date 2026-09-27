@@ -39,6 +39,17 @@ export default function ReportsView() {
     window.print();
   };
 
+  const currentButtonLabel = reportButtons.find((b) => b.id === reportType)?.label || 'Clinical Trial Report';
+  const reportTitle = reportData?.report_title || reportData?.title || `${currentButtonLabel.replace(/^\d+\.\s*/, '')} Report`;
+  const generatedAt = reportData?.generated_at || reportData?.date || new Date().toISOString().split('T')[0];
+  const institution = reportData?.institution || 'All India Institute of Ayurveda (AIIA), New Delhi';
+
+  const columns = reportData?.columns && reportData.columns.length > 0
+    ? reportData.columns
+    : (reportData?.rows && reportData.rows[0] ? Object.keys(reportData.rows[0]) : ['Trial ID', 'Title', 'Status']);
+
+  const rows = reportData?.rows || reportData?.records || reportData?.data || [];
+
   return (
     <div className="reports-view">
       <div className="view-header-bar">
@@ -49,7 +60,12 @@ export default function ReportsView() {
       </div>
 
       {/* Report Switcher Tabs */}
-      <div className="flex gap-2 mb-4 flex-wrap">
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '8px',
+        marginBottom: '16px'
+      }}>
         {reportButtons.map((btn) => (
           <button
             key={btn.id}
@@ -64,33 +80,50 @@ export default function ReportsView() {
       </div>
 
       {loading ? (
-        <div className="p-8 text-center text-slate-500">
-          <div className="badge badge-info animate-pulse p-3 inline-block">
+        <div className="p-8 text-center text-slate-500" style={{ padding: '32px', textAlign: 'center' }}>
+          <div className="badge badge-info animate-pulse" style={{ padding: '8px 16px', fontSize: '13px' }}>
             Generating Institutional Report...
           </div>
         </div>
       ) : error ? (
-        <div className="badge badge-danger p-3">{error}</div>
-      ) : reportData ? (
-        <div className="active-trials-section-card bg-white rounded-lg border shadow-xs p-5">
-          <div className="flex flex-wrap justify-between items-center gap-3 mb-4 pb-3 border-b">
+        <div className="badge badge-danger" style={{ padding: '10px 16px', fontSize: '13px', marginBottom: '16px' }}>{error}</div>
+      ) : (
+        <div className="active-trials-section-card bg-white rounded-lg border shadow-xs" style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '20px' }}>
+          {/* Header toolbar */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '16px',
+            marginBottom: '18px',
+            paddingBottom: '16px',
+            borderBottom: '1px solid #e2e8f0'
+          }}>
             <div>
-              <h4 className="text-base font-bold text-slate-900">{reportData.report_title}</h4>
-              <span className="text-muted text-xs">
-                Generated: {reportData.generated_at} • Institution: {reportData.institution}
-              </span>
+              <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a', margin: '0 0 6px 0', letterSpacing: '-0.2px' }}>
+                {reportTitle}
+              </h4>
+              <div style={{ fontSize: '12.5px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <span><strong>Generated:</strong> {generatedAt}</span>
+                <span>•</span>
+                <span><strong>Institution:</strong> {institution}</span>
+              </div>
             </div>
-            <div className="flex gap-2">
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <a
                 href={`/api/ayur/reports/export?type=${reportType}&format=csv`}
-                className="btn btn-outline btn-sm flex items-center gap-1.5"
+                className="btn btn-outline btn-sm"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}
                 download
               >
                 <Download size={14} />
                 <span>EXPORT CSV</span>
               </a>
               <button
-                className="btn btn-primary btn-sm flex items-center gap-1.5"
+                className="btn btn-primary btn-sm"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}
                 onClick={handlePrint}
               >
                 <Printer size={14} />
@@ -99,28 +132,56 @@ export default function ReportsView() {
             </div>
           </div>
 
+          {/* Data Table */}
           <div className="table-responsive">
             <table className="data-table">
               <thead>
                 <tr>
-                  {(reportData.columns || []).map((col, idx) => (
+                  {columns.map((col, idx) => (
                     <th key={idx}>{col}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {(reportData.rows || []).map((row, rIdx) => (
-                  <tr key={rIdx}>
-                    {(reportData.columns || []).map((col, cIdx) => (
-                      <td key={cIdx}>{row[col] !== undefined ? String(row[col]) : ''}</td>
-                    ))}
+                {rows.length === 0 ? (
+                  <tr>
+                    <td colSpan={columns.length} style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>
+                      No records found for this reporting domain.
+                    </td>
                   </tr>
-                ))}
+                ) : (
+                  rows.map((row, rIdx) => (
+                    <tr key={rIdx}>
+                      {columns.map((col, cIdx) => {
+                        const keys = Object.keys(row);
+                        const val = row[col] !== undefined
+                          ? row[col]
+                          : (row[keys[cIdx]] !== undefined ? row[keys[cIdx]] : '');
+                        
+                        return (
+                          <td key={cIdx}>
+                            {cIdx === 0 ? (
+                              <span className="trial-id-badge" style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>
+                                {String(val)}
+                              </span>
+                            ) : typeof val === 'boolean' ? (
+                              <span className={`badge ${val ? 'badge-success' : 'badge-danger'}`} style={{ fontSize: '10px' }}>
+                                {val ? 'Completed' : 'Pending'}
+                              </span>
+                            ) : (
+                              String(val)
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

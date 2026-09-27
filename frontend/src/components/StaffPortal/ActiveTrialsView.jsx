@@ -57,21 +57,68 @@ export default function ActiveTrialsView({ onOpenCreateTrial }) {
       </div>
 
       {/* Filter and search bar */}
-      <div className="flex flex-wrap gap-3 items-center justify-between mb-4 bg-white p-3 rounded-lg border shadow-xs">
-        <div className="flex items-center gap-2 flex-1 min-w-[240px]">
-          <Search size={16} className="text-slate-400" />
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '12px',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: '18px',
+        background: '#ffffff',
+        padding: '12px 16px',
+        borderRadius: '10px',
+        border: '1px solid #e2e8f0',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
+      }}>
+        <div style={{ position: 'relative', flex: '1 1 320px', minWidth: '240px' }}>
+          <Search
+            size={16}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#94a3b8',
+              pointerEvents: 'none'
+            }}
+          />
           <input
             type="text"
-            className="form-input text-xs"
+            className="form-input"
+            style={{
+              width: '100%',
+              paddingLeft: '38px',
+              height: '38px',
+              fontSize: '13px',
+              boxSizing: 'border-box'
+            }}
             placeholder="Search by ID, condition, city or protocol title..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <div className="flex items-center gap-2">
-          <Filter size={14} className="text-slate-400" />
+
+        <div style={{ position: 'relative', width: '180px', flexShrink: 0 }}>
+          <Filter
+            size={15}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#94a3b8',
+              pointerEvents: 'none'
+            }}
+          />
           <select
-            className="form-select text-xs"
+            className="form-select"
+            style={{
+              width: '100%',
+              paddingLeft: '36px',
+              height: '38px',
+              fontSize: '13px',
+              boxSizing: 'border-box'
+            }}
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >

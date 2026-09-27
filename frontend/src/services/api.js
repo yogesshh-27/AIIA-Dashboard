@@ -87,17 +87,28 @@ export function getFallbackForEndpoint(url) {
   }
 
   if (path.includes('/reports')) {
+    const trials = (FALLBACK_DATA['/api/ayur/trials']?.trials || []).slice(0, 10);
+    const rows = trials.map(t => ({
+      'Trial ID': t.trial_id,
+      'Trial Name': t.trial_name,
+      'Condition': t.condition || 'General',
+      'Location': t.city || 'New Delhi',
+      'Principal Investigator': t.pi_name || 'Dr. AIIA Research Team',
+      'Enrolled': t.enrolled_participants,
+      'Target': t.target_participants,
+      'Progress': `${t.progress_pct}%`,
+      'Status': t.trial_status
+    }));
     return {
       status: 'ok',
-      report_type: 'trial_progress',
-      data: (FALLBACK_DATA['/api/ayur/trials']?.trials || []).slice(0, 10).map(t => ({
-        trial_id: t.trial_id,
-        trial_name: t.trial_name,
-        target_participants: t.target_participants,
-        enrolled_participants: t.enrolled_participants,
-        progress_pct: t.progress_pct,
-        status: t.trial_status
-      }))
+      success: true,
+      report_title: 'Clinical Trial Progress & Governance Summary',
+      generated_at: new Date().toISOString().split('T')[0],
+      institution: 'All India Institute of Ayurveda (AIIA), New Delhi',
+      columns: ['Trial ID', 'Trial Name', 'Condition', 'Location', 'Principal Investigator', 'Enrolled', 'Target', 'Progress', 'Status'],
+      rows: rows,
+      records: rows,
+      data: rows
     };
   }
 

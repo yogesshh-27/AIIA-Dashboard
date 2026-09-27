@@ -237,35 +237,47 @@ export default function CtriExplorerView() {
                   const link = getSourceLink(t);
                   return (
                     <tr key={t.ctri_number || idx}>
-                      <td>
-                        <span className="trial-id-badge text-[11px] block mb-1">
-                          {t.ctri_number || 'PENDING'}
-                        </span>
-                        <a
-                          href={link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[10.5px] text-[#005944] font-semibold underline flex items-center gap-0.5 hover:text-emerald-800"
-                          title={`View official CTRI registry record for ${t.ctri_number}`}
-                        >
-                          <span>Official Record</span>
-                          <ExternalLink size={10} />
-                        </a>
+                      <td style={{ minWidth: '160px', verticalAlign: 'top' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
+                          <span className="trial-id-badge" style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>
+                            {t.ctri_number || 'PENDING'}
+                          </span>
+                          <a
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              fontSize: '11px',
+                              color: '#0f766e',
+                              fontWeight: '600',
+                              textDecoration: 'underline',
+                              whiteSpace: 'nowrap'
+                            }}
+                            title={`View official CTRI registry record for ${t.ctri_number}`}
+                          >
+                            <span>Official Record</span>
+                            <ExternalLink size={11} />
+                          </a>
+                        </div>
                       </td>
-                      <td>
-                        <div className="font-bold text-slate-900 mb-1">
+                      <td style={{ verticalAlign: 'top' }}>
+                        <div style={{ fontWeight: '700', color: '#0f172a', marginBottom: '6px', lineHeight: 1.35 }}>
                           {t.public_title || 'Untitled Trial'}
                         </div>
-                        <div className="flex gap-1.5 items-center">
-                          <span className="badge badge-info text-[10px]">
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}>
+                          <span className="badge badge-info" style={{ fontSize: '10px' }}>
                             {t.condition || 'General'}
                           </span>
                           <span
-                            className={`badge text-[10px] ${
+                            className={`badge ${
                               t.trial_category === 'AYURVEDA'
                                 ? 'badge-success'
                                 : 'badge-outline'
                             }`}
+                            style={{ fontSize: '10px' }}
                           >
                             {t.trial_category || 'AYURVEDA'}
                           </span>
