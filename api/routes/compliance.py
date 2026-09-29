@@ -100,3 +100,21 @@ async def update_alert_status(alert_id: int, body: AlertStatusRequest, request: 
         ip_address=request.client.host if request.client else "127.0.0.1",
     )
     return res
+
+
+# ============================================================
+# ALCOA+ REGULATORY DATA INTEGRITY ENDPOINTS
+# ============================================================
+from services.alcoa_engine import evaluate_alcoa_principles, generate_alcoa_certificate
+
+@router.get("/compliance/alcoa/metrics")
+async def get_alcoa_metrics(scope: str = "aiia", trial_id: Optional[str] = None):
+    """Evaluates 9 ALCOA+ principles for clinical trials and audit logs."""
+    return evaluate_alcoa_principles(scope=scope, trial_id=trial_id)
+
+
+@router.get("/compliance/alcoa/certificate/{trial_id:path}")
+async def get_alcoa_certificate(trial_id: str):
+    """Generates a cryptographically signed ALCOA+ Data Integrity Certificate."""
+    return generate_alcoa_certificate(trial_id=trial_id)
+

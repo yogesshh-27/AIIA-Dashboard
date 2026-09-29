@@ -536,4 +536,57 @@ export const api = {
 
   // Audit Trail
   getAuditTrail: () => fetchJSON('/api/ayur/audit'),
+
+  // AYURCTMS v3.0: ALCOA+ Data Integrity Engine
+  getAlcoaMetrics: (scope = 'aiia', trialId = '') =>
+    fetchJSON(`/api/compliance/alcoa/metrics?scope=${scope}${trialId ? `&trial_id=${trialId}` : ''}`),
+  getAlcoaCertificate: (trialId) =>
+    fetchJSON(`/api/compliance/alcoa/certificate/${encodeURIComponent(trialId)}`),
+
+  // AYURCTMS v3.0: ABDM & EDC / HIS Interoperability
+  verifyAbha: (abhaId) =>
+    fetchJSON('/api/interop/abdm/verify-abha', {
+      method: 'POST',
+      body: JSON.stringify({ abha_id: abhaId }),
+    }),
+  getAbdmStatus: () => fetchJSON('/api/interop/abdm/status'),
+  getFhirBundle: (trialId = '') =>
+    fetchJSON(`/api/interop/fhir/bundle${trialId ? `?trial_id=${trialId}` : ''}`),
+  ingestEdc: (data) =>
+    fetchJSON('/api/interop/edc/ingest', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // AYURCTMS v3.0: AIIA NPvCC MedDRA & Regulatory Timelines
+  searchMeddra: (query = '', soc = '') =>
+    fetchJSON(`/api/pv/meddra/search?query=${encodeURIComponent(query)}${soc ? `&soc=${encodeURIComponent(soc)}` : ''}`),
+  getRegulatoryTimelines: () => fetchJSON('/api/pv/regulatory/timelines'),
+
+  // AYURCTMS v3.0: DPDP Act (2023) Privacy & Consent
+  getPrivacyNotice: (language = 'en') =>
+    fetchJSON(`/api/privacy/notice?language=${language}`),
+  recordDpdpConsent: (data) =>
+    fetchJSON('/api/privacy/consent/record', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  withdrawDpdpConsent: (consentId, reason = '') =>
+    fetchJSON('/api/privacy/consent/withdraw', {
+      method: 'POST',
+      body: JSON.stringify({ consent_id: consentId, reason }),
+    }),
+  getDpoAuditLog: () => fetchJSON('/api/privacy/dpo/audit-log'),
+  submitRightsRequest: (data) =>
+    fetchJSON('/api/privacy/rights-request', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // AYURCTMS v3.0: CDISC Submission Datasets
+  getCdiscSdtm: (domain = 'DM', trialId = '') =>
+    fetchJSON(`/api/interop/cdisc/sdtm/${domain}${trialId ? `?trial_id=${trialId}` : ''}`),
+  getCdiscAdam: (datasetName = 'ADSL', trialId = '') =>
+    fetchJSON(`/api/interop/cdisc/adam/${datasetName}${trialId ? `?trial_id=${trialId}` : ''}`),
 };
+

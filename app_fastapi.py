@@ -37,6 +37,7 @@ from api.routes.documents import router as documents_router
 from api.routes.ctri import router as ctri_router
 from api.routes.search import router as search_router
 from api.routes.legacy import router as legacy_router
+from api.routes.privacy import router as privacy_router
 
 
 @asynccontextmanager
@@ -95,6 +96,7 @@ app.include_router(documents_router, prefix="/api", tags=["Document Repository"]
 app.include_router(ctri_router, prefix="/api", tags=["CTRI Registry"])
 app.include_router(search_router, prefix="/api", tags=["Search & Notifications"])
 app.include_router(legacy_router, prefix="/api", tags=["Legacy Endpoints"])
+app.include_router(privacy_router, prefix="/api", tags=["DPDP Privacy & Consent"])
 
 from services.websocket_manager import ws_manager
 

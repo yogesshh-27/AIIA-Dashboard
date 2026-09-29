@@ -11,8 +11,10 @@ import {
   AlertTriangle,
   FileText,
   GitBranch,
-  Database
+  Database,
+  Lock
 } from 'lucide-react';
+
 
 export default function StaffSidebar({ activeTab, onSelectTab, stats, isOpen }) {
   const navItems = [
@@ -41,9 +43,12 @@ export default function StaffSidebar({ activeTab, onSelectTab, stats, isOpen }) 
         { id: 'reports', label: '10. Reports', icon: FileText },
         { id: 'interop', label: '11. Interoperability & Audit', icon: GitBranch },
         { id: 'ctri-extractor', label: '12. CTRI Extractor Data', icon: Database, badge: '75 Trials', badgeClass: 'success-badge' },
+        { id: 'alcoa-audit', label: '13. ALCOA+ Audit Center', icon: ShieldCheck, badge: '96%', badgeClass: 'success-badge' },
+        { id: 'dpdp-privacy', label: '14. DPDP 2023 Privacy', icon: Lock, badge: 'Active', badgeClass: 'success-badge' },
       ]
     }
   ];
+
 
   return (
     <aside className={`staff-sidebar ${isOpen ? 'open mobile-open' : 'collapsed'}`} id="staff-sidebar">

@@ -155,3 +155,37 @@ async def get_pv_reporting_deadlines(
     return db_service.get_pv_reporting_deadlines(
         search=search, status=status, page=page, limit=limit,
     )
+
+
+# ============================================================
+# AIIA NPvCC MEDDRA CODING & STATUTORY REGULATORY TIMELINES
+# ============================================================
+from fastapi.responses import Response
+from services.meddra_service import (
+    search_meddra,
+    calculate_regulatory_timelines,
+    generate_e2b_r3_xml,
+)
+
+@router.get("/pv/meddra/search")
+async def api_search_meddra(query: str = "", soc: Optional[str] = None):
+    """5-tier MedDRA hierarchy search (SOC/HLGT/HLT/PT/LLT) with Ayurvedic term mapping."""
+    return search_meddra(query=query, soc_filter=soc)
+
+
+@router.get("/pv/regulatory/timelines")
+async def api_regulatory_timelines():
+    """Statutory countdown clock for 7-day, 14-day, and 30-day regulatory safety reporting."""
+    return calculate_regulatory_timelines()
+
+
+@router.get("/pv/export/e2b/{event_id}")
+async def api_export_e2b_xml(event_id: str):
+    """Generates an ICH E2B(R3) ICSR XML document for CDSCO / PvPI / NPvCC electronic reporting."""
+    xml_data = generate_e2b_r3_xml(event_id)
+    return Response(
+        content=xml_data.encode("utf-8"),
+        media_type="application/xml",
+        headers={"Content-Disposition": f'attachment; filename="E2B_R3_{event_id}.xml"'},
+    )
+

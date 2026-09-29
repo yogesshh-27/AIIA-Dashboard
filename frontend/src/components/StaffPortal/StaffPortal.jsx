@@ -15,6 +15,9 @@ import PharmacovigilanceView from './PharmacovigilanceView';
 import ReportsView from './ReportsView';
 import InteropView from './InteropView';
 import CtriExplorerView from './CtriExplorerView';
+import AlcoaAuditView from './AlcoaAuditView';
+import DpdpPrivacyView from './DpdpPrivacyView';
+
 
 export default function StaffPortal({ currentUser, onLogout }) {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -64,7 +67,12 @@ export default function StaffPortal({ currentUser, onLogout }) {
         return <InteropView />;
       case 'ctri-extractor':
         return <CtriExplorerView />;
+      case 'alcoa-audit':
+        return <AlcoaAuditView currentUser={currentUser} />;
+      case 'dpdp-privacy':
+        return <DpdpPrivacyView currentUser={currentUser} />;
       default:
+
         return (
           <DashboardView
             onNavigate={(tab) => setActiveTab(tab)}
