@@ -1,111 +1,73 @@
-# ROADMAP.md
+# ROADMAP.md — AYURCTMS v3.0
 
-> **Current Milestone**: AYURCTMS v2.0 — Production-Grade Upgrade
-> **Status**: ✅ Completed (74/74 tests passing)
+> **Milestone**: AYURCTMS v3.0 — Enterprise Regulatory CTMS, Interoperability & Submission Analytics  
+> **Status**: 🚀 In Progress (Phase 1 Starting)  
 
-## Must-Haves (from SPEC)
-- [x] FastAPI backend with Swagger docs
-- [x] Advanced clinical charts (Recharts)
-- [x] Interactive India trial map (Leaflet)
-- [x] WCAG 2.1 AA accessibility
-- [x] Real-time WebSocket alerts
-- [x] WHO pharmacovigilance algorithms
-- [x] Hindi language support
-- [x] PWA offline capability
-- [x] 21 CFR Part 11 e-signatures
-- [x] PostgreSQL migration
-- [x] Background worker queue
+---
+
+## Must-Haves (from SPEC & REQUIREMENTS)
+- [ ] ALCOA+ Audit Hardening & Data Quality Evaluation Engine
+- [ ] ABDM Interoperability & EDC / HIS Connectors
+- [ ] AIIA NPvCC Safety Module (MedDRA Coding, Regulatory Timelines & E2B(R3) Export)
+- [ ] DPDP Consent & Privacy Engine
+- [ ] Submission-Ready CDISC Exporter (SDTM, ADaM, Define-XML 2.0)
+- [ ] Persona-Tailored Portals (PI, Ethics Committee, Safety/NPvCC, Leadership)
+- [ ] Comprehensive Automated Tests passing 100%
+
+---
 
 ## Phases
 
-### Phase 1: FastAPI Backend Migration
-**Status**: ✅ Completed
-**Objective**: Replace `http.server` with FastAPI + Pydantic for all 28+ endpoints
+### Phase 1: ALCOA+ Audit Hardening & Data Quality Evaluation Engine
+**Status**: ⬜ Not Started  
+**Objective**: Build comprehensive ALCOA+ compliance calculation, audit scorecards, and verifiable certificate generation.  
 **Deliverables**:
-- FastAPI application with route modules (`api/routes/`)
-- Pydantic request/response models for all endpoints
-- Auto-generated Swagger UI at `/docs` and ReDoc at `/redoc`
-- CORS middleware replacing manual headers
-- All existing tests passing against new backend
-**Requirements**: SPEC Goal 1
+- Service module `services/alcoa_engine.py` evaluating the 9 ALCOA+ principles.
+- Endpoints: `GET /api/compliance/alcoa/metrics`, `GET /api/compliance/alcoa/certificate/{trial_id}`.
+- Automated tests verifying ALCOA+ calculations.
+**Requirements**: REQ-ALCOA-01, REQ-ALCOA-02
 
-### Phase 2: Advanced Clinical Charts & Dashboard Visualization
-**Status**: ✅ Completed
-**Objective**: Add Recharts-powered interactive data visualizations
+### Phase 2: ABDM Interoperability & EDC / HIS Connector Adapter Layer
+**Status**: ⬜ Not Started  
+**Objective**: Provide ABDM gateway mock endpoints (ABHA verification, HIP/HIU consent), FHIR R4 Bundle generator, and EDC/HIS ingestion pipelines.  
 **Deliverables**:
-- KPI trend line charts (enrollment velocity, AE rates over time)
-- Dosha balance radar charts (Vata/Pitta/Kapha pre/post treatment)
-- Recruitment burn-down charts (target vs actual)
-- Site-wise bar charts with outcome comparisons
-- Responsive chart containers with tooltips and legends
-**Requirements**: SPEC Goal 5
+- Service module `services/abdm_edc_service.py` with ABHA verify, FHIR R4 Bundle builders, and EDC payload parsers.
+- Endpoints: `POST /api/interop/abdm/verify-abha`, `GET /api/interop/fhir/bundle/{trial_id}`, `POST /api/interop/edc/ingest`.
+- Automated tests for ABDM & EDC connectors.
+**Requirements**: REQ-ABDM-01, REQ-ABDM-02, REQ-EDC-01
 
-### Phase 3: Interactive India Trial Map
-**Status**: ✅ Completed
-**Objective**: Leaflet.js geospatial visualization of 9 trial sites
+### Phase 3: AIIA NPvCC Pharmacovigilance Module (MedDRA/WHO Drug & Timelines)
+**Status**: ⬜ Not Started  
+**Objective**: Implement 5-tier MedDRA dictionary hierarchy search, statutory regulatory countdown timers (7d/14d/30d), and E2B(R3) ICSR XML generation.  
 **Deliverables**:
-- Interactive India map with colored markers for each trial city (`IndiaTrialMap.jsx`)
-- Click-to-filter: select a city pin to see its active trials
-- Recruitment density heatmap overlay toggle
-- Side panel metrics with status and hospital associations
-- Mobile-responsive map container
-**Requirements**: SPEC Goal 4
+- Service module `services/meddra_service.py` with MedDRA term lookup and regulatory timeline calculator.
+- Endpoints: `GET /api/pv/meddra/search`, `GET /api/pv/regulatory/timelines`, `GET /api/pv/export/e2b/{event_id}`.
+- Automated tests for MedDRA mapping, timeline checks, and E2B XML format.
+**Requirements**: REQ-PV-01, REQ-PV-02, REQ-PV-03
 
-### Phase 4: GIGW 3.0 Accessibility & Multi-Lingual Support
-**Status**: ✅ Completed
-**Objective**: WCAG 2.1 AA compliance + Hindi/English language switcher
+### Phase 4: Informed Consent & DPDP Act (2023) Privacy Engine
+**Status**: ⬜ Not Started  
+**Objective**: Build patient consent lifecycle management, multilingual consent artifact tracking, consent withdrawal, and Data Principal rights processing under DPDP 2023.  
 **Deliverables**:
-- Font size controls (A-, A, A+) in GovTopBar
-- High-contrast mode toggle (Standard / Dark / Yellow-on-Black)
-- Full keyboard navigation with visible focus indicators
-- ARIA landmarks, live regions, and screen reader labels
-- i18next integration with Hindi (`hi`) and English (`en`) locales
-- Browser SpeechRecognition voice search for patient portal
-**Requirements**: SPEC Goals 6, 7
+- Service module `services/dpdp_service.py` managing consent records, withdrawal tokens, and DPO logs.
+- Endpoints: `POST /api/privacy/consent/record`, `POST /api/privacy/consent/withdraw`, `GET /api/privacy/dpo/audit-log`, `POST /api/privacy/rights-request`.
+- Automated tests for DPDP compliance rules.
+**Requirements**: REQ-DPDP-01, REQ-DPDP-02
 
-### Phase 5: WHO Pharmacovigilance Algorithms & Real-Time WebSocket Alerts
-**Status**: ✅ Completed
-**Objective**: Statistical signal detection + instant push notifications
+### Phase 5: Submission-Ready CDISC Exporter (SDTM, ADaM & Define-XML 2.0)
+**Status**: ⬜ Not Started  
+**Objective**: Upgrade CDISC exporter to generate full SDTM domains (DM, TS, AE, EX, DS, LB), ADaM datasets (ADSL, ADAE), and W3C-valid Define-XML 2.0 with XML stylesheets.  
 **Deliverables**:
-- PRR (Proportional Reporting Ratio) algorithm implementation with 95% CI
-- ROR (Reporting Odds Ratio) algorithm implementation with 95% CI
-- Yates' Chi-squared statistical test and Evans et al. criteria evaluation
-- Signal detection dashboard with statistical confidence indicators
-- WebSocket server endpoint (`/ws/alerts`) for real-time SAE alerts
-- Frontend WebSocket client (`useWebSocketAlerts.js`) with live indicator and toast notifications
-**Requirements**: SPEC Goals 2, 3
+- Service module `services/cdisc_submission_exporter.py`.
+- Endpoints: `GET /api/interop/cdisc/submission-export?domain=...`, `GET /api/interop/cdisc/define-xml-2`.
+- Automated validation tests for SDTM/ADaM and XML schema compliance.
+**Requirements**: REQ-CDISC-01, REQ-CDISC-02, REQ-CDISC-03
 
-### Phase 6: 21 CFR Part 11 E-Signatures & Cryptographic Audit Trail
-**Status**: ✅ Completed
-**Objective**: Regulatory-grade electronic signatures with tamper-evident audit chain
+### Phase 6: Persona-Tailored Portals & GCP E-Signature Integration
+**Status**: ⬜ Not Started  
+**Objective**: Integrate role-based tailored dashboards into the React UI for Investigators, Ethics Committee, Safety/NPvCC, and Institutional Leadership.  
 **Deliverables**:
-- Re-authentication modal before signing clinical records
-- Intent declaration (e.g., "I certify these results are accurate")
-- SHA-256 cryptographic audit chain for signature blocks
-- Signature verification API endpoint (`/api/audit/esign/verify/{id}`)
-- E-signature status badges and verification certificates on approved records
-**Requirements**: SPEC Goal 9
-
-### Phase 7: PostgreSQL Migration & Background Workers
-**Status**: ✅ Completed
-**Objective**: Enterprise database + async task processing
-**Deliverables**:
-- SQLAlchemy ORM models (`services/db_models.py`)
-- Alembic migration scripts (`migrations/versions/`)
-- Dual-mode support (SQLite for dev, PostgreSQL for production)
-- Background worker queue (`services/background_tasks.py`)
-- Async PDF/CSV report generation endpoints (`/api/reports/async-generate`)
-- Scheduled CTRI registry scraper task
-**Requirements**: SPEC Goals 10, 11
-
-### Phase 8: PWA / Offline-First & Final Integration
-**Status**: ✅ Completed
-**Objective**: Progressive Web App with offline data collection
-**Deliverables**:
-- Service Worker (`sw.js`) with cache-first strategy for static assets
-- IndexedDB local storage engine (`offlineStorage.js`) for offline data collection
-- Background sync capability for network recovery
-- PWA manifest (`manifest.json`) with AIIA branding
-- Full regression test suite passing (74/74 tests, 100%)
-- Production build verified in `dist/`
-**Requirements**: SPEC Goal 8
+- Frontend views or modular tab extensions for the 4 persona dashboards.
+- Integration of ALCOA+ scorecards, ABDM badge, MedDRA coder, and DPDP consent viewer in UI.
+- Full regression verification across all modules.
+**Requirements**: REQ-UI-01, REQ-UI-02, REQ-UI-03, REQ-UI-04, REQ-SEC-01

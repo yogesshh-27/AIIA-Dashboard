@@ -1,22 +1,17 @@
-# STATE.md — Project State
+# STATE.md — Project State: AYURCTMS v3.0
 
 ## Current Focus
-- AYURCTMS v2.0 Upgrade: Implementing 11 free, open-source upgrades across frontend and backend.
-- Starting with Phase 1: FastAPI Backend Migration
+- Milestone: AYURCTMS v3.0 (Enterprise Regulatory CTMS, Interoperability & Submission Analytics)
+- Active Phase: **Phase 1: ALCOA+ Audit Hardening & Data Quality Evaluation Engine**
 
-## Completed Work (v1.0 — Archived)
-- [x] Complete AYURCTMS v1.0 prototype with 9 backend capabilities
-- [x] React 19 + Vite frontend with 20 modular components
-- [x] 67 automated tests passing 100%
-- [x] Deployed to Cloudflare Pages
-- [x] AIIA official branding and GIGW top bar
+## Milestone History
+- **v1.0** (Archived): Prototype CTMS, React 18/19 frontend, SQLite, Cloudflare deployment.
+- **v2.0** (Archived): FastAPI migration, Leaflet India GIS map, Recharts clinical charts, WHO PRR/ROR PV algorithms, WebSockets, 21 CFR Part 11 e-signatures, PWA offline caching.
 
-## v2.0 Progress
-- [ ] Phase 1: FastAPI Backend Migration
-- [ ] Phase 2: Advanced Clinical Charts (Recharts)
-- [ ] Phase 3: Interactive India Trial Map (Leaflet)
-- [ ] Phase 4: GIGW Accessibility + Hindi Language
-- [ ] Phase 5: WHO Pharmacovigilance + WebSocket Alerts
-- [ ] Phase 6: 21 CFR Part 11 E-Signatures
-- [ ] Phase 7: PostgreSQL + Background Workers
-- [ ] Phase 8: PWA / Offline-First
+## v3.0 Phase Tracker
+- [ ] Phase 1: ALCOA+ Audit Hardening & Data Quality Evaluation Engine
+- [ ] Phase 2: ABDM Interoperability & EDC / HIS Connectors
+- [ ] Phase 3: AIIA NPvCC Pharmacovigilance Module (MedDRA/WHO Drug & Timelines)
+- [ ] Phase 4: Informed Consent & DPDP Act (2023) Privacy Engine
+- [ ] Phase 5: Submission-Ready CDISC Exporter (SDTM, ADaM & Define-XML 2.0)
+- [ ] Phase 6: Persona-Tailored Portals & GCP E-Signature Integration

@@ -32,3 +32,22 @@
 **Status**: Accepted
 **Context**: PostgreSQL migration planned but SQLite must remain for local development and demo scenarios.
 **Decision**: Dual-mode database support via SQLAlchemy ORM — SQLite for dev, PostgreSQL for production.
+
+## ADR-006: Dedicated ALCOA+ Regulatory Integrity Metric Framework
+**Date**: 2026-09-29
+**Status**: Accepted
+**Context**: Clinical research governance requires quantitative proof of data integrity adhering to ALCOA+ principles.
+**Decision**: Implement a deterministic 9-factor ALCOA+ scoring engine and cryptographic audit certificate generator.
+
+## ADR-007: ABDM M1/M2/M3 Sandbox Architecture with FHIR R4 Bundle Models
+**Date**: 2026-09-29
+**Status**: Accepted
+**Context**: Ayushman Bharat Digital Mission (ABDM) compliance requires ABHA identity validation, consent artifacts, and FHIR R4 clinical payloads.
+**Decision**: Implement standard ABDM sandbox-compliant endpoints with FHIR R4 ResearchStudy/ResearchSubject/Encounter structures and EDC ingest adapters.
+
+## ADR-008: DPDP Act (2023) Privacy and Consent Lifecycle Architecture
+**Date**: 2026-09-29
+**Status**: Accepted
+**Context**: India's DPDP Act mandates transparent consent notices, purpose limitation, easy withdrawal, and Data Principal rights processing.
+**Decision**: Build a first-class DPDP consent and rights management engine within the CTMS with automated DPO activity logs.
+
